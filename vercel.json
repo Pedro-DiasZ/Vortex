@@ -2,22 +2,22 @@
   "version": 2,
   "builds": [
     {
-      "src": "backend/api.py",
+      "src": "VortexCode/backend/api.py",
       "use": "@vercel/python"
     },
     {
-      "src": "frontend/**",
+      "src": "VortexCode/frontend/**",
       "use": "@vercel/static"
     }
   ],
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "backend/api.py"
+      "dest": "VortexCode/backend/api.py"
     },
     {
       "src": "/(.*)",
-      "dest": "frontend/$1"
+      "dest": "VortexCode/frontend/$1"
     }
   ]
 }
