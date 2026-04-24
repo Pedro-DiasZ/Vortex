@@ -1,6 +1,0 @@
-dnspython
-python-whois
-requests
-ping3
-fastapi
-uvicorn
