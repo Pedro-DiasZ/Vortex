@@ -1,33 +1,33 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-# --- IMPORTAÇÕES DOS MÓDULOS ---
-from modules.email.spf import check_spf
-from modules.email.dmarc import check_dmarc
-from modules.email.dkim import check_dkim
-from modules.email.blks import check_blacklists
-from modules.email.smtp_checker import check_smtp
-from modules.email.email_header_analyzer import analyze_header
+# --- IMPORTAÇÕES DOS MÓDULOS (Caminhos absolutos para o Vercel) ---
+from backend.modules.email.spf import check_spf
+from backend.modules.email.dmarc import check_dmarc
+from backend.modules.email.dkim import check_dkim
+from backend.modules.email.blks import check_blacklists
+from backend.modules.email.smtp_checker import check_smtp
+from backend.modules.email.email_header_analyzer import analyze_header
 
-from modules.dns.whois import get_whois_info
-from modules.dns.lookup import dns_lookup
-from modules.dns.propagation import check_propagation
+from backend.modules.dns.whois import get_whois_info
+from backend.modules.dns.lookup import dns_lookup
+from backend.modules.dns.propagation import check_propagation
 
-from modules.infra.geo import geolocate_ip
-from modules.infra.ping import ping_host
-from modules.infra.ip_info import get_ip_info
-from modules.infra.uptime import check_uptime
-from modules.infra.port_checker import check_port
+from backend.modules.infra.geo import geolocate_ip
+from backend.modules.infra.ping import ping_host
+from backend.modules.infra.ip_info import get_ip_info
+from backend.modules.infra.uptime import check_uptime
+from backend.modules.infra.port_checker import check_port
 
-from modules.ssl.http_headers import get_http_headers
-from modules.ssl.ssl_checker import check_ssl
+from backend.modules.ssl.http_headers import get_http_headers
+from backend.modules.ssl.ssl_checker import check_ssl
 
-from modules.utils.base64_tool import base64_decode, base64_encode
-from modules.utils.cidr import is_valid_cidr
-from modules.utils.password_generator import generate_strong_password
-from modules.utils.ttl_converter import ttl_seconds_to_human
+from backend.modules.utils.base64_tool import base64_decode, base64_encode
+from backend.modules.utils.cidr import is_valid_cidr
+from backend.modules.utils.password_generator import generate_strong_password
+from backend.modules.utils.ttl_converter import ttl_seconds_to_human
 
-app = FastAPI(title="Email Health Monitor API")
+app = FastAPI(title="VortexAPI")
 
 app.add_middleware(
     CORSMiddleware,
