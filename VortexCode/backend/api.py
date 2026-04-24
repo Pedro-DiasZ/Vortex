@@ -1,33 +1,27 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from VortexCode.backend.modules.email.spf import check_spf
+from VortexCode.backend.modules.email.dmarc import check_dmarc
+from VortexCode.backend.modules.email.dkim import check_dkim
+from VortexCode.backend.modules.email.blks import check_blacklists
+from VortexCode.backend.modules.email.smtp_checker import check_smtp
+from VortexCode.backend.modules.email.email_header_analyzer import analyze_header
+from VortexCode.backend.modules.dns.whois import get_whois_info
+from VortexCode.backend.modules.dns.lookup import dns_lookup
+from VortexCode.backend.modules.dns.propagation import check_propagation
+from VortexCode.backend.modules.infra.geo import geolocate_ip
+from VortexCode.backend.modules.infra.ping import ping_host
+from VortexCode.backend.modules.infra.ip_info import get_ip_info
+from VortexCode.backend.modules.infra.uptime import check_uptime
+from VortexCode.backend.modules.infra.port_checker import check_port
+from VortexCode.backend.modules.ssl.http_headers import get_http_headers
+from VortexCode.backend.modules.ssl.ssl_checker import check_ssl
+from VortexCode.backend.modules.utils.base64_tool import base64_decode, base64_encode
+from VortexCode.backend.modules.utils.cidr import is_valid_cidr
+from VortexCode.backend.modules.utils.password_generator import generate_strong_password
+from VortexCode.backend.modules.utils.ttl_converter import ttl_seconds_to_human
 
-# --- IMPORTAÇÕES DOS MÓDULOS ---
-from modules.email.spf import check_spf
-from modules.email.dmarc import check_dmarc
-from modules.email.dkim import check_dkim
-from modules.email.blks import check_blacklists
-from modules.email.smtp_checker import check_smtp
-from modules.email.email_header_analyzer import analyze_header
-
-from modules.dns.whois import get_whois_info
-from modules.dns.lookup import dns_lookup
-from modules.dns.propagation import check_propagation
-
-from modules.infra.geo import geolocate_ip
-from modules.infra.ping import ping_host
-from modules.infra.ip_info import get_ip_info
-from modules.infra.uptime import check_uptime
-from modules.infra.port_checker import check_port
-
-from modules.ssl.http_headers import get_http_headers
-from modules.ssl.ssl_checker import check_ssl
-
-from modules.utils.base64_tool import base64_decode, base64_encode
-from modules.utils.cidr import is_valid_cidr
-from modules.utils.password_generator import generate_strong_password
-from modules.utils.ttl_converter import ttl_seconds_to_human
-
-app = FastAPI(title="Email Health Monitor API")
+app = FastAPI(title="VortexAPI")
 
 app.add_middleware(
     CORSMiddleware,
