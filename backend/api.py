@@ -36,100 +36,110 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
-@app.get("/")
+app = FastAPI(
+    title="VortexAPI",
+    openapi_url="/api/openapi.json",
+    docs_url="/api/docs"
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"]
+)
+
+@app.get("/api"
 def root():
     return {"message": "API Online - Sistema de Diagnóstico de Infraestrutura"}
 
-# --- SEÇÃO: EMAIL ---
-@app.get("/spf")
+
+@app.get("/api/spf") 
 def spf(domain: str):
     return check_spf(domain)
 
-@app.get("/dmarc")
+@app.get("/api/dmarc")
 def dmarc(domain: str):
     return check_dmarc(domain)
 
-@app.get("/dkim")
+@app.get("/api/dkim")
 def dkim(domain: str, selector: str = "default"):
     return check_dkim(domain, selector)
 
-@app.get("/blacklists")
+@app.get("/api/blacklists")
 def blacklists(domain: str):
     return check_blacklists(domain)
 
-@app.get("/smtp")
+@app.get("/api/smtp")
 def smtp(host: str, port: int = 587):
     return check_smtp(host, port)
 
-@app.post("/analyze-header")
+@app.post("/api/analyze-header")
 def header_analyzer(raw_header: dict):
-    # Recebe via POST pois headers podem ser muito longos para URL
     return analyze_header(raw_header.get("content", ""))
 
-# --- SEÇÃO: DNS ---
-@app.get("/whois")
+
+@app.get("/api/whois")
 def whois(domain: str):
     return get_whois_info(domain)
 
-@app.get("/dns")
+@app.get("/api/dns")
 def dns(domain: str, record_type: str = "A"):
     return dns_lookup(domain, record_type)
 
-@app.get("/dns-propagation")
+@app.get("/api/dns-propagation")
 def dns_propagation(domain: str, record_type: str = "A"):
     return check_propagation(domain, record_type)
 
-# --- SEÇÃO: INFRA ---
-@app.get("/geo")
+
+@app.get("/api/geo")
 def geo(ip: str):
     return geolocate_ip(ip)
 
-@app.get("/ping")
+@app.get("/api/ping")
 def ping(host: str):
     return ping_host(host)
 
-@app.get("/ip-info")
+@app.get("/api/ip-info")
 def ip_info(ip: str):
     return get_ip_info(ip)
 
-@app.get("/uptime")
+@app.get("/api/uptime")
 def uptime(url: str):
     return check_uptime(url)
 
-@app.get("/port-checker")
+@app.get("/api/port-checker")
 def port_checker(host: str, port: int):
     return check_port(host, port)
 
-# --- SEÇÃO: SSL ---
-@app.get("/ssl")
+
+@app.get("/api/ssl")
 def ssl(domain: str):
     ssl_info = check_ssl(domain)
     headers = get_http_headers(domain)
     return {"ssl_info": ssl_info, "http_headers": headers}
 
-# --- SEÇÃO: UTILS ---
-@app.get("/utils/cidr")
+@app.get("/api/utils/cidr")
 def cidr(cidr: str):
     return {"is_valid": is_valid_cidr(cidr)}
 
-@app.get("/utils/base64/encode")
+@app.get("/api/utils/base64/encode")
 def b64_encode(text: str):
     return {"encoded": base64_encode(text)}
 
-@app.get("/utils/base64/decode")
+@app.get("/api/utils/base64/decode")
 def b64_decode(text: str):
     return {"decoded": base64_decode(text)}
 
-@app.get("/utils/password/strong")
+@app.get("/api/utils/password/strong")
 def strong_password(length: int = 16):
     return {"password": generate_strong_password(length)}
 
-@app.get("/utils/ttl/humanize")
+@app.get("/api/utils/ttl/humanize")
 def ttl_humanize(seconds: int):
     return {"humanized": ttl_seconds_to_human(seconds)}
 
-
-@app.get("/dns_reverse")
+@app.get("/api/dns_reverse")
 def dns_reverse(ip: str):
-    from modules.dns.dns_reverse import dns_reverse_resolver
+    from backend.modules.dns.dns_reverse import dns_reverse_resolver
     return dns_reverse_resolver(ip)
