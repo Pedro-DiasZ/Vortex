@@ -27,15 +27,6 @@ from backend.modules.utils.cidr import is_valid_cidr
 from backend.modules.utils.password_generator import generate_strong_password
 from backend.modules.utils.ttl_converter import ttl_seconds_to_human
 
-app = FastAPI(title="VortexAPI")
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_methods=["*"],
-    allow_headers=["*"]
-)
-
 app = FastAPI(
     title="VortexAPI",
     openapi_url="/api/openapi.json",
@@ -49,7 +40,7 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
-@app.get("/api"
+@app.get("/api")
 def root():
     return {"message": "API Online - Sistema de Diagnóstico de Infraestrutura"}
 
