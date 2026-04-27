@@ -137,5 +137,4 @@ def dns_reverse(ip: str):
 
 @app.post("/email_log_analysis")
 def email_log_analysis(data: dict):
-    from modules.email.log_analyzer import analyze_log
     return analyze_log(data.get("content", ""))
