@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-# --- IMPORTAÇÕES DOS MÓDULOS (Caminhos absolutos para o Vercel) ---
+
 from backend.modules.email.spf import check_spf
 from backend.modules.email.dmarc import check_dmarc
 from backend.modules.email.dkim import check_dkim
