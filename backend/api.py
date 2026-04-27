@@ -134,3 +134,8 @@ def ttl_humanize(seconds: int):
 def dns_reverse(ip: str):
     from backend.modules.dns.dns_reverse import dns_reverse_resolver
     return dns_reverse_resolver(ip)
+
+@app.get("/email_log_analysis")
+def email_log_analysis(raw_log: str):
+    from modules.email.log_analyzer import analyze_log
+    return analyze_log(raw_log)
