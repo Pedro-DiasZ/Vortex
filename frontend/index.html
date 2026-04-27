@@ -700,6 +700,7 @@
       { path: '/blacklists', title: 'Blacklist Monitor', label: 'Blacklists', desc: 'Cruza domínio/IP com listas de bloqueio.', icon: 'radar', fields: [{ n: 'domain', p: 'domínio ou IP' }] },
       { path: '/smtp', title: 'SMTP Checker', label: 'SMTP Checker', desc: 'Testa conexão e banner de servidores SMTP.', icon: 'send', fields: [{ n: 'host', p: 'smtp.exemplo.com' }, { n: 'port', p: 'porta', v: '587', type: 'number' }] },
       { path: '/analyze-header', title: 'Header Analyzer', label: 'Header Analyzer', desc: 'Analisa cabeçalhos brutos de e-mail.', icon: 'scan', method: 'POST', bodyKeys: ['content'], fields: [{ n: 'content', p: 'Cole aqui o header bruto do e-mail...', type: 'area' }] },
+      { path: '/email_log_analysis', title: 'Email Log Analysis', label: 'Log Analysis', desc: 'Analisa logs de envio para identificar falhas comuns.', icon: 'terminal', method: 'POST', bodyKeys: ['content'], fields: [{ n: 'content', p: 'Cole aqui os logs de envio...', type: 'area' }] },
     ]},
     { title: 'DNS', category: 'checks', items: [
       { path: '/whois', title: 'WHOIS Info', label: 'WHOIS', icon: 'search', fields: [{ n: 'domain', p: 'exemplo.com' }] },
