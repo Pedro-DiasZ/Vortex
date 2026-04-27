@@ -136,6 +136,6 @@ def dns_reverse(ip: str):
     from backend.modules.dns.dns_reverse import dns_reverse_resolver
     return dns_reverse_resolver(ip)
 
-@app.post("/email_log_analysis")
+@app.post("/api/email_log_analysis") 
 def email_log_analysis(data: dict):
     return analyze_log(data.get("content", ""))
