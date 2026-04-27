@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
   :root {
     --bg: #0f172a;
@@ -66,8 +67,16 @@
     -webkit-font-smoothing: antialiased;
     overflow: hidden;
   }
-  ::-webkit-scrollbar { width: 6px; height: 6px; }
-  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 9999px; }
+  
+  /* SCROLLBAR MELHORADA (MAIS LARGA E FÁCIL DE CLICAR) */
+  ::-webkit-scrollbar { width: 10px; height: 12px; }
+  ::-webkit-scrollbar-thumb { 
+    background: var(--border); 
+    border-radius: 9999px; 
+    border: 3px solid transparent; 
+    background-clip: padding-box; 
+  }
+  ::-webkit-scrollbar-thumb:hover { background-color: var(--muted); }
   ::-webkit-scrollbar-track { background: transparent; }
 
   .app { display: flex; height: 100vh; }
@@ -191,7 +200,6 @@
   }
   .textarea { font-family: 'Fira Code', monospace; font-size: 13px; min-height: 150px; resize: vertical; }
 
-  /* SELECTOR GRID */
   .type-grid {
     display: flex;
     flex-wrap: wrap;
@@ -230,11 +238,6 @@
   .btn:hover:not(:disabled) { transform: translateY(-1px); }
   .btn:disabled { opacity: .6; cursor: not-allowed; }
   .btn svg { width: 16px; height: 16px; }
-
-  .btn-secondary {
-    background: var(--sidebar-soft); color: var(--text);
-    border: 1px solid var(--border); box-shadow: none;
-  }
 
   /* RESULT */
   .result {
@@ -300,7 +303,7 @@
 
   .strength { margin-top: 18px; }
   .strength-label { display: flex; justify-content: space-between; font-size: 11px; text-transform: uppercase; letter-spacing: 0.16em; color: var(--muted); font-weight: 700; }
-  .strength-label b { color: var(--text); }
+  .strength-label b { color: var(--text); font-weight: 600; }
   .strength-bar { margin-top: 6px; height: 8px; border-radius: 9999px; background: var(--sidebar-soft); overflow: hidden; }
   .strength-fill { height: 100%; transition: width .4s, background .4s; border-radius: 9999px; }
 
@@ -352,6 +355,182 @@
   @keyframes spin { to { transform: rotate(360deg); } }
   .spin { animation: spin 1s linear infinite; }
 
+  /* ======= MIGRATION ======= */
+  .mig-topbar {
+    display: flex; align-items: center; gap: 10px;
+    flex-wrap: wrap; margin-bottom: 16px;
+  }
+  .mig-cid-wrap {
+    flex: 1; min-width: 200px; display: flex; align-items: center; gap: 8px;
+    background: var(--input-bg); border: 1px solid var(--border);
+    border-radius: 10px; padding: 0 12px; height: 40px;
+  }
+  .mig-cid-wrap svg { width: 14px; height: 14px; color: var(--muted); flex-shrink: 0; }
+  .mig-cid-input {
+    flex: 1; border: none; background: transparent; color: var(--text);
+    font: 500 13px 'Inter', sans-serif; outline: none;
+  }
+  .mig-cid-input::placeholder { color: var(--muted); }
+  .mig-action-btn {
+    height: 40px; padding: 0 16px; border-radius: 10px; border: none;
+    cursor: pointer; display: inline-flex; align-items: center; gap: 7px;
+    font: 700 12px 'Inter', sans-serif; white-space: nowrap; transition: .15s;
+  }
+  .mig-action-btn.outline {
+    background: var(--sidebar-soft); color: var(--text);
+    border: 1px solid var(--border);
+  }
+  .mig-action-btn.outline:hover { border-color: var(--primary); color: var(--primary); }
+  .mig-action-btn.primary {
+    background: var(--gradient-primary); color: var(--primary-foreground);
+    box-shadow: var(--shadow-elegant);
+  }
+  .mig-action-btn.primary:hover { transform: translateY(-1px); }
+  .mig-action-btn.danger {
+    background: rgba(239,68,68,.12); color: var(--danger);
+    border: 1px solid rgba(239,68,68,.25);
+  }
+  .mig-action-btn svg { width: 14px; height: 14px; }
+
+  .mig-counter {
+    font: 600 12px 'Fira Code', monospace; color: var(--muted);
+    padding: 0 12px; display: flex; align-items: center; gap: 6px;
+    white-space: nowrap;
+  }
+  .mig-counter b { color: var(--primary); font-size: 14px; }
+
+  .mig-table-wrap {
+    border: 1px solid var(--border); border-radius: var(--radius);
+    overflow-x: auto; background: var(--card);
+    box-shadow: var(--shadow-card);
+    max-height: 420px; overflow-y: auto;
+  }
+  .mig-table {
+    width: 100%; border-collapse: collapse;
+    font-size: 12px; white-space: nowrap;
+    min-width: 1050px; /* TABELA MAIS LARGA PARA MELHOR DISTRIBUIÇÃO */
+  }
+  .mig-table thead tr {
+    background: var(--card-2);
+    border-bottom: 2px solid var(--border);
+    position: sticky; top: 0; z-index: 2;
+  }
+  .mig-table th {
+    padding: 10px 10px; text-align: left;
+    font: 700 10px 'Inter', sans-serif;
+    text-transform: uppercase; letter-spacing: 0.14em;
+    color: var(--muted); white-space: nowrap;
+  }
+  .mig-table th.col-num { width: 40px; color: var(--border); text-align: center; }
+  .mig-table th.col-del { width: 36px; }
+  .mig-table tbody tr { border-bottom: 1px solid var(--border-soft); transition: background .1s; }
+  .mig-table tbody tr:last-child { border-bottom: none; }
+  .mig-table tbody tr:hover { background: var(--card-2); }
+  .mig-table tbody tr.row-duplicate { background: rgba(245,158,11,.07); }
+  .mig-table tbody tr.row-error { background: rgba(239,68,68,.07); }
+  .mig-table td { padding: 5px 6px; }
+  .mig-table td.col-num {
+    color: var(--muted); font: 500 11px 'Fira Code', monospace;
+    text-align: center; padding: 0 8px; user-select: none;
+  }
+  .mig-table td.col-del { text-align: center; }
+  .mig-cell {
+    width: 100%; border: none; background: transparent;
+    color: var(--text); font: 400 12.5px 'Inter', sans-serif;
+    outline: none; padding: 6px 8px; border-radius: 7px;
+    transition: background .1s, box-shadow .1s;
+    min-width: 90px;
+  }
+  .mig-cell:focus {
+    background: var(--input-bg);
+    box-shadow: 0 0 0 2px var(--primary);
+  }
+  .mig-cell::placeholder { color: var(--border); }
+  .mig-cell.invalid { box-shadow: 0 0 0 2px var(--danger) !important; }
+  .mig-cell.narrow { min-width: 56px; }
+  .mig-del-btn {
+    background: transparent; border: none; color: var(--muted);
+    cursor: pointer; width: 28px; height: 28px; border-radius: 6px;
+    display: grid; place-items: center; transition: .15s;
+  }
+  .mig-del-btn:hover { background: rgba(239,68,68,.15); color: var(--danger); }
+  .mig-del-btn svg { width: 13px; height: 13px; }
+
+  .mig-empty {
+    padding: 48px 24px; text-align: center;
+    color: var(--muted); font-size: 14px;
+  }
+  .mig-empty svg { width: 40px; height: 40px; color: var(--border); margin: 0 auto 12px; display: block; }
+  .mig-empty p { margin: 0; }
+  .mig-empty small { font-size: 12px; opacity: .7; }
+
+  .mig-footer {
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 12px; margin-top: 16px;
+  }
+  .mig-footer-info {
+    font: 500 12px 'Fira Code', monospace; color: var(--muted);
+  }
+  .mig-download-row {
+    display: flex; gap: 8px; flex-wrap: wrap;
+  }
+  .mig-dl-btn {
+    height: 44px; padding: 0 20px; border-radius: 10px; border: none;
+    cursor: pointer; display: inline-flex; align-items: center; gap: 8px;
+    font: 700 12px 'Inter', sans-serif; text-transform: uppercase; letter-spacing: 0.1em;
+    transition: .15s; white-space: nowrap;
+  }
+  .mig-dl-btn:hover:not(:disabled) { transform: translateY(-1px); }
+  .mig-dl-btn:disabled { opacity: .45; cursor: not-allowed; }
+  .mig-dl-btn.lote {
+    background: linear-gradient(135deg, #22c55e, #16a34a);
+    color: #fff; box-shadow: 0 8px 24px -8px rgba(34,197,94,.5);
+  }
+  .mig-dl-btn.acc {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    color: #fff; box-shadow: 0 8px 24px -8px rgba(245,158,11,.5);
+  }
+  .mig-dl-btn.both {
+    background: var(--gradient-primary);
+    color: #fff; box-shadow: var(--shadow-elegant);
+  }
+  .mig-dl-btn svg { width: 15px; height: 15px; }
+
+  .mig-badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 2px 8px; border-radius: 9999px; font: 700 10px 'Fira Code', monospace;
+    margin-left: 6px;
+  }
+  .mig-badge.ok { background: rgba(34,197,94,.15); color: var(--success); }
+  .mig-badge.warn { background: rgba(245,158,11,.15); color: var(--warning); }
+  .mig-badge.err { background: rgba(239,68,68,.15); color: var(--danger); }
+
+  /* CSS DO MODAL DE CONFIRMAÇÃO */
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
+    z-index: 9999; display: flex; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none; transition: opacity 0.2s;
+  }
+  .modal-overlay.show { opacity: 1; pointer-events: auto; }
+  .modal-box {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 24px; width: 90%; max-width: 360px;
+    box-shadow: var(--shadow-elegant); transform: translateY(10px); transition: transform 0.2s;
+    text-align: center;
+  }
+  .modal-overlay.show .modal-box { transform: translateY(0); }
+  .modal-title { margin: 0 0 8px; font-size: 16px; font-weight: 800; color: var(--text); }
+  .modal-desc { margin: 0 0 24px; font-size: 13px; color: var(--muted); line-height: 1.5; }
+  .modal-actions { display: flex; gap: 10px; }
+  .modal-btn {
+    flex: 1; height: 40px; border: none; border-radius: 10px;
+    font: 700 13px 'Inter', sans-serif; cursor: pointer; transition: 0.15s;
+  }
+  .modal-btn.cancel { background: var(--sidebar-soft); color: var(--text); border: 1px solid var(--border); }
+  .modal-btn.cancel:hover { border-color: var(--muted); }
+  .modal-btn.confirm { background: rgba(239,68,68,0.12); color: var(--danger); border: 1px solid rgba(239,68,68,0.25); }
+  .modal-btn.confirm:hover { background: var(--danger); color: #fff; }
+
   /* MOBILE */
   @media (max-width: 860px) {
     body { overflow: auto; }
@@ -369,6 +548,8 @@
       z-index: 40; opacity: 0; pointer-events: none; transition: opacity .2s;
     }
     .backdrop.show { opacity: 1; pointer-events: auto; }
+    .mig-download-row { flex-direction: column; }
+    .mig-dl-btn { width: 100%; justify-content: center; }
   }
 </style>
 </head>
@@ -399,7 +580,7 @@
     <nav class="nav" id="nav"></nav>
     <div class="sidebar-footer">
       <span class="pulse-dot"></span>
-      <span>api</span>
+      <span>api · 127.0.0.1:8000</span>
     </div>
   </aside>
 
@@ -431,16 +612,29 @@
 
         <div id="mainCard"></div>
 
-        <p class="footnote">endpoint <b id="footEndpoint">/spf</b></p>
+        <p class="footnote" id="footnoteEl">endpoint <b id="footEndpoint">/spf</b> · backend local em <b>127.0.0.1:8000</b></p>
       </div>
     </main>
   </div>
 </div>
 
-<script>
- const API = "/api";
+<div class="modal-overlay" id="confirmModal">
+  <div class="modal-box">
+    <div class="modal-title">Limpar todas as contas?</div>
+    <div class="modal-desc">Você está prestes a remover <b id="confirmCount" style="color:var(--text);">0</b> conta(s). Esta ação não pode ser desfeita.</div>
+    <div class="modal-actions">
+      <button class="modal-btn cancel" onclick="closeConfirmModal()">Cancelar</button>
+      <button class="modal-btn confirm" onclick="executeClear()">Sim, limpar tudo</button>
+    </div>
+  </div>
+</div>
 
-  function showToast(message) {
+<input type="file" id="migFileInput" accept=".xlsx,.xls,.csv" style="display:none">
+
+<script>
+  const API = "/api";
+
+  function showToast(message, type) {
     let container = document.getElementById('toastContainer');
     if (!container) {
       container = document.createElement('div');
@@ -448,17 +642,22 @@
       container.className = 'toast-container';
       document.body.appendChild(container);
     }
+    const color = type === 'error' ? 'var(--danger)' : type === 'warn' ? 'var(--warning)' : 'var(--success)';
+    const icon = type === 'error'
+      ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>'
+      : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><polyline points="20 6 9 17 4 12"/></svg>';
     const toast = document.createElement('div');
     toast.className = 'toast';
-    toast.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><polyline points="20 6 9 17 4 12"/></svg> <span>${message}</span>`;
+    toast.style.borderLeftColor = color;
+    toast.innerHTML = `<span style="color:${color};display:inline-flex">${icon}</span> <span>${message}</span>`;
     container.appendChild(toast);
     setTimeout(() => {
       toast.classList.add('hiding');
       setTimeout(() => toast.remove(), 300);
-    }, 3000);
+    }, 3500);
   }
 
-  // ======= ICONS (inline SVG) =======
+  // ======= ICONS =======
   const ICONS = {
     mail: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 5L2 7"/></svg>',
     shield: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>',
@@ -485,6 +684,11 @@
     terminal: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>',
     moon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>',
     sun: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>',
+    download: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>',
+    upload: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>',
+    plus: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>',
+    trash: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>',
+    move: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 9l-3 3 3 3"/><path d="M9 5l3-3 3 3"/><path d="M15 19l-3 3-3-3"/><path d="M19 9l3 3-3 3"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="12" y1="2" x2="12" y2="22"/></svg>',
   };
 
   // ======= ROUTES =======
@@ -521,6 +725,9 @@
     { title: 'Network Utils', category: 'tools', items: [
       { path: '/utils/cidr', title: 'Validar CIDR', label: 'Validar CIDR', icon: 'network', fields: [{ n: 'cidr', p: '192.168.1.0/24' }] },
       { path: '/utils/ttl/humanize', title: 'TTL Humanizer', label: 'TTL Humanize', icon: 'clock', fields: [{ n: 'seconds', p: 'Ex.: 3600', type: 'number' }] },
+    ]},
+    { title: 'Migration', category: 'tools', items: [
+      { path: '/migration/email', title: 'E-mail Migration', label: 'E-mail Migration', desc: 'Gerencie contas para migração e exporte os arquivos LOTE e ACC prontos para uso.', icon: 'move', variant: 'migration' },
     ]},
   ];
 
@@ -596,15 +803,23 @@
     document.getElementById('viewSubtitle').style.display = route.desc ? 'block' : 'none';
     document.getElementById('eyebrowText').innerText = currentTab === 'checks' ? 'Diagnóstico' : 'Ferramenta';
     document.getElementById('eyebrowIcon').innerHTML = `<span style="display:inline-flex;width:16px;height:16px;">${ICONS[route.icon] || ''}</span>`;
-    document.getElementById('footEndpoint').innerText = route.path;
 
-    const card = document.getElementById('mainCard');
-    if (route.variant === 'password') {
-      card.innerHTML = renderPasswordUI();
-      bindPassword();
+    const footnote = document.getElementById('footnoteEl');
+
+    if (route.variant === 'migration') {
+      footnote.style.display = 'none';
+      document.getElementById('mainCard').innerHTML = renderMigrationUI();
+      bindMigration();
     } else {
-      card.innerHTML = renderFormUI(route);
-      bindForm(route);
+      footnote.style.display = 'block';
+      document.getElementById('footEndpoint').innerText = route.path;
+      if (route.variant === 'password') {
+        document.getElementById('mainCard').innerHTML = renderPasswordUI();
+        bindPassword();
+      } else {
+        document.getElementById('mainCard').innerHTML = renderFormUI(route);
+        bindForm(route);
+      }
     }
   }
 
@@ -619,23 +834,18 @@
   function renderFormUI(route) {
     const fieldsHtml = (route.fields || []).map(f => {
       const label = f.n.replace(/_/g, ' ');
-      
-      // GRID DE BOTÕES PARArecord_type OU OPÇÕES
       if (f.options) {
         return `<div class="field">
           <label class="field-label">${label}</label>
           <input type="hidden" id="f_${f.n}" value="${f.v || f.options[0]}">
           <div class="type-grid">
             ${f.options.map(opt => `
-              <button class="type-btn ${opt === (f.v || f.options[0]) ? 'active' : ''}" 
-                      onclick="selectType('${f.n}', '${opt}', this)">
-                ${opt}
-              </button>
+              <button class="type-btn ${opt === (f.v || f.options[0]) ? 'active' : ''}"
+                      onclick="selectType('${f.n}', '${opt}', this)">${opt}</button>
             `).join('')}
           </div>
         </div>`;
       }
-
       if (f.type === 'area') {
         return `<div class="field">
           <label class="field-label" for="f_${f.n}">${label}</label>
@@ -655,9 +865,7 @@
       </div>
       <div class="result">
         <div class="result-head">
-          <div class="dots">
-            <span class="r"></span><span class="y"></span><span class="g"></span>
-          </div>
+          <div class="dots"><span class="r"></span><span class="y"></span><span class="g"></span></div>
           <div class="result-title">${ICONS.terminal}<span>Resultado</span></div>
           <button class="copy-btn" id="copyOut">${ICONS.copy}<span>Copiar</span></button>
         </div>
@@ -669,25 +877,14 @@
   function bindForm(route) {
     const out = document.getElementById('output');
     const btn = document.getElementById('execBtn');
-
     document.querySelectorAll('#mainCard .input, #mainCard .textarea').forEach(el => {
-      el.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' && el.tagName !== 'TEXTAREA') execute();
-      });
+      el.addEventListener('keydown', (e) => { if (e.key === 'Enter' && el.tagName !== 'TEXTAREA') execute(); });
     });
-
-    document.getElementById('copyOut').onclick = async (e) => {
-      const textToCopy = out.innerText;
-      if (!textToCopy || textToCopy === 'Aguardando execução...') return;
-
-      try {
-        await navigator.clipboard.writeText(textToCopy);
-        showToast('Resultado copiado com sucesso!');
-      } catch (err) {
-        console.error('Erro ao copiar:', err);
-      }
+    document.getElementById('copyOut').onclick = async () => {
+      const text = out.innerText;
+      if (!text || text === 'Aguardando execução...') return;
+      try { await navigator.clipboard.writeText(text); showToast('Resultado copiado!'); } catch {}
     };
-
     async function execute() {
       out.classList.remove('error');
       out.innerText = 'Executando requisição...';
@@ -730,7 +927,6 @@
         btn.innerHTML = `${ICONS.play}<span>Executar</span>`;
       }
     }
-
     btn.onclick = execute;
   }
 
@@ -746,27 +942,20 @@
           <button class="pwd-btn pwd-btn-icon" id="pwdRefresh" title="Gerar nova">${ICONS.refresh}</button>
           <button class="pwd-btn pwd-btn-copy" id="pwdCopy">${ICONS.copy}<span>Copiar</span></button>
         </div>
-
         <div class="range-row">
-          <div class="range-label">
-            <span>Comprimento</span>
-            <span class="v" id="lenVal">16</span>
-          </div>
+          <div class="range-label"><span>Comprimento</span><span class="v" id="lenVal">16</span></div>
           <input type="range" id="f_len" min="8" max="64" value="16">
         </div>
-
         <div class="checkbox-group">
           <label class="checkbox-label"><input type="checkbox" id="f_upper" checked> Maiúsculas (A-Z)</label>
           <label class="checkbox-label"><input type="checkbox" id="f_lower" checked> Minúsculas (a-z)</label>
           <label class="checkbox-label"><input type="checkbox" id="f_nums" checked> Números (0-9)</label>
           <label class="checkbox-label"><input type="checkbox" id="f_sym" checked> Símbolos (!@#$)</label>
         </div>
-
         <div class="strength">
           <div class="strength-label"><span>Força</span><b id="strengthLabel">—</b></div>
           <div class="strength-bar"><div class="strength-fill" id="strengthFill" style="width:0%;background:var(--border);"></div></div>
         </div>
-
         <div id="pwdAlert"></div>
       </div>
     `;
@@ -797,7 +986,6 @@
     const sLabel = document.getElementById('strengthLabel');
     const sFill = document.getElementById('strengthFill');
     const alertEl = document.getElementById('pwdAlert');
-
     const cbUpper = document.getElementById('f_upper');
     const cbLower = document.getElementById('f_lower');
     const cbNums = document.getElementById('f_nums');
@@ -809,83 +997,469 @@
       sFill.style.width = s.pct + '%';
       sFill.style.background = s.color;
     }
-
     function generate() {
       alertEl.innerHTML = '';
-      
       const length = parseInt(lenEl.value);
-      const useUpper = cbUpper.checked;
-      const useLower = cbLower.checked;
-      const useNums = cbNums.checked;
-      const useSym = cbSym.checked;
-
+      const useUpper = cbUpper.checked, useLower = cbLower.checked;
+      const useNums = cbNums.checked, useSym = cbSym.checked;
       if (!useUpper && !useLower && !useNums && !useSym) {
-         input.value = '';
-         updateStrength('');
-         alertEl.innerHTML = `<div class="alert">Selecione pelo menos um tipo de caractere.</div>`;
-         return;
+        input.value = ''; updateStrength('');
+        alertEl.innerHTML = `<div class="alert">Selecione pelo menos um tipo de caractere.</div>`;
+        return;
       }
-
-      const chars = {
-        upper: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
-        lower: 'abcdefghijklmnopqrstuvwxyz',
-        nums: '0123456789',
-        sym: '!@#$%^&*()_+~`|}{[]:;?><,./-='
-      };
-
+      const chars = { upper: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', lower: 'abcdefghijklmnopqrstuvwxyz', nums: '0123456789', sym: '!@#$%^&*()_+~`|}{[]:;?><,./-=' };
       let charset = '';
       if (useUpper) charset += chars.upper;
       if (useLower) charset += chars.lower;
       if (useNums) charset += chars.nums;
       if (useSym) charset += chars.sym;
-
       let pwd = '';
       if (useUpper) pwd += chars.upper[Math.floor(Math.random() * chars.upper.length)];
       if (useLower) pwd += chars.lower[Math.floor(Math.random() * chars.lower.length)];
       if (useNums) pwd += chars.nums[Math.floor(Math.random() * chars.nums.length)];
       if (useSym) pwd += chars.sym[Math.floor(Math.random() * chars.sym.length)];
-
-      while (pwd.length < length) {
-        pwd += charset[Math.floor(Math.random() * charset.length)];
-      }
-
-      pwd = pwd.split('').sort(() => 0.5 - Math.random()).join('');
-      pwd = pwd.substring(0, length);
-
+      while (pwd.length < length) pwd += charset[Math.floor(Math.random() * charset.length)];
+      pwd = pwd.split('').sort(() => 0.5 - Math.random()).join('').substring(0, length);
       input.value = pwd;
       updateStrength(pwd);
     }
-
-    lenEl.oninput = () => {
-      lenVal.innerText = lenEl.value;
-      generate();
-    };
-
-    cbUpper.onchange = generate;
-    cbLower.onchange = generate;
-    cbNums.onchange = generate;
-    cbSym.onchange = generate;
-
+    lenEl.oninput = () => { lenVal.innerText = lenEl.value; generate(); };
+    cbUpper.onchange = cbLower.onchange = cbNums.onchange = cbSym.onchange = generate;
     document.getElementById('pwdRefresh').onclick = generate;
-    
-    document.getElementById('pwdCopy').onclick = async (e) => {
+    document.getElementById('pwdCopy').onclick = async () => {
       if (!input.value) return;
-      
-      try {
-        await navigator.clipboard.writeText(input.value);
-        showToast('Senha copiada com sucesso!');
-      } catch (err) {
-        console.error('Erro ao copiar senha:', err);
-      }
+      try { await navigator.clipboard.writeText(input.value); showToast('Senha copiada!'); } catch {}
     };
-
     generate();
   }
 
-  // ======= INIT =======
+// ======= MIGRATIONS =======
+  function isValidEmail(v) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
+  }
+
+  function validatePassword(pwd, row, isFrom) {
+    if (!pwd) return false;
+    
+    // 1. Mínimo 8 caracteres
+    if (pwd.length < 8) return false;
+    
+    // 2. Obrigatório: Maiúscula, minúscula, número e especial
+    if (!/[A-Z]/.test(pwd)) return false;
+    if (!/[a-z]/.test(pwd)) return false;
+    if (!/[0-9]/.test(pwd)) return false;
+    if (!/[^a-zA-Z0-9]/.test(pwd)) return false; 
+    
+    // 3. Proibido: / [ ] " ' ;
+    if (/[\/\[\]"';]/.test(pwd)) return false;
+
+    // 4. Não pode conter partes do nome ou e-mail (mínimo 3 letras)
+    const partsToCheck = [];
+    if (row.firstName && row.firstName.length >= 3) partsToCheck.push(row.firstName.toLowerCase());
+    if (row.lastName && row.lastName.length >= 3) partsToCheck.push(row.lastName.toLowerCase());
+
+    const email = isFrom ? row.emailFrom : row.emailTo;
+    if (email && email.includes('@')) {
+      const localPart = email.split('@')[0];
+      if (localPart.length >= 3) partsToCheck.push(localPart.toLowerCase());
+    }
+
+    const pwdLower = pwd.toLowerCase();
+    for (const part of partsToCheck) {
+      if (pwdLower.includes(part)) return false;
+    }
+
+    return true;
+  }
+
+  let migRows = [];
+  let migCompany = '';
+
+  function createMigRow(data = {}) {
+    return {
+      id: Date.now() + Math.random(),
+      firstName:    data.firstName    || '',
+      lastName:     data.lastName     || '',
+      emailFrom:    data.emailFrom    || '',
+      passFrom:     data.passFrom     || '',
+      emailTo:      data.emailTo      || '',
+      passTo:       data.passTo       || '',
+      plan:         data.plan         || '',
+    };
+  }
+
+  function renderMigrationUI() {
+    return `
+      <div class="card" style="padding:20px;">
+        <div class="mig-topbar">
+          <div class="mig-cid-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+            <input class="mig-cid-input" id="migCid" placeholder="Company CID (ex: empresa_abc)" value="${migCompany}">
+          </div>
+          <span class="mig-counter"><b id="migCount">0</b> conta(s)</span>
+          <button class="mig-action-btn outline" id="migImportBtn">
+            ${ICONS.upload}<span>Importar</span>
+          </button>
+          <button class="mig-action-btn outline" id="migAddBtn">
+            ${ICONS.plus}<span>Adicionar</span>
+          </button>
+          <button class="mig-action-btn danger" id="migClearBtn">
+            ${ICONS.trash}<span>Limpar</span>
+          </button>
+        </div>
+
+        <div class="mig-table-wrap">
+          <table class="mig-table">
+            <thead>
+              <tr>
+                <th class="col-num">#</th>
+                <th>Nome</th>
+                <th>Sobrenome</th>
+                <th>E-mail Origem</th>
+                <th>Senha Origem</th>
+                <th>E-mail Destino</th>
+                <th>Senha Destino</th>
+                <th>Plano</th>
+                <th class="col-del"></th>
+              </tr>
+            </thead>
+            <tbody id="migTbody"></tbody>
+          </table>
+          <div id="migEmpty" class="mig-empty" style="display:none;">
+            ${ICONS.move}
+            <p>Nenhuma conta adicionada ainda.</p>
+            <small>Clique em "Adicionar" ou importe um arquivo XLSX/CSV.</small>
+          </div>
+        </div>
+
+        <div style="margin-top:10px;font:500 11px 'Fira Code',monospace;color:var(--muted);">
+          Colunas esperadas: Nome · Sobrenome · E-mail Origem · Senha Origem · E-mail Destino · Senha Destino · Plano
+        </div>
+
+        <div class="mig-footer">
+          <div class="mig-footer-info" id="migStats">—</div>
+          <div class="mig-download-row">
+            <button class="mig-dl-btn lote" id="dlLoteBtn" disabled>
+              ${ICONS.download}<span>Baixar LOTE</span>
+            </button>
+            <button class="mig-dl-btn acc" id="dlAccBtn" disabled>
+              ${ICONS.download}<span>Baixar ACC</span>
+            </button>
+            <button class="mig-dl-btn both" id="dlBothBtn" disabled>
+              ${ICONS.download}<span>Baixar Ambos</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  function bindMigration() {
+    migRows = JSON.parse(sessionStorage.getItem('migRows') || '[]');
+    migCompany = sessionStorage.getItem('migCompany') || '';
+    const cidEl = document.getElementById('migCid');
+    if (cidEl) cidEl.value = migCompany;
+
+    renderMigTable();
+
+    document.getElementById('migCid').oninput = (e) => {
+      migCompany = e.target.value;
+      sessionStorage.setItem('migCompany', migCompany);
+    };
+
+    document.getElementById('migAddBtn').onclick = () => {
+      migRows.push(createMigRow());
+      saveMigRows();
+      renderMigTable();
+      setTimeout(() => {
+        const wrap = document.querySelector('.mig-table-wrap');
+        if (wrap) wrap.scrollTop = wrap.scrollHeight;
+      }, 50);
+    };
+
+    // NOVO: Chama o Modal em vez do alerta nativo
+    document.getElementById('migClearBtn').onclick = () => {
+      if (migRows.length === 0) return;
+      document.getElementById('confirmCount').innerText = migRows.length;
+      document.getElementById('confirmModal').classList.add('show');
+    };
+
+    document.getElementById('migImportBtn').onclick = () => {
+      document.getElementById('migFileInput').click();
+    };
+
+    document.getElementById('migFileInput').onchange = (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      e.target.value = '';
+      const ext = file.name.split('.').pop().toLowerCase();
+      if (ext === 'csv') {
+        const reader = new FileReader();
+        reader.onload = (ev) => importCSV(ev.target.result);
+        reader.readAsText(file, 'utf-8');
+      } else if (ext === 'xlsx' || ext === 'xls') {
+        const reader = new FileReader();
+        reader.onload = (ev) => importXLSX(ev.target.result);
+        reader.readAsArrayBuffer(file);
+      } else {
+        showToast('Formato não suportado. Use XLSX, XLS ou CSV.', 'error');
+      }
+    };
+
+    document.getElementById('dlLoteBtn').onclick = () => downloadLote();
+    document.getElementById('dlAccBtn').onclick  = () => downloadAcc();
+    document.getElementById('dlBothBtn').onclick  = () => { downloadLote(); setTimeout(downloadAcc, 200); };
+  }
+
+  // Lógica do Modal de Exclusão
+  function closeConfirmModal() {
+    document.getElementById('confirmModal').classList.remove('show');
+  }
+
+  function executeClear() {
+    migRows = [];
+    saveMigRows();
+    renderMigTable();
+    closeConfirmModal();
+  }
+
+  function saveMigRows() {
+    sessionStorage.setItem('migRows', JSON.stringify(migRows));
+  }
+
+  function getCid() {
+    const raw = (document.getElementById('migCid')?.value || migCompany || 'cliente').trim();
+    return raw.replace(/\s+/g, '_').toLowerCase() || 'cliente';
+  }
+
+  function renderMigTable() {
+    const tbody = document.getElementById('migTbody');
+    const emptyEl = document.getElementById('migEmpty');
+    const countEl = document.getElementById('migCount');
+    const statsEl = document.getElementById('migStats');
+    const dlLote = document.getElementById('dlLoteBtn');
+    const dlAcc  = document.getElementById('dlAccBtn');
+    const dlBoth = document.getElementById('dlBothBtn');
+
+    if (!tbody) return;
+
+    countEl.innerText = migRows.length;
+    const hasRows = migRows.length > 0;
+    emptyEl.style.display = hasRows ? 'none' : 'block';
+
+    const fromEmails = {}, toEmails = {};
+    migRows.forEach((r, i) => {
+      const from = r.emailFrom.toLowerCase().trim();
+      const to   = r.emailTo.toLowerCase().trim();
+      if (from) { fromEmails[from] = (fromEmails[from] || []); fromEmails[from].push(i); }
+      if (to)   { toEmails[to]   = (toEmails[to]   || []); toEmails[to].push(i); }
+    });
+    const dupFromIdx = new Set(Object.values(fromEmails).filter(a => a.length > 1).flat());
+    const dupToIdx   = new Set(Object.values(toEmails).filter(a => a.length > 1).flat());
+
+    let validCount = 0, warnCount = 0;
+    migRows.forEach((r, i) => {
+      const hasDup = dupFromIdx.has(i) || dupToIdx.has(i);
+      const hasFrom = isValidEmail(r.emailFrom);
+      const hasTo   = isValidEmail(r.emailTo);
+      const passFromOk = true; 
+      const passToOk   = r.emailTo ? validatePassword(r.passTo, r, false) : true;
+
+      if (!hasDup && hasFrom && hasTo && passFromOk && passToOk) validCount++;
+      else if (hasDup) warnCount++;
+    });
+    const errCount = migRows.length - validCount - warnCount;
+
+    if (hasRows) {
+      statsEl.innerHTML = `
+        <span class="mig-badge ok">${validCount} ok</span>
+        ${warnCount > 0 ? `<span class="mig-badge warn">${warnCount} dup</span>` : ''}
+        ${errCount > 0  ? `<span class="mig-badge err">${errCount} com erro</span>` : ''}
+      `;
+    } else {
+      statsEl.innerHTML = '—';
+    }
+
+    dlLote.disabled = dlAcc.disabled = dlBoth.disabled = !hasRows || errCount > 0;
+
+    tbody.innerHTML = migRows.map((row, idx) => {
+      const isDup = dupFromIdx.has(idx) || dupToIdx.has(idx);
+      const fromOk = isValidEmail(row.emailFrom);
+      const toOk   = isValidEmail(row.emailTo);
+      const passFromOk = true; 
+      const passToOk   = row.emailTo ? validatePassword(row.passTo, row, false) : true;
+
+      const hasError = (!fromOk && row.emailFrom) || (!toOk && row.emailTo) || (row.emailFrom && !passFromOk) || (row.emailTo && !passToOk);
+      const rowClass = isDup ? 'row-duplicate' : hasError ? 'row-error' : '';
+
+      // O campo "plan" agora é um input de texto comum
+      return `
+        <tr class="${rowClass}" data-idx="${idx}">
+          <td class="col-num">${idx + 1}</td>
+          <td><input class="mig-cell" data-field="firstName" value="${esc(row.firstName)}" placeholder="Nome"></td>
+          <td><input class="mig-cell" data-field="lastName"  value="${esc(row.lastName)}"  placeholder="Sobrenome"></td>
+          <td><input class="mig-cell ${(!fromOk && row.emailFrom) ? 'invalid' : ''}" data-field="emailFrom" value="${esc(row.emailFrom)}" placeholder="origem@exemplo.com" type="email"></td>
+          <td><input class="mig-cell ${(!passFromOk && row.emailFrom) ? 'invalid' : ''}" data-field="passFrom"   value="${esc(row.passFrom)}"   placeholder="••••••••" type="text" autocomplete="off"></td>
+          <td><input class="mig-cell ${(!toOk && row.emailTo) ? 'invalid' : ''}" data-field="emailTo"   value="${esc(row.emailTo)}"   placeholder="destino@exemplo.com" type="email"></td>
+          <td><input class="mig-cell ${(!passToOk && row.emailTo) ? 'invalid' : ''}" data-field="passTo"     value="${esc(row.passTo)}"     placeholder="••••••••" type="text" autocomplete="off"></td>
+          <td><input class="mig-cell" data-field="plan" value="${esc(row.plan)}" placeholder="Plano (ex: z-basic 5gb)" type="text"></td>
+          <td class="col-del">
+            <button class="mig-del-btn" data-del="${idx}" title="Remover">${ICONS.trash}</button>
+          </td>
+        </tr>
+      `;
+    }).join('');
+
+    tbody.querySelectorAll('.mig-cell').forEach(el => {
+      el.addEventListener('input', onCellInput);
+      el.addEventListener('blur', () => { saveMigRows(); renderMigTable(); });
+    });
+    tbody.querySelectorAll('.mig-del-btn').forEach(btn => {
+      btn.onclick = () => {
+        const i = parseInt(btn.dataset.del);
+        migRows.splice(i, 1);
+        saveMigRows();
+        renderMigTable();
+      };
+    });
+  }
+
+  function onCellInput(e) {
+    const el = e.target;
+    const tr = el.closest('tr');
+    const idx = parseInt(tr.dataset.idx);
+    const field = el.dataset.field;
+    
+    if (migRows[idx] !== undefined) {
+      migRows[idx][field] = el.value;
+
+      const row = migRows[idx];
+      const fromOk = isValidEmail(row.emailFrom);
+      const toOk   = isValidEmail(row.emailTo);
+      const passFromOk = true;
+      const passToOk   = row.emailTo ? validatePassword(row.passTo, row, false) : true;
+
+      const emailFromEl = tr.querySelector('[data-field="emailFrom"]');
+      const emailToEl   = tr.querySelector('[data-field="emailTo"]');
+      const passFromEl  = tr.querySelector('[data-field="passFrom"]');
+      const passToEl    = tr.querySelector('[data-field="passTo"]');
+
+      if(emailFromEl) emailFromEl.classList.toggle('invalid', row.emailFrom && !fromOk);
+      if(emailToEl) emailToEl.classList.toggle('invalid', row.emailTo && !toOk);
+      if(passFromEl) passFromEl.classList.toggle('invalid', row.emailFrom && !passFromOk);
+      if(passToEl) passToEl.classList.toggle('invalid', row.emailTo && !passToOk);
+
+      const hasError = (row.emailFrom && !fromOk) || (row.emailTo && !toOk) || (row.emailFrom && !passFromOk) || (row.emailTo && !passToOk);
+      tr.classList.toggle('row-error', hasError);
+    }
+  }
+
+  function esc(str) {
+    return (str || '').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  // ======= IMPORT =======
+  function importCSV(text) {
+    const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+    if (!lines.length) { showToast('Arquivo CSV vazio.', 'error'); return; }
+
+    let start = 0;
+    const header = lines[0].toLowerCase();
+    if (header.includes('nome') || header.includes('email') || header.includes('first')) start = 1;
+
+    let added = 0;
+    for (let i = start; i < lines.length; i++) {
+      const sep = lines[i].includes(';') ? ';' : ',';
+      const cols = lines[i].split(sep).map(c => c.trim().replace(/^["']|["']$/g, ''));
+      if (cols.length < 2) continue;
+      migRows.push(createMigRow({
+        firstName: cols[0] || '',
+        lastName:  cols[1] || '',
+        emailFrom: cols[2] || '',
+        passFrom:  cols[3] || '',
+        emailTo:   cols[4] || '',
+        passTo:    cols[5] || '',
+        plan:      cols[6] || '', // Agora puxa exatamente o texto digitado
+      }));
+      added++;
+    }
+    saveMigRows();
+    renderMigTable();
+    showToast(`${added} conta(s) importada(s) do CSV.`);
+  }
+
+  function importXLSX(buffer) {
+    if (typeof XLSX === 'undefined') {
+      showToast('SheetJS não carregado. Verifique a conexão.', 'error');
+      return;
+    }
+    try {
+      const wb = XLSX.read(buffer, { type: 'array' });
+      const ws = wb.Sheets[wb.SheetNames[0]];
+      const rows = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
+
+      if (!rows.length) { showToast('Planilha vazia.', 'error'); return; }
+
+      let start = 0;
+      const firstCell = String(rows[0][0] || '').toLowerCase();
+      if (firstCell.includes('nome') || firstCell.includes('first') || firstCell.includes('name')) start = 1;
+
+      let added = 0;
+      for (let i = start; i < rows.length; i++) {
+        const r = rows[i];
+        if (!r[0] && !r[2] && !r[4]) continue; 
+        migRows.push(createMigRow({
+          firstName: String(r[0] || '').trim(),
+          lastName:  String(r[1] || '').trim(),
+          emailFrom: String(r[2] || '').trim(),
+          passFrom:  String(r[3] || '').trim(),
+          emailTo:   String(r[4] || '').trim(),
+          passTo:    String(r[5] || '').trim(),
+          plan:      String(r[6] || '').trim(), 
+        }));
+        added++;
+      }
+      saveMigRows();
+      renderMigTable();
+      showToast(`${added} conta(s) importada(s) da planilha.`);
+    } catch (err) {
+      showToast('Erro ao ler a planilha: ' + err.message, 'error');
+    }
+  }
+
+  // ======= DOWNLOAD =======
+  function downloadFile(content, filename, mime) {
+    const blob = new Blob([content], { type: mime });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href     = url;
+    a.download = filename;
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+  function downloadLote() {
+    if (!migRows.length) { showToast('Nenhuma conta para exportar.', 'warn'); return; }
+    const lines = migRows.map(r =>
+      [r.firstName, r.lastName, r.emailTo, r.passTo, r.plan].join(';')
+    );
+    const cid = getCid();
+    downloadFile(lines.join('\n'), `lote_${cid}.csv`, 'text/csv;charset=utf-8');
+    showToast(`lote_${cid}.csv gerado com ${migRows.length} linha(s).`);
+  }
+
+  function downloadAcc() {
+    if (!migRows.length) { showToast('Nenhuma conta para exportar.', 'warn'); return; }
+    const lines = migRows.map(r =>
+      [r.emailFrom, r.passFrom, r.emailTo, r.passTo].join(';')
+    );
+    const cid = getCid();
+    downloadFile(lines.join('\n'), `acc_${cid}.csv`, 'text/csv;charset=utf-8');
+    showToast(`acc_${cid}.csv gerado com ${migRows.length} linha(s).`);
+  }
+
   renderNav();
   renderView();
 </script>
-
 </body>
 </html>
