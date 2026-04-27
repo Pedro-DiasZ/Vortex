@@ -68,21 +68,19 @@
     -webkit-font-smoothing: antialiased;
     overflow: hidden;
   }
-  
-  /* SCROLLBAR MELHORADA (MAIS LARGA E FÁCIL DE CLICAR) */
+
   ::-webkit-scrollbar { width: 10px; height: 12px; }
-  ::-webkit-scrollbar-thumb { 
-    background: var(--border); 
-    border-radius: 9999px; 
-    border: 3px solid transparent; 
-    background-clip: padding-box; 
+  ::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 9999px;
+    border: 3px solid transparent;
+    background-clip: padding-box;
   }
   ::-webkit-scrollbar-thumb:hover { background-color: var(--muted); }
   ::-webkit-scrollbar-track { background: transparent; }
 
   .app { display: flex; height: 100vh; }
 
-  /* SIDEBAR */
   .sidebar {
     width: 288px; flex-shrink: 0;
     background: var(--gradient-sidebar);
@@ -154,7 +152,6 @@
     50% { box-shadow: 0 0 0 6px rgba(34,197,94,0); }
   }
 
-  /* MAIN */
   .main { flex: 1; display: flex; flex-direction: column; min-width: 0; overflow-x: hidden; }
   .container { min-width: 0; }
   .topbar {
@@ -201,32 +198,14 @@
   }
   .textarea { font-family: 'Fira Code', monospace; font-size: 13px; min-height: 150px; resize: vertical; }
 
-  .type-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-top: 8px;
-  }
+  .type-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
   .type-btn {
-    padding: 8px 16px;
-    border-radius: 8px;
-    border: 1px solid var(--border);
-    background: var(--card-2);
-    color: var(--muted);
-    font: 700 12px 'Inter', sans-serif;
-    cursor: pointer;
-    transition: all 0.2s;
+    padding: 8px 16px; border-radius: 8px; border: 1px solid var(--border);
+    background: var(--card-2); color: var(--muted);
+    font: 700 12px 'Inter', sans-serif; cursor: pointer; transition: all 0.2s;
   }
-  .type-btn:hover {
-    border-color: var(--primary);
-    color: var(--text);
-  }
-  .type-btn.active {
-    background: var(--primary);
-    color: var(--primary-foreground);
-    border-color: var(--primary);
-    box-shadow: var(--shadow-elegant);
-  }
+  .type-btn:hover { border-color: var(--primary); color: var(--text); }
+  .type-btn.active { background: var(--primary); color: var(--primary-foreground); border-color: var(--primary); box-shadow: var(--shadow-elegant); }
 
   .btn {
     width: 100%; height: 46px; border: none; border-radius: 10px;
@@ -240,7 +219,6 @@
   .btn:disabled { opacity: .6; cursor: not-allowed; }
   .btn svg { width: 16px; height: 16px; }
 
-  /* RESULT */
   .result {
     margin-top: 22px; border-radius: var(--radius); overflow: hidden;
     border: 1px solid var(--border); background: var(--card);
@@ -274,7 +252,49 @@
   }
   pre.output.error { color: var(--danger); }
 
-  /* PASSWORD GENERATOR */
+  /* ===== RECOMMENDATIONS ===== */
+  .rec-strip {
+    margin-top: 14px;
+    padding: 14px 16px;
+    border-radius: var(--radius);
+    border: 1px solid rgba(59,130,246,0.2);
+    background: rgba(59,130,246,0.05);
+    animation: fadeIn .3s ease-out;
+  }
+  .rec-header {
+    display: flex; align-items: center; gap: 7px;
+    font: 800 10px 'Inter', sans-serif;
+    text-transform: uppercase; letter-spacing: 0.2em;
+    color: var(--primary); margin-bottom: 10px;
+    opacity: 0.85;
+  }
+  .rec-header svg { width: 13px; height: 13px; }
+  .rec-btns { display: flex; flex-wrap: wrap; gap: 7px; }
+  .rec-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 7px 13px; border-radius: 8px;
+    border: 1px solid rgba(59,130,246,0.25);
+    background: rgba(59,130,246,0.08);
+    color: var(--primary-glow);
+    font: 600 12px 'Inter', sans-serif;
+    cursor: pointer; transition: all 0.15s;
+  }
+  .rec-btn:hover {
+    background: var(--primary); color: var(--primary-foreground);
+    border-color: var(--primary); transform: translateY(-1px);
+    box-shadow: var(--shadow-elegant);
+  }
+  .rec-btn svg { width: 13px; height: 13px; flex-shrink: 0; }
+
+  /* ===== FIELD HIGHLIGHT (after rec navigation) ===== */
+  @keyframes fieldGlow {
+    0%   { box-shadow: 0 0 0 0 rgba(59,130,246,0.6); border-color: var(--primary); }
+    60%  { box-shadow: 0 0 0 6px rgba(59,130,246,0.15); border-color: var(--primary); }
+    100% { box-shadow: 0 0 0 3px rgba(59,130,246,0.18); border-color: var(--primary); }
+  }
+  .field-highlight { animation: fieldGlow 0.7s ease-out forwards; }
+
+  /* ===== PASSWORD GENERATOR ===== */
   .pwd-bar {
     display: flex; align-items: stretch; gap: 6px;
     padding: 6px; border-radius: 14px;
@@ -308,10 +328,7 @@
   .strength-bar { margin-top: 6px; height: 8px; border-radius: 9999px; background: var(--sidebar-soft); overflow: hidden; }
   .strength-fill { height: 100%; transition: width .4s, background .4s; border-radius: 9999px; }
 
-  .footnote {
-    text-align: center; margin-top: 28px; color: var(--muted);
-    font: 500 12px 'Fira Code', monospace;
-  }
+  .footnote { text-align: center; margin-top: 28px; color: var(--muted); font: 500 12px 'Fira Code', monospace; }
   .footnote b { color: var(--text); font-weight: 600; }
 
   .alert {
@@ -321,18 +338,13 @@
   }
 
   .checkbox-group { margin-top: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .checkbox-label {
-    display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 500;
-    color: var(--text); cursor: pointer; user-select: none;
-  }
+  .checkbox-label { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 500; color: var(--text); cursor: pointer; user-select: none; }
   .checkbox-label input {
     appearance: none; width: 18px; height: 18px; border: 2px solid var(--border);
     border-radius: 4px; background: var(--input-bg); cursor: pointer;
     position: relative; transition: .2s;
   }
-  .checkbox-label input:checked {
-    background: var(--primary); border-color: var(--primary);
-  }
+  .checkbox-label input:checked { background: var(--primary); border-color: var(--primary); }
   .checkbox-label input:checked::after {
     content: ''; position: absolute; left: 5px; top: 1px; width: 4px; height: 9px;
     border: solid var(--primary-foreground); border-width: 0 2px 2px 0; transform: rotate(45deg);
@@ -349,55 +361,33 @@
   @keyframes slideIn { from { opacity: 0; transform: translateX(100%); } to { opacity: 1; transform: translateX(0); } }
   @keyframes slideOut { from { opacity: 1; transform: translateX(0); } to { opacity: 0; transform: translateX(100%); } }
 
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(6px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
   @keyframes spin { to { transform: rotate(360deg); } }
   .spin { animation: spin 1s linear infinite; }
 
-  /* ======= MIGRATION ======= */
-  .mig-topbar {
-    display: flex; align-items: center; gap: 10px;
-    flex-wrap: wrap; margin-bottom: 16px;
-  }
+  /* ===== MIGRATION ===== */
+  .mig-topbar { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; }
   .mig-cid-wrap {
     flex: 1; min-width: 200px; display: flex; align-items: center; gap: 8px;
     background: var(--input-bg); border: 1px solid var(--border);
     border-radius: 10px; padding: 0 12px; height: 40px;
   }
   .mig-cid-wrap svg { width: 14px; height: 14px; color: var(--muted); flex-shrink: 0; }
-  .mig-cid-input {
-    flex: 1; border: none; background: transparent; color: var(--text);
-    font: 500 13px 'Inter', sans-serif; outline: none;
-  }
+  .mig-cid-input { flex: 1; border: none; background: transparent; color: var(--text); font: 500 13px 'Inter', sans-serif; outline: none; }
   .mig-cid-input::placeholder { color: var(--muted); }
   .mig-action-btn {
     height: 40px; padding: 0 16px; border-radius: 10px; border: none;
     cursor: pointer; display: inline-flex; align-items: center; gap: 7px;
     font: 700 12px 'Inter', sans-serif; white-space: nowrap; transition: .15s;
   }
-  .mig-action-btn.outline {
-    background: var(--sidebar-soft); color: var(--text);
-    border: 1px solid var(--border);
-  }
+  .mig-action-btn.outline { background: var(--sidebar-soft); color: var(--text); border: 1px solid var(--border); }
   .mig-action-btn.outline:hover { border-color: var(--primary); color: var(--primary); }
-  .mig-action-btn.primary {
-    background: var(--gradient-primary); color: var(--primary-foreground);
-    box-shadow: var(--shadow-elegant);
-  }
+  .mig-action-btn.primary { background: var(--gradient-primary); color: var(--primary-foreground); box-shadow: var(--shadow-elegant); }
   .mig-action-btn.primary:hover { transform: translateY(-1px); }
-  .mig-action-btn.danger {
-    background: rgba(239,68,68,.12); color: var(--danger);
-    border: 1px solid rgba(239,68,68,.25);
-  }
+  .mig-action-btn.danger { background: rgba(239,68,68,.12); color: var(--danger); border: 1px solid rgba(239,68,68,.25); }
   .mig-action-btn svg { width: 14px; height: 14px; }
 
-  .mig-counter {
-    font: 600 12px 'Fira Code', monospace; color: var(--muted);
-    padding: 0 12px; display: flex; align-items: center; gap: 6px;
-    white-space: nowrap;
-  }
+  .mig-counter { font: 600 12px 'Fira Code', monospace; color: var(--muted); padding: 0 12px; display: flex; align-items: center; gap: 6px; white-space: nowrap; }
   .mig-counter b { color: var(--primary); font-size: 14px; }
 
   .mig-table-wrap {
@@ -406,22 +396,9 @@
     box-shadow: var(--shadow-card);
     max-height: 420px; overflow-y: auto;
   }
-  .mig-table {
-    width: 100%; border-collapse: collapse;
-    font-size: 12px; white-space: nowrap;
-    min-width: 1050px; /* TABELA MAIS LARGA PARA MELHOR DISTRIBUIÇÃO */
-  }
-  .mig-table thead tr {
-    background: var(--card-2);
-    border-bottom: 2px solid var(--border);
-    position: sticky; top: 0; z-index: 2;
-  }
-  .mig-table th {
-    padding: 10px 10px; text-align: left;
-    font: 700 10px 'Inter', sans-serif;
-    text-transform: uppercase; letter-spacing: 0.14em;
-    color: var(--muted); white-space: nowrap;
-  }
+  .mig-table { width: 100%; border-collapse: collapse; font-size: 12px; white-space: nowrap; min-width: 1050px; }
+  .mig-table thead tr { background: var(--card-2); border-bottom: 2px solid var(--border); position: sticky; top: 0; z-index: 2; }
+  .mig-table th { padding: 10px 10px; text-align: left; font: 700 10px 'Inter', sans-serif; text-transform: uppercase; letter-spacing: 0.14em; color: var(--muted); white-space: nowrap; }
   .mig-table th.col-num { width: 40px; color: var(--border); text-align: center; }
   .mig-table th.col-del { width: 36px; }
   .mig-table tbody tr { border-bottom: 1px solid var(--border-soft); transition: background .1s; }
@@ -430,22 +407,15 @@
   .mig-table tbody tr.row-duplicate { background: rgba(245,158,11,.07); }
   .mig-table tbody tr.row-error { background: rgba(239,68,68,.07); }
   .mig-table td { padding: 5px 6px; }
-  .mig-table td.col-num {
-    color: var(--muted); font: 500 11px 'Fira Code', monospace;
-    text-align: center; padding: 0 8px; user-select: none;
-  }
+  .mig-table td.col-num { color: var(--muted); font: 500 11px 'Fira Code', monospace; text-align: center; padding: 0 8px; user-select: none; }
   .mig-table td.col-del { text-align: center; }
   .mig-cell {
     width: 100%; border: none; background: transparent;
     color: var(--text); font: 400 12.5px 'Inter', sans-serif;
     outline: none; padding: 6px 8px; border-radius: 7px;
-    transition: background .1s, box-shadow .1s;
-    min-width: 90px;
+    transition: background .1s, box-shadow .1s; min-width: 90px;
   }
-  .mig-cell:focus {
-    background: var(--input-bg);
-    box-shadow: 0 0 0 2px var(--primary);
-  }
+  .mig-cell:focus { background: var(--input-bg); box-shadow: 0 0 0 2px var(--primary); }
   .mig-cell::placeholder { color: var(--border); }
   .mig-cell.invalid { box-shadow: 0 0 0 2px var(--danger) !important; }
   .mig-cell.narrow { min-width: 56px; }
@@ -457,24 +427,14 @@
   .mig-del-btn:hover { background: rgba(239,68,68,.15); color: var(--danger); }
   .mig-del-btn svg { width: 13px; height: 13px; }
 
-  .mig-empty {
-    padding: 48px 24px; text-align: center;
-    color: var(--muted); font-size: 14px;
-  }
+  .mig-empty { padding: 48px 24px; text-align: center; color: var(--muted); font-size: 14px; }
   .mig-empty svg { width: 40px; height: 40px; color: var(--border); margin: 0 auto 12px; display: block; }
   .mig-empty p { margin: 0; }
   .mig-empty small { font-size: 12px; opacity: .7; }
 
-  .mig-footer {
-    display: flex; align-items: center; justify-content: space-between;
-    flex-wrap: wrap; gap: 12px; margin-top: 16px;
-  }
-  .mig-footer-info {
-    font: 500 12px 'Fira Code', monospace; color: var(--muted);
-  }
-  .mig-download-row {
-    display: flex; gap: 8px; flex-wrap: wrap;
-  }
+  .mig-footer { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-top: 16px; }
+  .mig-footer-info { font: 500 12px 'Fira Code', monospace; color: var(--muted); }
+  .mig-download-row { display: flex; gap: 8px; flex-wrap: wrap; }
   .mig-dl-btn {
     height: 44px; padding: 0 20px; border-radius: 10px; border: none;
     cursor: pointer; display: inline-flex; align-items: center; gap: 8px;
@@ -483,30 +443,17 @@
   }
   .mig-dl-btn:hover:not(:disabled) { transform: translateY(-1px); }
   .mig-dl-btn:disabled { opacity: .45; cursor: not-allowed; }
-  .mig-dl-btn.lote {
-    background: linear-gradient(135deg, #22c55e, #16a34a);
-    color: #fff; box-shadow: 0 8px 24px -8px rgba(34,197,94,.5);
-  }
-  .mig-dl-btn.acc {
-    background: linear-gradient(135deg, #f59e0b, #d97706);
-    color: #fff; box-shadow: 0 8px 24px -8px rgba(245,158,11,.5);
-  }
-  .mig-dl-btn.both {
-    background: var(--gradient-primary);
-    color: #fff; box-shadow: var(--shadow-elegant);
-  }
+  .mig-dl-btn.lote { background: linear-gradient(135deg, #22c55e, #16a34a); color: #fff; box-shadow: 0 8px 24px -8px rgba(34,197,94,.5); }
+  .mig-dl-btn.acc  { background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; box-shadow: 0 8px 24px -8px rgba(245,158,11,.5); }
+  .mig-dl-btn.both { background: var(--gradient-primary); color: #fff; box-shadow: var(--shadow-elegant); }
   .mig-dl-btn svg { width: 15px; height: 15px; }
 
-  .mig-badge {
-    display: inline-flex; align-items: center; gap: 4px;
-    padding: 2px 8px; border-radius: 9999px; font: 700 10px 'Fira Code', monospace;
-    margin-left: 6px;
-  }
-  .mig-badge.ok { background: rgba(34,197,94,.15); color: var(--success); }
+  .mig-badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 9999px; font: 700 10px 'Fira Code', monospace; margin-left: 6px; }
+  .mig-badge.ok   { background: rgba(34,197,94,.15); color: var(--success); }
   .mig-badge.warn { background: rgba(245,158,11,.15); color: var(--warning); }
-  .mig-badge.err { background: rgba(239,68,68,.15); color: var(--danger); }
+  .mig-badge.err  { background: rgba(239,68,68,.15);  color: var(--danger);  }
 
-  /* CSS DO MODAL DE CONFIRMAÇÃO */
+  /* ===== MODALS ===== */
   .modal-overlay {
     position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
     z-index: 9999; display: flex; align-items: center; justify-content: center;
@@ -515,42 +462,38 @@
   .modal-overlay.show { opacity: 1; pointer-events: auto; }
   .modal-box {
     background: var(--card); border: 1px solid var(--border);
-    border-radius: var(--radius); padding: 24px; width: 90%; max-width: 360px;
+    border-radius: var(--radius); padding: 24px; width: 90%; max-width: 380px;
     box-shadow: var(--shadow-elegant); transform: translateY(10px); transition: transform 0.2s;
     text-align: center;
   }
   .modal-overlay.show .modal-box { transform: translateY(0); }
+  .modal-icon { width: 48px; height: 48px; border-radius: 14px; display: grid; place-items: center; margin: 0 auto 14px; }
+  .modal-icon.warn { background: rgba(245,158,11,.15); color: var(--warning); }
+  .modal-icon.danger { background: rgba(239,68,68,.12); color: var(--danger); }
+  .modal-icon svg { width: 22px; height: 22px; }
   .modal-title { margin: 0 0 8px; font-size: 16px; font-weight: 800; color: var(--text); }
-  .modal-desc { margin: 0 0 24px; font-size: 13px; color: var(--muted); line-height: 1.5; }
+  .modal-desc { margin: 0 0 24px; font-size: 13px; color: var(--muted); line-height: 1.55; }
   .modal-actions { display: flex; gap: 10px; }
-  .modal-btn {
-    flex: 1; height: 40px; border: none; border-radius: 10px;
-    font: 700 13px 'Inter', sans-serif; cursor: pointer; transition: 0.15s;
-  }
+  .modal-btn { flex: 1; height: 40px; border: none; border-radius: 10px; font: 700 13px 'Inter', sans-serif; cursor: pointer; transition: 0.15s; }
   .modal-btn.cancel { background: var(--sidebar-soft); color: var(--text); border: 1px solid var(--border); }
   .modal-btn.cancel:hover { border-color: var(--muted); }
-  .modal-btn.confirm { background: rgba(239,68,68,0.12); color: var(--danger); border: 1px solid rgba(239,68,68,0.25); }
-  .modal-btn.confirm:hover { background: var(--danger); color: #fff; }
+  .modal-btn.confirm-danger { background: rgba(239,68,68,0.12); color: var(--danger); border: 1px solid rgba(239,68,68,0.25); }
+  .modal-btn.confirm-danger:hover { background: var(--danger); color: #fff; }
+  .modal-btn.confirm-warn { background: rgba(245,158,11,0.12); color: var(--warning); border: 1px solid rgba(245,158,11,0.25); }
+  .modal-btn.confirm-warn:hover { background: var(--warning); color: #fff; }
 
-  /* MOBILE */
   @media (max-width: 860px) {
     body { overflow: auto; }
     .app { display: block; height: auto; min-height: 100vh; }
-    .sidebar {
-      position: fixed; inset: 0 auto 0 0; z-index: 50;
-      transform: translateX(-100%); transition: transform .25s;
-      box-shadow: 0 0 40px rgba(0,0,0,.45);
-    }
+    .sidebar { position: fixed; inset: 0 auto 0 0; z-index: 50; transform: translateX(-100%); transition: transform .25s; box-shadow: 0 0 40px rgba(0,0,0,.45); }
     .sidebar.open { transform: translateX(0); }
     .topbar { display: flex; }
     .content { padding: 24px 16px 60px; }
-    .backdrop {
-      position: fixed; inset: 0; background: rgba(0,0,0,.5);
-      z-index: 40; opacity: 0; pointer-events: none; transition: opacity .2s;
-    }
+    .backdrop { position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 40; opacity: 0; pointer-events: none; transition: opacity .2s; }
     .backdrop.show { opacity: 1; pointer-events: auto; }
     .mig-download-row { flex-direction: column; }
     .mig-dl-btn { width: 100%; justify-content: center; }
+    .rec-btns { flex-direction: column; }
   }
 </style>
 </head>
@@ -609,22 +552,41 @@
           <h1 id="viewTitle">SPF Check</h1>
           <p class="subtitle" id="viewSubtitle"></p>
         </div>
-
         <div id="mainCard"></div>
-
         <p class="footnote" id="footnoteEl">endpoint <b id="footEndpoint">/spf</b></p>
       </div>
     </main>
   </div>
 </div>
 
+<!-- Modal: Confirmar Limpeza -->
 <div class="modal-overlay" id="confirmModal">
   <div class="modal-box">
+    <div class="modal-icon danger">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+    </div>
     <div class="modal-title">Limpar todas as contas?</div>
     <div class="modal-desc">Você está prestes a remover <b id="confirmCount" style="color:var(--text);">0</b> conta(s). Esta ação não pode ser desfeita.</div>
     <div class="modal-actions">
       <button class="modal-btn cancel" onclick="closeConfirmModal()">Cancelar</button>
-      <button class="modal-btn confirm" onclick="executeClear()">Sim, limpar tudo</button>
+      <button class="modal-btn confirm-danger" onclick="executeClear()">Sim, limpar tudo</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Download com Erros -->
+<div class="modal-overlay" id="migErrModal">
+  <div class="modal-box">
+    <div class="modal-icon warn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+    </div>
+    <div class="modal-title">Existem erros nos dados</div>
+    <div class="modal-desc">
+      <b id="migErrCount" style="color:var(--warning);">0</b> linha(s) contêm problemas de validação (e-mails inválidos, senhas fora do padrão ou duplicatas).<br><br>Deseja baixar o arquivo mesmo assim?
+    </div>
+    <div class="modal-actions">
+      <button class="modal-btn cancel" onclick="closeMigErrModal()">Cancelar</button>
+      <button class="modal-btn confirm-warn" id="migErrConfirmBtn">Baixar mesmo assim</button>
     </div>
   </div>
 </div>
@@ -651,10 +613,7 @@
     toast.style.borderLeftColor = color;
     toast.innerHTML = `<span style="color:${color};display:inline-flex">${icon}</span> <span>${message}</span>`;
     container.appendChild(toast);
-    setTimeout(() => {
-      toast.classList.add('hiding');
-      setTimeout(() => toast.remove(), 300);
-    }, 3500);
+    setTimeout(() => { toast.classList.add('hiding'); setTimeout(() => toast.remove(), 300); }, 3500);
   }
 
   // ======= ICONS =======
@@ -689,12 +648,14 @@
     plus: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>',
     trash: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>',
     move: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 9l-3 3 3 3"/><path d="M9 5l3-3 3 3"/><path d="M15 19l-3 3-3-3"/><path d="M19 9l3 3-3 3"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="12" y1="2" x2="12" y2="22"/></svg>',
+    lightbulb: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg>',
+    arrowRight: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>',
   };
 
   // ======= ROUTES =======
   const ROUTE_GROUPS = [
     { title: 'E-mail', category: 'checks', items: [
-      { path: '/spf', title: 'SPF Check', label: 'SPF', desc: 'Verifica o registro SPF do domínio.', icon: 'mail', fields: [{ n: 'domain', p: 'exemplo.com' }] },
+      { path: '/spf',  title: 'SPF Check',  label: 'SPF',  desc: 'Verifica o registro SPF do domínio.', icon: 'mail',  fields: [{ n: 'domain', p: 'exemplo.com' }] },
       { path: '/dkim', title: 'DKIM Check', label: 'DKIM', desc: 'Consulta a chave pública DKIM por seletor.', icon: 'shield', fields: [{ n: 'domain', p: 'exemplo.com' }, { n: 'selector', p: 'selector', v: 'default' }] },
       { path: '/dmarc', title: 'DMARC Check', label: 'DMARC', desc: 'Política DMARC publicada no DNS.', icon: 'file', fields: [{ n: 'domain', p: 'exemplo.com' }] },
       { path: '/blacklists', title: 'Blacklist Monitor', label: 'Blacklists', desc: 'Cruza domínio/IP com listas de bloqueio.', icon: 'radar', fields: [{ n: 'domain', p: 'domínio ou IP' }] },
@@ -737,6 +698,293 @@
 
   let currentTab = 'checks';
   let currentPath = '/spf';
+
+  // ======= SMART RECOMMENDATIONS =======
+  // Each entry: { label, icon, target, field, getValue(output) → string|null }
+  const RECOMMENDATIONS = {
+    '/ping': [
+      {
+        label: 'Geolocalização do IP',
+        icon: 'pin', target: '/geo', field: 'ip',
+        getValue: (out) => out.match(/\b(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\b/)?.[1]
+                       || document.getElementById('f_host')?.value
+      },
+      {
+        label: 'IP Information',
+        icon: 'info', target: '/ip-info', field: 'ip',
+        getValue: (out) => out.match(/\b(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\b/)?.[1]
+                       || document.getElementById('f_host')?.value
+      },
+      {
+        label: 'Verificar Portas',
+        icon: 'plug', target: '/port-checker', field: 'host',
+        getValue: () => document.getElementById('f_host')?.value
+      }
+    ],
+    '/geo': [
+      {
+        label: 'IP Information',
+        icon: 'info', target: '/ip-info', field: 'ip',
+        getValue: () => document.getElementById('f_ip')?.value
+      },
+      {
+        label: 'Blacklist Monitor',
+        icon: 'radar', target: '/blacklists', field: 'domain',
+        getValue: () => document.getElementById('f_ip')?.value
+      }
+    ],
+    '/ip-info': [
+      {
+        label: 'Geolocalização',
+        icon: 'pin', target: '/geo', field: 'ip',
+        getValue: () => document.getElementById('f_ip')?.value
+      },
+      {
+        label: 'Blacklist Monitor',
+        icon: 'radar', target: '/blacklists', field: 'domain',
+        getValue: () => document.getElementById('f_ip')?.value
+      }
+    ],
+    '/whois': [
+      {
+        label: 'DNS Lookup',
+        icon: 'globe', target: '/dns', field: 'domain',
+        getValue: () => document.getElementById('f_domain')?.value
+      },
+      {
+        label: 'SSL & Headers',
+        icon: 'lock', target: '/ssl', field: 'domain',
+        getValue: () => document.getElementById('f_domain')?.value
+      },
+      {
+        label: 'Blacklist Monitor',
+        icon: 'radar', target: '/blacklists', field: 'domain',
+        getValue: () => document.getElementById('f_domain')?.value
+      }
+    ],
+    '/spf': [
+      {
+        label: 'DKIM Check',
+        icon: 'shield', target: '/dkim', field: 'domain',
+        getValue: () => document.getElementById('f_domain')?.value
+      },
+      {
+        label: 'DMARC Check',
+        icon: 'file', target: '/dmarc', field: 'domain',
+        getValue: () => document.getElementById('f_domain')?.value
+      }
+    ],
+    '/dkim': [
+      {
+        label: 'SPF Check',
+        icon: 'mail', target: '/spf', field: 'domain',
+        getValue: () => document.getElementById('f_domain')?.value
+      },
+      {
+        label: 'DMARC Check',
+        icon: 'file', target: '/dmarc', field: 'domain',
+        getValue: () => document.getElementById('f_domain')?.value
+      }
+    ],
+    '/dmarc': [
+      {
+        label: 'SPF Check',
+        icon: 'mail', target: '/spf', field: 'domain',
+        getValue: () => document.getElementById('f_domain')?.value
+      },
+      {
+        label: 'DKIM Check',
+        icon: 'shield', target: '/dkim', field: 'domain',
+        getValue: () => document.getElementById('f_domain')?.value
+      }
+    ],
+    '/blacklists': [
+      {
+        label: 'DNS Lookup',
+        icon: 'globe', target: '/dns', field: 'domain',
+        getValue: () => document.getElementById('f_domain')?.value
+      },
+      {
+        label: 'Geolocalização',
+        icon: 'pin', target: '/geo', field: 'ip',
+        getValue: (out) => out.match(/\b(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\b/)?.[1]
+                       || document.getElementById('f_domain')?.value
+      }
+    ],
+    '/dns': [
+      {
+        label: 'Geolocalização do IP',
+        icon: 'pin', target: '/geo', field: 'ip',
+        getValue: (out) => out.match(/\b(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\b/)?.[1]
+      },
+      {
+        label: 'SSL & Headers',
+        icon: 'lock', target: '/ssl', field: 'domain',
+        getValue: () => document.getElementById('f_domain')?.value
+      },
+      {
+        label: 'WHOIS Info',
+        icon: 'search', target: '/whois', field: 'domain',
+        getValue: () => document.getElementById('f_domain')?.value
+      }
+    ],
+    '/dns-propagation': [
+      {
+        label: 'DNS Lookup',
+        icon: 'globe', target: '/dns', field: 'domain',
+        getValue: () => document.getElementById('f_domain')?.value
+      },
+      {
+        label: 'WHOIS Info',
+        icon: 'search', target: '/whois', field: 'domain',
+        getValue: () => document.getElementById('f_domain')?.value
+      }
+    ],
+    '/dns_reverse': [
+      {
+        label: 'Geolocalização',
+        icon: 'pin', target: '/geo', field: 'ip',
+        getValue: () => document.getElementById('f_ip')?.value
+      },
+      {
+        label: 'Blacklist Monitor',
+        icon: 'radar', target: '/blacklists', field: 'domain',
+        getValue: () => document.getElementById('f_ip')?.value
+      }
+    ],
+    '/ssl': [
+      {
+        label: 'Uptime Monitor',
+        icon: 'timer', target: '/uptime', field: 'url',
+        getValue: () => { const d = document.getElementById('f_domain')?.value; return d ? `https://${d}` : null; }
+      },
+      {
+        label: 'WHOIS Info',
+        icon: 'search', target: '/whois', field: 'domain',
+        getValue: () => document.getElementById('f_domain')?.value
+      }
+    ],
+    '/uptime': [
+      {
+        label: 'SSL & Headers',
+        icon: 'lock', target: '/ssl', field: 'domain',
+        getValue: () => {
+          const url = document.getElementById('f_url')?.value || '';
+          try { return new URL(url).hostname; } catch { return url.replace(/^https?:\/\//, '').split('/')[0]; }
+        }
+      },
+      {
+        label: 'Ping Test',
+        icon: 'activity', target: '/ping', field: 'host',
+        getValue: () => {
+          const url = document.getElementById('f_url')?.value || '';
+          try { return new URL(url).hostname; } catch { return url.replace(/^https?:\/\//, '').split('/')[0]; }
+        }
+      }
+    ],
+    '/smtp': [
+      {
+        label: 'SPF Check',
+        icon: 'mail', target: '/spf', field: 'domain',
+        getValue: () => { const h = document.getElementById('f_host')?.value || ''; const p = h.split('.'); return p.length >= 2 ? p.slice(-2).join('.') : h; }
+      },
+      {
+        label: 'Blacklist Monitor',
+        icon: 'radar', target: '/blacklists', field: 'domain',
+        getValue: () => document.getElementById('f_host')?.value
+      }
+    ],
+    '/port-checker': [
+      {
+        label: 'Ping Test',
+        icon: 'activity', target: '/ping', field: 'host',
+        getValue: () => document.getElementById('f_host')?.value
+      },
+      {
+        label: 'Geolocalização',
+        icon: 'pin', target: '/geo', field: 'ip',
+        getValue: (out) => out.match(/\b(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\b/)?.[1]
+                       || document.getElementById('f_host')?.value
+      }
+    ],
+    '/analyze-header': [
+      {
+        label: 'Blacklist Monitor',
+        icon: 'radar', target: '/blacklists', field: 'domain',
+        getValue: (out) => out.match(/\b(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\b/)?.[1]
+      }
+    ],
+  };
+
+  function showRecommendations(path, output) {
+    const recArea = document.getElementById('recArea');
+    if (!recArea) return;
+
+    const recs = RECOMMENDATIONS[path];
+    if (!recs || !recs.length) { recArea.innerHTML = ''; return; }
+
+    // Evaluate each recommendation — only show those that produce a value
+    const active = recs.map((rec, i) => {
+      try {
+        const value = rec.getValue(output);
+        if (!value || !value.trim()) return null;
+        return { ...rec, value: value.trim(), idx: i };
+      } catch { return null; }
+    }).filter(Boolean);
+
+    if (!active.length) { recArea.innerHTML = ''; return; }
+
+    recArea.innerHTML = `
+      <div class="rec-strip">
+        <div class="rec-header">
+          ${ICONS.lightbulb}
+          <span>Próximos passos sugeridos</span>
+        </div>
+        <div class="rec-btns" id="recBtns">
+          ${active.map((rec, i) => `
+            <button class="rec-btn" data-i="${i}">
+              <span style="display:inline-flex;width:13px;height:13px;">${ICONS[rec.icon] || ICONS.arrowRight}</span>
+              ${rec.label}
+              <span style="opacity:.5;display:inline-flex;width:11px;height:11px;">${ICONS.arrowRight}</span>
+            </button>
+          `).join('')}
+        </div>
+      </div>
+    `;
+
+    recArea.querySelectorAll('.rec-btn').forEach(btn => {
+      btn.onclick = () => {
+        const rec = active[parseInt(btn.dataset.i)];
+        navigateWithData(rec.target, rec.field, rec.value);
+      };
+    });
+  }
+
+  function navigateWithData(path, field, value) {
+    // Switch tab if needed
+    const group = ROUTE_GROUPS.find(g => g.items.some(item => item.path === path));
+    if (group && group.category !== currentTab) {
+      currentTab = group.category;
+      document.querySelectorAll('.tab').forEach(b => b.classList.toggle('active', b.dataset.tab === currentTab));
+    }
+    currentPath = path;
+    renderNav();
+    renderView();
+    toggleSidebar(false);
+
+    // Pre-fill field and auto-execute after render
+    setTimeout(() => {
+      const el = document.getElementById(`f_${field}`);
+      if (el && value) {
+        el.value = value;
+        el.classList.add('field-highlight');
+        el.dispatchEvent(new Event('input', { bubbles: true }));
+        // Auto-execute
+        const execBtn = document.getElementById('execBtn');
+        if (execBtn) execBtn.click();
+      }
+    }, 80);
+  }
 
   // ======= THEME =======
   function setTheme(t) {
@@ -872,23 +1120,29 @@
         </div>
         <pre class="output" id="output">Aguardando execução...</pre>
       </div>
+      <div id="recArea"></div>
     `;
   }
 
   function bindForm(route) {
-    const out = document.getElementById('output');
-    const btn = document.getElementById('execBtn');
+    const out  = document.getElementById('output');
+    const btn  = document.getElementById('execBtn');
+    const recArea = document.getElementById('recArea');
+
     document.querySelectorAll('#mainCard .input, #mainCard .textarea').forEach(el => {
       el.addEventListener('keydown', (e) => { if (e.key === 'Enter' && el.tagName !== 'TEXTAREA') execute(); });
     });
+
     document.getElementById('copyOut').onclick = async () => {
       const text = out.innerText;
       if (!text || text === 'Aguardando execução...') return;
       try { await navigator.clipboard.writeText(text); showToast('Resultado copiado!'); } catch {}
     };
+
     async function execute() {
       out.classList.remove('error');
       out.innerText = 'Executando requisição...';
+      if (recArea) recArea.innerHTML = '';
       btn.disabled = true;
       btn.innerHTML = `<svg class="spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M21 12a9 9 0 1 1-6.22-8.56"/></svg><span>Carregando...</span>`;
       try {
@@ -912,13 +1166,15 @@
           if (qs) url += `?${qs}`;
         }
         const res = await fetch(url, init);
-        const ct = res.headers.get('content-type') || '';
+        const ct  = res.headers.get('content-type') || '';
         const data = ct.includes('application/json') ? await res.json() : await res.text();
         if (!res.ok) {
           out.classList.add('error');
           out.innerText = typeof data === 'string' ? data : `Erro ${res.status}\n${JSON.stringify(data, null, 2)}`;
         } else {
           out.innerText = typeof data === 'string' ? data : JSON.stringify(data, null, 2);
+          // Show recommendations on success
+          showRecommendations(route.path, out.innerText);
         }
       } catch (e) {
         out.classList.add('error');
@@ -981,28 +1237,23 @@
   }
 
   function bindPassword() {
-    const input = document.getElementById('f_pass');
-    const lenEl = document.getElementById('f_len');
+    const input  = document.getElementById('f_pass');
+    const lenEl  = document.getElementById('f_len');
     const lenVal = document.getElementById('lenVal');
     const sLabel = document.getElementById('strengthLabel');
-    const sFill = document.getElementById('strengthFill');
+    const sFill  = document.getElementById('strengthFill');
     const alertEl = document.getElementById('pwdAlert');
     const cbUpper = document.getElementById('f_upper');
     const cbLower = document.getElementById('f_lower');
-    const cbNums = document.getElementById('f_nums');
-    const cbSym = document.getElementById('f_sym');
+    const cbNums  = document.getElementById('f_nums');
+    const cbSym   = document.getElementById('f_sym');
 
-    function updateStrength(p) {
-      const s = strengthOf(p);
-      sLabel.innerText = s.label;
-      sFill.style.width = s.pct + '%';
-      sFill.style.background = s.color;
-    }
+    function updateStrength(p) { const s = strengthOf(p); sLabel.innerText = s.label; sFill.style.width = s.pct + '%'; sFill.style.background = s.color; }
     function generate() {
       alertEl.innerHTML = '';
       const length = parseInt(lenEl.value);
       const useUpper = cbUpper.checked, useLower = cbLower.checked;
-      const useNums = cbNums.checked, useSym = cbSym.checked;
+      const useNums  = cbNums.checked,  useSym   = cbSym.checked;
       if (!useUpper && !useLower && !useNums && !useSym) {
         input.value = ''; updateStrength('');
         alertEl.innerHTML = `<div class="alert">Selecione pelo menos um tipo de caractere.</div>`;
@@ -1012,17 +1263,16 @@
       let charset = '';
       if (useUpper) charset += chars.upper;
       if (useLower) charset += chars.lower;
-      if (useNums) charset += chars.nums;
-      if (useSym) charset += chars.sym;
+      if (useNums)  charset += chars.nums;
+      if (useSym)   charset += chars.sym;
       let pwd = '';
       if (useUpper) pwd += chars.upper[Math.floor(Math.random() * chars.upper.length)];
       if (useLower) pwd += chars.lower[Math.floor(Math.random() * chars.lower.length)];
-      if (useNums) pwd += chars.nums[Math.floor(Math.random() * chars.nums.length)];
-      if (useSym) pwd += chars.sym[Math.floor(Math.random() * chars.sym.length)];
+      if (useNums)  pwd += chars.nums[Math.floor(Math.random() * chars.nums.length)];
+      if (useSym)   pwd += chars.sym[Math.floor(Math.random() * chars.sym.length)];
       while (pwd.length < length) pwd += charset[Math.floor(Math.random() * charset.length)];
       pwd = pwd.split('').sort(() => 0.5 - Math.random()).join('').substring(0, length);
-      input.value = pwd;
-      updateStrength(pwd);
+      input.value = pwd; updateStrength(pwd);
     }
     lenEl.oninput = () => { lenVal.innerText = lenEl.value; generate(); };
     cbUpper.onchange = cbLower.onchange = cbNums.onchange = cbSym.onchange = generate;
@@ -1034,59 +1284,82 @@
     generate();
   }
 
-// ======= MIGRATIONS =======
-  function isValidEmail(v) {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
-  }
+  // ======= MIGRATIONS =======
+  function isValidEmail(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()); }
 
   function validatePassword(pwd, row, isFrom) {
     if (!pwd) return false;
-    
-    // 1. Mínimo 8 caracteres
     if (pwd.length < 8) return false;
-    
-    // 2. Obrigatório: Maiúscula, minúscula, número e especial
     if (!/[A-Z]/.test(pwd)) return false;
     if (!/[a-z]/.test(pwd)) return false;
     if (!/[0-9]/.test(pwd)) return false;
-    if (!/[^a-zA-Z0-9]/.test(pwd)) return false; 
-    
-    // 3. Proibido: / [ ] " ' ;
+    if (!/[^a-zA-Z0-9]/.test(pwd)) return false;
     if (/[\/\[\]"';]/.test(pwd)) return false;
-
-    // 4. Não pode conter partes do nome ou e-mail (mínimo 3 letras)
     const partsToCheck = [];
     if (row.firstName && row.firstName.length >= 3) partsToCheck.push(row.firstName.toLowerCase());
-    if (row.lastName && row.lastName.length >= 3) partsToCheck.push(row.lastName.toLowerCase());
-
+    if (row.lastName  && row.lastName.length  >= 3) partsToCheck.push(row.lastName.toLowerCase());
     const email = isFrom ? row.emailFrom : row.emailTo;
     if (email && email.includes('@')) {
       const localPart = email.split('@')[0];
       if (localPart.length >= 3) partsToCheck.push(localPart.toLowerCase());
     }
-
     const pwdLower = pwd.toLowerCase();
-    for (const part of partsToCheck) {
-      if (pwdLower.includes(part)) return false;
-    }
-
+    for (const part of partsToCheck) { if (pwdLower.includes(part)) return false; }
     return true;
   }
 
   let migRows = [];
   let migCompany = '';
+  let pendingDownloadFn = null;
 
   function createMigRow(data = {}) {
     return {
       id: Date.now() + Math.random(),
-      firstName:    data.firstName    || '',
-      lastName:     data.lastName     || '',
-      emailFrom:    data.emailFrom    || '',
-      passFrom:     data.passFrom     || '',
-      emailTo:      data.emailTo      || '',
-      passTo:       data.passTo       || '',
-      plan:         data.plan         || '',
+      firstName: data.firstName || '',
+      lastName:  data.lastName  || '',
+      emailFrom: data.emailFrom || '',
+      passFrom:  data.passFrom  || '',
+      emailTo:   data.emailTo   || '',
+      passTo:    data.passTo    || '',
+      plan:      data.plan      || '',
     };
+  }
+
+  // Count rows with validation errors
+  function countMigErrors() {
+    const fromEmails = {}, toEmails = {};
+    migRows.forEach((r, i) => {
+      const from = r.emailFrom.toLowerCase().trim();
+      const to   = r.emailTo.toLowerCase().trim();
+      if (from) { fromEmails[from] = fromEmails[from] || []; fromEmails[from].push(i); }
+      if (to)   { toEmails[to]   = toEmails[to]   || []; toEmails[to].push(i); }
+    });
+    const dupFromIdx = new Set(Object.values(fromEmails).filter(a => a.length > 1).flat());
+    const dupToIdx   = new Set(Object.values(toEmails).filter(a => a.length > 1).flat());
+    let err = 0;
+    migRows.forEach((r, i) => {
+      const hasDup     = dupFromIdx.has(i) || dupToIdx.has(i);
+      const fromOk     = isValidEmail(r.emailFrom);
+      const toOk       = isValidEmail(r.emailTo);
+      const passToOk   = r.emailTo ? validatePassword(r.passTo, r, false) : true;
+      if (hasDup || (r.emailFrom && !fromOk) || (r.emailTo && !toOk) || (r.emailTo && !passToOk)) err++;
+    });
+    return err;
+  }
+
+  // Migration error modal
+  function openMigErrModal(downloadFn) {
+    pendingDownloadFn = downloadFn;
+    document.getElementById('migErrCount').innerText = countMigErrors();
+    document.getElementById('migErrConfirmBtn').onclick = () => {
+      closeMigErrModal();
+      pendingDownloadFn && pendingDownloadFn();
+    };
+    document.getElementById('migErrModal').classList.add('show');
+  }
+  function closeMigErrModal() {
+    document.getElementById('migErrModal').classList.remove('show');
+    pendingDownloadFn = null;
   }
 
   function renderMigrationUI() {
@@ -1098,15 +1371,9 @@
             <input class="mig-cid-input" id="migCid" placeholder="Company CID (ex: empresa_abc)" value="${migCompany}">
           </div>
           <span class="mig-counter"><b id="migCount">0</b> conta(s)</span>
-          <button class="mig-action-btn outline" id="migImportBtn">
-            ${ICONS.upload}<span>Importar</span>
-          </button>
-          <button class="mig-action-btn outline" id="migAddBtn">
-            ${ICONS.plus}<span>Adicionar</span>
-          </button>
-          <button class="mig-action-btn danger" id="migClearBtn">
-            ${ICONS.trash}<span>Limpar</span>
-          </button>
+          <button class="mig-action-btn outline" id="migImportBtn">${ICONS.upload}<span>Importar</span></button>
+          <button class="mig-action-btn outline" id="migAddBtn">${ICONS.plus}<span>Adicionar</span></button>
+          <button class="mig-action-btn danger" id="migClearBtn">${ICONS.trash}<span>Limpar</span></button>
         </div>
 
         <div class="mig-table-wrap">
@@ -1114,12 +1381,9 @@
             <thead>
               <tr>
                 <th class="col-num">#</th>
-                <th>Nome</th>
-                <th>Sobrenome</th>
-                <th>E-mail Origem</th>
-                <th>Senha Origem</th>
-                <th>E-mail Destino</th>
-                <th>Senha Destino</th>
+                <th>Nome</th><th>Sobrenome</th>
+                <th>E-mail Origem</th><th>Senha Origem</th>
+                <th>E-mail Destino</th><th>Senha Destino</th>
                 <th>Plano</th>
                 <th class="col-del"></th>
               </tr>
@@ -1140,15 +1404,9 @@
         <div class="mig-footer">
           <div class="mig-footer-info" id="migStats">—</div>
           <div class="mig-download-row">
-            <button class="mig-dl-btn lote" id="dlLoteBtn" disabled>
-              ${ICONS.download}<span>Baixar LOTE</span>
-            </button>
-            <button class="mig-dl-btn acc" id="dlAccBtn" disabled>
-              ${ICONS.download}<span>Baixar ACC</span>
-            </button>
-            <button class="mig-dl-btn both" id="dlBothBtn" disabled>
-              ${ICONS.download}<span>Baixar Ambos</span>
-            </button>
+            <button class="mig-dl-btn lote" id="dlLoteBtn" disabled>${ICONS.download}<span>Baixar LOTE</span></button>
+            <button class="mig-dl-btn acc"  id="dlAccBtn"  disabled>${ICONS.download}<span>Baixar ACC</span></button>
+            <button class="mig-dl-btn both" id="dlBothBtn" disabled>${ICONS.download}<span>Baixar Ambos</span></button>
           </div>
         </div>
       </div>
@@ -1156,7 +1414,7 @@
   }
 
   function bindMigration() {
-    migRows = JSON.parse(sessionStorage.getItem('migRows') || '[]');
+    migRows    = JSON.parse(sessionStorage.getItem('migRows') || '[]');
     migCompany = sessionStorage.getItem('migCompany') || '';
     const cidEl = document.getElementById('migCid');
     if (cidEl) cidEl.value = migCompany;
@@ -1172,26 +1430,19 @@
       migRows.push(createMigRow());
       saveMigRows();
       renderMigTable();
-      setTimeout(() => {
-        const wrap = document.querySelector('.mig-table-wrap');
-        if (wrap) wrap.scrollTop = wrap.scrollHeight;
-      }, 50);
+      setTimeout(() => { const wrap = document.querySelector('.mig-table-wrap'); if (wrap) wrap.scrollTop = wrap.scrollHeight; }, 50);
     };
 
-    // NOVO: Chama o Modal em vez do alerta nativo
     document.getElementById('migClearBtn').onclick = () => {
-      if (migRows.length === 0) return;
+      if (!migRows.length) return;
       document.getElementById('confirmCount').innerText = migRows.length;
       document.getElementById('confirmModal').classList.add('show');
     };
 
-    document.getElementById('migImportBtn').onclick = () => {
-      document.getElementById('migFileInput').click();
-    };
+    document.getElementById('migImportBtn').onclick = () => document.getElementById('migFileInput').click();
 
     document.getElementById('migFileInput').onchange = (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
+      const file = e.target.files[0]; if (!file) return;
       e.target.value = '';
       const ext = file.name.split('.').pop().toLowerCase();
       if (ext === 'csv') {
@@ -1209,24 +1460,13 @@
 
     document.getElementById('dlLoteBtn').onclick = () => downloadLote();
     document.getElementById('dlAccBtn').onclick  = () => downloadAcc();
-    document.getElementById('dlBothBtn').onclick  = () => { downloadLote(); setTimeout(downloadAcc, 200); };
+    document.getElementById('dlBothBtn').onclick = () => downloadBoth();
   }
 
-  // Lógica do Modal de Exclusão
-  function closeConfirmModal() {
-    document.getElementById('confirmModal').classList.remove('show');
-  }
+  function closeConfirmModal() { document.getElementById('confirmModal').classList.remove('show'); }
+  function executeClear() { migRows = []; saveMigRows(); renderMigTable(); closeConfirmModal(); }
 
-  function executeClear() {
-    migRows = [];
-    saveMigRows();
-    renderMigTable();
-    closeConfirmModal();
-  }
-
-  function saveMigRows() {
-    sessionStorage.setItem('migRows', JSON.stringify(migRows));
-  }
+  function saveMigRows() { sessionStorage.setItem('migRows', JSON.stringify(migRows)); }
 
   function getCid() {
     const raw = (document.getElementById('migCid')?.value || migCompany || 'cliente').trim();
@@ -1234,14 +1474,13 @@
   }
 
   function renderMigTable() {
-    const tbody = document.getElementById('migTbody');
+    const tbody  = document.getElementById('migTbody');
     const emptyEl = document.getElementById('migEmpty');
     const countEl = document.getElementById('migCount');
     const statsEl = document.getElementById('migStats');
-    const dlLote = document.getElementById('dlLoteBtn');
-    const dlAcc  = document.getElementById('dlAccBtn');
-    const dlBoth = document.getElementById('dlBothBtn');
-
+    const dlLote  = document.getElementById('dlLoteBtn');
+    const dlAcc   = document.getElementById('dlAccBtn');
+    const dlBoth  = document.getElementById('dlBothBtn');
     if (!tbody) return;
 
     countEl.innerText = migRows.length;
@@ -1252,21 +1491,19 @@
     migRows.forEach((r, i) => {
       const from = r.emailFrom.toLowerCase().trim();
       const to   = r.emailTo.toLowerCase().trim();
-      if (from) { fromEmails[from] = (fromEmails[from] || []); fromEmails[from].push(i); }
-      if (to)   { toEmails[to]   = (toEmails[to]   || []); toEmails[to].push(i); }
+      if (from) { fromEmails[from] = fromEmails[from] || []; fromEmails[from].push(i); }
+      if (to)   { toEmails[to]   = toEmails[to]   || []; toEmails[to].push(i); }
     });
     const dupFromIdx = new Set(Object.values(fromEmails).filter(a => a.length > 1).flat());
     const dupToIdx   = new Set(Object.values(toEmails).filter(a => a.length > 1).flat());
 
     let validCount = 0, warnCount = 0;
     migRows.forEach((r, i) => {
-      const hasDup = dupFromIdx.has(i) || dupToIdx.has(i);
-      const hasFrom = isValidEmail(r.emailFrom);
-      const hasTo   = isValidEmail(r.emailTo);
-      const passFromOk = true; 
-      const passToOk   = r.emailTo ? validatePassword(r.passTo, r, false) : true;
-
-      if (!hasDup && hasFrom && hasTo && passFromOk && passToOk) validCount++;
+      const hasDup   = dupFromIdx.has(i) || dupToIdx.has(i);
+      const fromOk   = isValidEmail(r.emailFrom);
+      const toOk     = isValidEmail(r.emailTo);
+      const passToOk = r.emailTo ? validatePassword(r.passTo, r, false) : true;
+      if (!hasDup && fromOk && toOk && passToOk) validCount++;
       else if (hasDup) warnCount++;
     });
     const errCount = migRows.length - validCount - warnCount;
@@ -1275,84 +1512,66 @@
       statsEl.innerHTML = `
         <span class="mig-badge ok">${validCount} ok</span>
         ${warnCount > 0 ? `<span class="mig-badge warn">${warnCount} dup</span>` : ''}
-        ${errCount > 0  ? `<span class="mig-badge err">${errCount} com erro</span>` : ''}
+        ${errCount  > 0 ? `<span class="mig-badge err">${errCount} com erro</span>` : ''}
       `;
     } else {
       statsEl.innerHTML = '—';
     }
 
-    dlLote.disabled = dlAcc.disabled = dlBoth.disabled = !hasRows || errCount > 0;
+    // Buttons always enabled when there are rows — errors only block via modal warning
+    dlLote.disabled = dlAcc.disabled = dlBoth.disabled = !hasRows;
 
     tbody.innerHTML = migRows.map((row, idx) => {
-      const isDup = dupFromIdx.has(idx) || dupToIdx.has(idx);
-      const fromOk = isValidEmail(row.emailFrom);
-      const toOk   = isValidEmail(row.emailTo);
-      const passFromOk = true; 
+      const isDup      = dupFromIdx.has(idx) || dupToIdx.has(idx);
+      const fromOk     = isValidEmail(row.emailFrom);
+      const toOk       = isValidEmail(row.emailTo);
       const passToOk   = row.emailTo ? validatePassword(row.passTo, row, false) : true;
+      const hasError   = (!fromOk && row.emailFrom) || (!toOk && row.emailTo) || (row.emailTo && !passToOk);
+      const rowClass   = isDup ? 'row-duplicate' : hasError ? 'row-error' : '';
 
-      const hasError = (!fromOk && row.emailFrom) || (!toOk && row.emailTo) || (row.emailFrom && !passFromOk) || (row.emailTo && !passToOk);
-      const rowClass = isDup ? 'row-duplicate' : hasError ? 'row-error' : '';
-
-      // O campo "plan" agora é um input de texto comum
       return `
         <tr class="${rowClass}" data-idx="${idx}">
           <td class="col-num">${idx + 1}</td>
           <td><input class="mig-cell" data-field="firstName" value="${esc(row.firstName)}" placeholder="Nome"></td>
           <td><input class="mig-cell" data-field="lastName"  value="${esc(row.lastName)}"  placeholder="Sobrenome"></td>
           <td><input class="mig-cell ${(!fromOk && row.emailFrom) ? 'invalid' : ''}" data-field="emailFrom" value="${esc(row.emailFrom)}" placeholder="origem@exemplo.com" type="email"></td>
-          <td><input class="mig-cell ${(!passFromOk && row.emailFrom) ? 'invalid' : ''}" data-field="passFrom"   value="${esc(row.passFrom)}"   placeholder="••••••••" type="text" autocomplete="off"></td>
-          <td><input class="mig-cell ${(!toOk && row.emailTo) ? 'invalid' : ''}" data-field="emailTo"   value="${esc(row.emailTo)}"   placeholder="destino@exemplo.com" type="email"></td>
-          <td><input class="mig-cell ${(!passToOk && row.emailTo) ? 'invalid' : ''}" data-field="passTo"     value="${esc(row.passTo)}"     placeholder="••••••••" type="text" autocomplete="off"></td>
+          <td><input class="mig-cell" data-field="passFrom" value="${esc(row.passFrom)}" placeholder="••••••••" type="text" autocomplete="off"></td>
+          <td><input class="mig-cell ${(!toOk && row.emailTo) ? 'invalid' : ''}" data-field="emailTo" value="${esc(row.emailTo)}" placeholder="destino@exemplo.com" type="email"></td>
+          <td><input class="mig-cell ${(!passToOk && row.emailTo) ? 'invalid' : ''}" data-field="passTo" value="${esc(row.passTo)}" placeholder="••••••••" type="text" autocomplete="off"></td>
           <td><input class="mig-cell" data-field="plan" value="${esc(row.plan)}" placeholder="Plano (ex: z-basic 5gb)" type="text"></td>
-          <td class="col-del">
-            <button class="mig-del-btn" data-del="${idx}" title="Remover">${ICONS.trash}</button>
-          </td>
+          <td class="col-del"><button class="mig-del-btn" data-del="${idx}" title="Remover">${ICONS.trash}</button></td>
         </tr>
       `;
     }).join('');
 
     tbody.querySelectorAll('.mig-cell').forEach(el => {
       el.addEventListener('input', onCellInput);
-      el.addEventListener('blur', () => { saveMigRows(); renderMigTable(); });
+      el.addEventListener('blur',  () => { saveMigRows(); renderMigTable(); });
     });
     tbody.querySelectorAll('.mig-del-btn').forEach(btn => {
-      btn.onclick = () => {
-        const i = parseInt(btn.dataset.del);
-        migRows.splice(i, 1);
-        saveMigRows();
-        renderMigTable();
-      };
+      btn.onclick = () => { migRows.splice(parseInt(btn.dataset.del), 1); saveMigRows(); renderMigTable(); };
     });
   }
 
   function onCellInput(e) {
-    const el = e.target;
-    const tr = el.closest('tr');
-    const idx = parseInt(tr.dataset.idx);
+    const el    = e.target;
+    const tr    = el.closest('tr');
+    const idx   = parseInt(tr.dataset.idx);
     const field = el.dataset.field;
-    
-    if (migRows[idx] !== undefined) {
-      migRows[idx][field] = el.value;
-
-      const row = migRows[idx];
-      const fromOk = isValidEmail(row.emailFrom);
-      const toOk   = isValidEmail(row.emailTo);
-      const passFromOk = true;
-      const passToOk   = row.emailTo ? validatePassword(row.passTo, row, false) : true;
-
-      const emailFromEl = tr.querySelector('[data-field="emailFrom"]');
-      const emailToEl   = tr.querySelector('[data-field="emailTo"]');
-      const passFromEl  = tr.querySelector('[data-field="passFrom"]');
-      const passToEl    = tr.querySelector('[data-field="passTo"]');
-
-      if(emailFromEl) emailFromEl.classList.toggle('invalid', row.emailFrom && !fromOk);
-      if(emailToEl) emailToEl.classList.toggle('invalid', row.emailTo && !toOk);
-      if(passFromEl) passFromEl.classList.toggle('invalid', row.emailFrom && !passFromOk);
-      if(passToEl) passToEl.classList.toggle('invalid', row.emailTo && !passToOk);
-
-      const hasError = (row.emailFrom && !fromOk) || (row.emailTo && !toOk) || (row.emailFrom && !passFromOk) || (row.emailTo && !passToOk);
-      tr.classList.toggle('row-error', hasError);
-    }
+    if (migRows[idx] === undefined) return;
+    migRows[idx][field] = el.value;
+    const row        = migRows[idx];
+    const fromOk     = isValidEmail(row.emailFrom);
+    const toOk       = isValidEmail(row.emailTo);
+    const passToOk   = row.emailTo ? validatePassword(row.passTo, row, false) : true;
+    const emailFromEl = tr.querySelector('[data-field="emailFrom"]');
+    const emailToEl   = tr.querySelector('[data-field="emailTo"]');
+    const passToEl    = tr.querySelector('[data-field="passTo"]');
+    if (emailFromEl) emailFromEl.classList.toggle('invalid', row.emailFrom && !fromOk);
+    if (emailToEl)   emailToEl.classList.toggle('invalid', row.emailTo && !toOk);
+    if (passToEl)    passToEl.classList.toggle('invalid', row.emailTo && !passToOk);
+    const hasError = (row.emailFrom && !fromOk) || (row.emailTo && !toOk) || (row.emailTo && !passToOk);
+    tr.classList.toggle('row-error', hasError);
   }
 
   function esc(str) {
@@ -1363,69 +1582,41 @@
   function importCSV(text) {
     const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
     if (!lines.length) { showToast('Arquivo CSV vazio.', 'error'); return; }
-
     let start = 0;
     const header = lines[0].toLowerCase();
     if (header.includes('nome') || header.includes('email') || header.includes('first')) start = 1;
-
     let added = 0;
     for (let i = start; i < lines.length; i++) {
-      const sep = lines[i].includes(';') ? ';' : ',';
+      const sep  = lines[i].includes(';') ? ';' : ',';
       const cols = lines[i].split(sep).map(c => c.trim().replace(/^["']|["']$/g, ''));
       if (cols.length < 2) continue;
-      migRows.push(createMigRow({
-        firstName: cols[0] || '',
-        lastName:  cols[1] || '',
-        emailFrom: cols[2] || '',
-        passFrom:  cols[3] || '',
-        emailTo:   cols[4] || '',
-        passTo:    cols[5] || '',
-        plan:      cols[6] || '', // Agora puxa exatamente o texto digitado
-      }));
+      migRows.push(createMigRow({ firstName: cols[0]||'', lastName: cols[1]||'', emailFrom: cols[2]||'', passFrom: cols[3]||'', emailTo: cols[4]||'', passTo: cols[5]||'', plan: cols[6]||'' }));
       added++;
     }
-    saveMigRows();
-    renderMigTable();
+    saveMigRows(); renderMigTable();
     showToast(`${added} conta(s) importada(s) do CSV.`);
   }
 
   function importXLSX(buffer) {
-    if (typeof XLSX === 'undefined') {
-      showToast('SheetJS não carregado. Verifique a conexão.', 'error');
-      return;
-    }
+    if (typeof XLSX === 'undefined') { showToast('SheetJS não carregado. Verifique a conexão.', 'error'); return; }
     try {
-      const wb = XLSX.read(buffer, { type: 'array' });
-      const ws = wb.Sheets[wb.SheetNames[0]];
+      const wb   = XLSX.read(buffer, { type: 'array' });
+      const ws   = wb.Sheets[wb.SheetNames[0]];
       const rows = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
-
       if (!rows.length) { showToast('Planilha vazia.', 'error'); return; }
-
       let start = 0;
       const firstCell = String(rows[0][0] || '').toLowerCase();
       if (firstCell.includes('nome') || firstCell.includes('first') || firstCell.includes('name')) start = 1;
-
       let added = 0;
       for (let i = start; i < rows.length; i++) {
         const r = rows[i];
-        if (!r[0] && !r[2] && !r[4]) continue; 
-        migRows.push(createMigRow({
-          firstName: String(r[0] || '').trim(),
-          lastName:  String(r[1] || '').trim(),
-          emailFrom: String(r[2] || '').trim(),
-          passFrom:  String(r[3] || '').trim(),
-          emailTo:   String(r[4] || '').trim(),
-          passTo:    String(r[5] || '').trim(),
-          plan:      String(r[6] || '').trim(), 
-        }));
+        if (!r[0] && !r[2] && !r[4]) continue;
+        migRows.push(createMigRow({ firstName: String(r[0]||'').trim(), lastName: String(r[1]||'').trim(), emailFrom: String(r[2]||'').trim(), passFrom: String(r[3]||'').trim(), emailTo: String(r[4]||'').trim(), passTo: String(r[5]||'').trim(), plan: String(r[6]||'').trim() }));
         added++;
       }
-      saveMigRows();
-      renderMigTable();
+      saveMigRows(); renderMigTable();
       showToast(`${added} conta(s) importada(s) da planilha.`);
-    } catch (err) {
-      showToast('Erro ao ler a planilha: ' + err.message, 'error');
-    }
+    } catch (err) { showToast('Erro ao ler a planilha: ' + err.message, 'error'); }
   }
 
   // ======= DOWNLOAD =======
@@ -1433,30 +1624,46 @@
     const blob = new Blob([content], { type: mime });
     const url  = URL.createObjectURL(blob);
     const a    = document.createElement('a');
-    a.href     = url;
-    a.download = filename;
-    a.click();
+    a.href = url; a.download = filename; a.click();
     setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
 
-  function downloadLote() {
-    if (!migRows.length) { showToast('Nenhuma conta para exportar.', 'warn'); return; }
-    const lines = migRows.map(r =>
-      [r.firstName, r.lastName, r.emailTo, r.passTo, r.plan].join(';')
-    );
-    const cid = getCid();
+  function _doDownloadLote() {
+    const lines = migRows.map(r => [r.firstName, r.lastName, r.emailTo, r.passTo, r.plan].join(';'));
+    const cid   = getCid();
     downloadFile(lines.join('\n'), `lote_${cid}.csv`, 'text/csv;charset=utf-8');
     showToast(`lote_${cid}.csv gerado com ${migRows.length} linha(s).`);
   }
 
-  function downloadAcc() {
-    if (!migRows.length) { showToast('Nenhuma conta para exportar.', 'warn'); return; }
-    const lines = migRows.map(r =>
-      [r.emailFrom, r.passFrom, r.emailTo, r.passTo].join(';')
-    );
-    const cid = getCid();
+  function _doDownloadAcc() {
+    const lines = migRows.map(r => [r.emailFrom, r.passFrom, r.emailTo, r.passTo].join(';'));
+    const cid   = getCid();
     downloadFile(lines.join('\n'), `acc_${cid}.csv`, 'text/csv;charset=utf-8');
     showToast(`acc_${cid}.csv gerado com ${migRows.length} linha(s).`);
+  }
+
+  function downloadLote() {
+    if (!migRows.length) { showToast('Nenhuma conta para exportar.', 'warn'); return; }
+    const errs = countMigErrors();
+    if (errs > 0) { openMigErrModal(() => _doDownloadLote()); return; }
+    _doDownloadLote();
+  }
+
+  function downloadAcc() {
+    if (!migRows.length) { showToast('Nenhuma conta para exportar.', 'warn'); return; }
+    const errs = countMigErrors();
+    if (errs > 0) { openMigErrModal(() => _doDownloadAcc()); return; }
+    _doDownloadAcc();
+  }
+
+  function downloadBoth() {
+    if (!migRows.length) { showToast('Nenhuma conta para exportar.', 'warn'); return; }
+    const errs = countMigErrors();
+    if (errs > 0) {
+      openMigErrModal(() => { _doDownloadLote(); setTimeout(_doDownloadAcc, 200); });
+      return;
+    }
+    _doDownloadLote(); setTimeout(_doDownloadAcc, 200);
   }
 
   renderNav();
