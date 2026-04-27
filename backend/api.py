@@ -8,6 +8,7 @@ from backend.modules.email.dkim import check_dkim
 from backend.modules.email.blks import check_blacklists
 from backend.modules.email.smtp_checker import check_smtp
 from backend.modules.email.email_header_analyzer import analyze_header
+from modules.email.log_analyzer import analyze_log
 
 from backend.modules.dns.whois import get_whois_info
 from backend.modules.dns.lookup import dns_lookup
