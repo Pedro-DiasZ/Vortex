@@ -402,6 +402,25 @@
   @keyframes spin { to { transform: rotate(360deg); } }
   .spin { animation: spin 1s linear infinite; }
 
+  /* ===== SPF TAGS ===== */
+  .spf-tags-wrap { padding: 16px 18px; display: flex; flex-wrap: wrap; gap: 8px; align-items: flex-start; }
+  .spf-tag {
+    display: inline-block; padding: 5px 11px; border-radius: 8px;
+    font: 600 13px 'Fira Code', monospace; user-select: text;
+    background: rgba(59,130,246,0.1); color: var(--primary-glow);
+    border: 1px solid rgba(59,130,246,0.25);
+  }
+  .spf-tag.tag-version  { background: rgba(139,92,246,0.1); color: #a78bfa; border-color: rgba(139,92,246,0.25); }
+  .spf-tag.tag-all-fail { background: rgba(239,68,68,0.1);  color: #f87171; border-color: rgba(239,68,68,0.25); }
+  .spf-tag.tag-all-soft { background: rgba(245,158,11,0.1); color: #fbbf24; border-color: rgba(245,158,11,0.25); }
+  .spf-tag.tag-all-pass { background: rgba(34,197,94,0.1);  color: #4ade80; border-color: rgba(34,197,94,0.25); }
+  .spf-status {
+    display: flex; align-items: center; gap: 8px;
+    padding: 10px 18px 16px; font: 600 12px 'Inter', sans-serif;
+    border-top: 1px solid var(--border-soft); color: var(--muted);
+  }
+  .spf-status-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
   /* ===== MIGRATION ===== */
   .mig-topbar { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; }
   .mig-cid-wrap {
@@ -1277,6 +1296,7 @@
           setMessage(msg, true);
         } else {
           out.innerHTML = renderTable(data);
+          if (route.path === '/spf') renderSPFTags(data, out);
           const rawText = typeof data === 'string' ? data : JSON.stringify(data, null, 2);
           showRecommendations(route.path, rawText);
         }
@@ -1767,6 +1787,34 @@
       return;
     }
     _doDownloadLote(); setTimeout(_doDownloadAcc, 200);
+  }
+
+  // ======= SPF VISUAL TAGS =======
+  function renderSPFTags(data, container) {
+    const record = data?.record || '';
+    if (!record.toLowerCase().includes('v=spf')) return;
+
+    let statusColor = 'var(--warning)', statusMsg = 'Política neutra.';
+    if (record.includes('-all'))      { statusColor = 'var(--danger)';  statusMsg = 'Política restritiva (-all): rejeita e-mails não autorizados.'; }
+    else if (record.includes('~all')) { statusColor = 'var(--warning)'; statusMsg = 'Política suave (~all): marca como suspeito mas entrega normalmente.'; }
+    else if (record.includes('+all')) { statusColor = '#f87171';        statusMsg = 'Atenção: +all permite qualquer servidor enviar e-mails pelo domínio!'; }
+
+    const tags = record.trim().split(/\s+/).map(mech => {
+      const lower = mech.toLowerCase();
+      if (lower === 'v=spf1') return `<span class="spf-tag tag-version">${mech}</span>`;
+      if (['-all','~all','+all','?all'].includes(lower)) {
+        const cls = lower.startsWith('-') ? 'tag-all-fail' : lower.startsWith('~') ? 'tag-all-soft' : 'tag-all-pass';
+        return `<span class="spf-tag ${cls}">${mech}</span>`;
+      }
+      return `<span class="spf-tag">${mech}</span>`;
+    }).join('');
+
+    container.innerHTML = `
+      <div class="spf-tags-wrap">${tags}</div>
+      <div class="spf-status">
+        <span class="spf-status-dot" style="background:${statusColor};box-shadow:0 0 0 3px ${statusColor}33;"></span>
+        <span>${statusMsg}</span>
+      </div>`;
   }
 
   window.addEventListener('error', (ev) => {
