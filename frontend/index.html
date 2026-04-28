@@ -243,14 +243,51 @@
   }
   .copy-btn svg { width: 14px; height: 14px; flex-shrink: 0; }
   .copy-btn:hover { background: var(--sidebar-soft); }
-  pre.output {
-    margin: 0; padding: 18px;
-    background: var(--terminal-bg); color: var(--terminal-fg);
-    font: 500 13px 'Fira Code', monospace; line-height: 1.55;
-    white-space: pre-wrap; word-break: break-all;
+  .output-wrap {
+    background: var(--card-2);
     max-height: 480px; overflow: auto;
   }
-  pre.output.error { color: var(--danger); }
+  .output-wrap .placeholder,
+  .output-wrap .err-msg {
+    margin: 0; padding: 18px;
+    font: 500 13px 'Fira Code', monospace; line-height: 1.55;
+    color: var(--muted); white-space: pre-wrap; word-break: break-word;
+  }
+  .output-wrap .err-msg { color: var(--danger); }
+  table.out-table {
+    width: 100%; border-collapse: collapse;
+    font: 500 13px 'Inter', sans-serif;
+  }
+  table.out-table th, table.out-table td {
+    text-align: left; padding: 10px 14px;
+    border-bottom: 1px solid var(--border-soft);
+    vertical-align: top; word-break: break-word;
+  }
+  table.out-table thead th {
+    position: sticky; top: 0; z-index: 1;
+    background: var(--card); color: var(--muted);
+    font: 700 10.5px 'Inter', sans-serif;
+    text-transform: uppercase; letter-spacing: 0.16em;
+    border-bottom: 1px solid var(--border);
+  }
+  table.out-table td.k {
+    color: var(--primary-glow); font-weight: 600;
+    width: 34%; white-space: nowrap;
+  }
+  table.out-table td.v {
+    color: var(--text);
+    font-family: 'Fira Code', monospace; font-size: 12.5px;
+  }
+  table.out-table tr:last-child td { border-bottom: none; }
+  table.out-table tr:hover td { background: rgba(59,130,246,0.04); }
+  table.out-table td.depth-1 { padding-left: 28px; }
+  table.out-table td.depth-2 { padding-left: 42px; }
+  table.out-table td.depth-3 { padding-left: 56px; }
+  table.out-table td.section {
+    background: var(--card); color: var(--primary);
+    font: 800 10.5px 'Inter', sans-serif;
+    text-transform: uppercase; letter-spacing: 0.16em;
+  }
 
   /* ===== RECOMMENDATIONS ===== */
   .rec-strip {
@@ -641,6 +678,7 @@
     copy: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>',
     check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>',
     terminal: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>',
+    table: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/></svg>',
     moon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>',
     sun: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>',
     download: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>',
@@ -1115,10 +1153,10 @@
       <div class="result">
         <div class="result-head">
           <div class="dots"><span class="r"></span><span class="y"></span><span class="g"></span></div>
-          <div class="result-title">${ICONS.terminal}<span>Resultado</span></div>
+          <div class="result-title">${ICONS.table || ICONS.terminal}<span>Resultado</span></div>
           <button class="copy-btn" id="copyOut">${ICONS.copy}<span>Copiar</span></button>
         </div>
-        <pre class="output" id="output">Aguardando execução...</pre>
+        <div class="output-wrap" id="output"><div class="placeholder">Aguardando execução...</div></div>
       </div>
       <div id="recArea"></div>
     `;
@@ -1134,14 +1172,80 @@
     });
 
     document.getElementById('copyOut').onclick = async () => {
-      const text = out.innerText;
+      const text = (out.innerText || '').trim();
       if (!text || text === 'Aguardando execução...') return;
       try { await navigator.clipboard.writeText(text); showToast('Resultado copiado!'); } catch {}
     };
 
+    function setMessage(msg, isError) {
+      out.innerHTML = `<div class="${isError ? 'err-msg' : 'placeholder'}"></div>`;
+      out.firstChild.textContent = msg;
+    }
+
+    // Converte qualquer payload (objeto, array, string) em linhas { key, value, depth }
+    function flatten(value, prefix, depth, rows) {
+      if (value === null || value === undefined) {
+        rows.push({ k: prefix || '(vazio)', v: '—', d: depth });
+        return;
+      }
+      if (Array.isArray(value)) {
+        if (!value.length) { rows.push({ k: prefix || '[]', v: '(lista vazia)', d: depth }); return; }
+        const allPrim = value.every(v => v === null || typeof v !== 'object');
+        if (allPrim) { rows.push({ k: prefix, v: value.join(', '), d: depth }); return; }
+        value.forEach((v, i) => {
+          rows.push({ section: `${prefix || 'item'} [${i + 1}]`, d: depth });
+          flatten(v, '', depth + 1, rows);
+        });
+        return;
+      }
+      if (typeof value === 'object') {
+        const keys = Object.keys(value);
+        if (!keys.length) { rows.push({ k: prefix || '{}', v: '(vazio)', d: depth }); return; }
+        keys.forEach(k => flatten(value[k], prefix ? `${prefix}.${k}` : k, depth, rows));
+        return;
+      }
+      rows.push({ k: prefix || 'valor', v: String(value), d: depth });
+    }
+
+    function renderTable(data) {
+      // String: tenta JSON, senão divide por linhas
+      if (typeof data === 'string') {
+        const t = data.trim();
+        try {
+          const parsed = JSON.parse(t);
+          return renderTable(parsed);
+        } catch {}
+        const lines = t.split(/\r?\n/).filter(l => l.trim() !== '');
+        const rows = lines.map((l, i) => {
+          const m = l.match(/^\s*([\w\-\.\s]{1,40}?)\s*[:=]\s*(.+)$/);
+          return m ? { k: m[1].trim(), v: m[2].trim(), d: 0 }
+                   : { k: `linha ${i + 1}`, v: l, d: 0 };
+        });
+        return buildTableHTML(rows);
+      }
+      const rows = [];
+      flatten(data, '', 0, rows);
+      return buildTableHTML(rows);
+    }
+
+    function buildTableHTML(rows) {
+      if (!rows.length) return `<div class="placeholder">Sem dados.</div>`;
+      const esc = s => String(s).replace(/[&<>"']/g, c =>
+        ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+      const body = rows.map(r => {
+        if (r.section) {
+          return `<tr><td class="section depth-${Math.min(r.d,3)}" colspan="2">${esc(r.section)}</td></tr>`;
+        }
+        return `<tr><td class="k depth-${Math.min(r.d,3)}">${esc(r.k)}</td><td class="v">${esc(r.v)}</td></tr>`;
+      }).join('');
+      return `<table class="out-table">
+        <thead><tr><th>Campo</th><th>Valor</th></tr></thead>
+        <tbody>${body}</tbody>
+      </table>`;
+    }
+
     async function execute() {
-      out.classList.remove('error');
-      out.innerText = 'Executando requisição...';
+      setMessage('Executando requisição...', false);
       if (recArea) recArea.innerHTML = '';
       btn.disabled = true;
       btn.innerHTML = `<svg class="spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M21 12a9 9 0 1 1-6.22-8.56"/></svg><span>Carregando...</span>`;
@@ -1169,16 +1273,15 @@
         const ct  = res.headers.get('content-type') || '';
         const data = ct.includes('application/json') ? await res.json() : await res.text();
         if (!res.ok) {
-          out.classList.add('error');
-          out.innerText = typeof data === 'string' ? data : `Erro ${res.status}\n${JSON.stringify(data, null, 2)}`;
+          const msg = typeof data === 'string' ? data : `Erro ${res.status}\n${JSON.stringify(data, null, 2)}`;
+          setMessage(msg, true);
         } else {
-          out.innerText = typeof data === 'string' ? data : JSON.stringify(data, null, 2);
-          // Show recommendations on success
-          showRecommendations(route.path, out.innerText);
+          out.innerHTML = renderTable(data);
+          const rawText = typeof data === 'string' ? data : JSON.stringify(data, null, 2);
+          showRecommendations(route.path, rawText);
         }
       } catch (e) {
-        out.classList.add('error');
-        out.innerText = `Não foi possível conectar à API em ${API}.\nVerifique se o servidor local está em execução.`;
+        setMessage(`Não foi possível conectar à API em ${API}.\nVerifique se o servidor local está em execução.`, true);
       } finally {
         btn.disabled = false;
         btn.innerHTML = `${ICONS.play}<span>Executar</span>`;
