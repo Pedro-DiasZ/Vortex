@@ -629,7 +629,6 @@
   </div>
 </div>
 
-<!-- Modal: Confirmar Limpeza -->
 <div class="modal-overlay" id="confirmModal">
   <div class="modal-box">
     <div class="modal-icon danger">
@@ -644,7 +643,6 @@
   </div>
 </div>
 
-<!-- Modal: Download com Erros -->
 <div class="modal-overlay" id="migErrModal">
   <div class="modal-box">
     <div class="modal-icon warn">
@@ -771,7 +769,6 @@
   let currentPath = '/spf';
 
   // ======= SMART RECOMMENDATIONS =======
-  // Each entry: { label, icon, target, field, getValue(output) → string|null }
   const RECOMMENDATIONS = {
     '/ping': [
       {
@@ -994,7 +991,6 @@
     const recs = RECOMMENDATIONS[path];
     if (!recs || !recs.length) { recArea.innerHTML = ''; return; }
 
-    // Evaluate each recommendation — only show those that produce a value
     const active = recs.map((rec, i) => {
       try {
         const value = rec.getValue(output);
@@ -1032,7 +1028,6 @@
   }
 
   function navigateWithData(path, field, value) {
-    // Switch tab if needed
     const group = ROUTE_GROUPS.find(g => g.items.some(item => item.path === path));
     if (group && group.category !== currentTab) {
       currentTab = group.category;
@@ -1043,14 +1038,12 @@
     renderView();
     toggleSidebar(false);
 
-    // Pre-fill field and auto-execute after render
     setTimeout(() => {
       const el = document.getElementById(`f_${field}`);
       if (el && value) {
         el.value = value;
         el.classList.add('field-highlight');
         el.dispatchEvent(new Event('input', { bubbles: true }));
-        // Auto-execute
         const execBtn = document.getElementById('execBtn');
         if (execBtn) execBtn.click();
       }
@@ -1215,7 +1208,6 @@
       out.firstChild.textContent = msg;
     }
 
-    // Converte qualquer payload (objeto, array, string) em linhas { key, value, depth }
     function flatten(value, prefix, depth, rows) {
       if (value === null || value === undefined) {
         rows.push({ k: prefix || '(vazio)', v: '—', d: depth });
@@ -1241,7 +1233,6 @@
     }
 
     function renderTable(data) {
-      // String: tenta JSON, senão divide por linhas
       if (typeof data === 'string') {
         const t = data.trim();
         try {
@@ -1427,11 +1418,9 @@
   function validatePassword(pwd, row, isFrom) {
     if (!pwd) return false;
     if (pwd.length < 8) return false;
-    if (!/[A-Z]/.test(pwd)) return false;
-    if (!/[a-z]/.test(pwd)) return false;
-    if (!/[0-9]/.test(pwd)) return false;
-    if (!/[^a-zA-Z0-9]/.test(pwd)) return false;
-    if (/[\/\[\]"';]/.test(pwd)) return false;
+    // Permite caracteres especiais que o provedor enviou
+    if (/[\/"';]/.test(pwd)) return false; 
+    
     const partsToCheck = [];
     if (row.firstName && row.firstName.length >= 3) partsToCheck.push(row.firstName.toLowerCase());
     if (row.lastName  && row.lastName.length  >= 3) partsToCheck.push(row.lastName.toLowerCase());
@@ -1462,7 +1451,6 @@
     };
   }
 
-  // Count rows with validation errors
   function countMigErrors() {
     const fromEmails = {}, toEmails = {};
     migRows.forEach((r, i) => {
@@ -1484,13 +1472,16 @@
     return err;
   }
 
-  // Migration error modal
   function openMigErrModal(downloadFn) {
     pendingDownloadFn = downloadFn;
     document.getElementById('migErrCount').innerText = countMigErrors();
-    document.getElementById('migErrConfirmBtn').onclick = () => {
+    const confirmBtn = document.getElementById('migErrConfirmBtn');
+    
+    // CORREÇÃO: Limpa evento anterior para evitar pilhas de download
+    confirmBtn.onclick = null; 
+    confirmBtn.onclick = () => {
       closeMigErrModal();
-      pendingDownloadFn && pendingDownloadFn();
+      if (typeof pendingDownloadFn === 'function') pendingDownloadFn();
     };
     document.getElementById('migErrModal').classList.add('show');
   }
@@ -1655,7 +1646,6 @@
       statsEl.innerHTML = '—';
     }
 
-    // Buttons always enabled when there are rows — errors only block via modal warning
     dlLote.disabled = dlAcc.disabled = dlBoth.disabled = !hasRows;
 
     tbody.innerHTML = migRows.map((row, idx) => {
@@ -1845,7 +1835,6 @@
       <span>${statusMsg}</span>
     </div>`;
 
-  // Bind dropdowns
   container.querySelectorAll('.spf-has-drop').forEach(tag => {
     tag.onclick = (e) => {
       e.stopPropagation();
