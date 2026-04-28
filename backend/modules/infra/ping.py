@@ -1,22 +1,47 @@
 import socket
+import subprocess
+import sys
 from urllib.parse import urlparse
-
-from ping3 import ping
 
 
 def _normalize_host(host: str) -> str:
     host = (host or "").strip()
     if not host:
         return ""
-
-    # Accept full URLs in the input field and extract only hostname.
     parsed = urlparse(host if "://" in host else f"//{host}")
     cleaned = parsed.hostname or host
     return cleaned.strip().strip("/")
 
 
-def ping_host(host):
+def _tcp_reachable(host: str, timeout: int = 5) -> tuple[bool, int | None]:
+    """Fallback: verifica alcançabilidade via TCP nas portas 443 e 80."""
+    for port in (443, 80):
+        try:
+            with socket.create_connection((host, port), timeout=timeout):
+                return True, port
+        except (socket.timeout, ConnectionRefusedError, OSError):
+            continue
+    return False, None
+
+
+def _system_ping(host: str) -> bool:
+    """Fallback: usa o binário 'ping' do sistema operacional."""
+    flag = "-n" if sys.platform == "win32" else "-c"
+    try:
+        result = subprocess.run(
+            ["ping", flag, "1", "-W", "3", host],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            timeout=5,
+        )
+        return result.returncode == 0
+    except Exception:
+        return False
+
+
+def ping_host(host: str) -> dict:
     normalized_host = _normalize_host(host)
+
     if not normalized_host:
         return {
             "host": host,
@@ -25,7 +50,7 @@ def ping_host(host):
             "alive": False,
             "response_time_ms": None,
             "found": False,
-            "reason": "Host vazio ou invalido"
+            "reason": "Host vazio ou inválido",
         }
 
     try:
@@ -38,21 +63,29 @@ def ping_host(host):
             "alive": False,
             "response_time_ms": None,
             "found": False,
-            "reason": "Falha na resolucao DNS do host"
+            "reason": "Falha na resolução DNS do host",
         }
 
     try:
+        from ping3 import ping
+
         result = ping(normalized_host, timeout=5)
+
         if result is None or result is False:
+            tcp_alive, tcp_port = _tcp_reachable(normalized_host)
             return {
                 "host": host,
                 "normalized_host": normalized_host,
                 "resolved_ip": resolved_ip,
-                "alive": False,
-                "status": "DOWN",
+                "alive": tcp_alive,
+                "status": "UP (TCP)" if tcp_alive else "DOWN",
                 "response_time_ms": None,
                 "found": True,
-                "reason": "Host resolveu, mas nao respondeu ao ICMP (timeout/firewall)"
+                "reason": (
+                    f"ICMP bloqueado; alcançável via TCP porta {tcp_port}"
+                    if tcp_alive
+                    else "Host resolveu, mas não respondeu a ICMP nem TCP"
+                ),
             }
 
         return {
@@ -62,14 +95,38 @@ def ping_host(host):
             "alive": True,
             "status": "UP",
             "response_time_ms": round(result * 1000, 2),
-            "found": True
+            "found": True,
         }
 
+    except PermissionError:
+        pass
     except Exception as e:
+        pass
+
+
+    if _system_ping(normalized_host):
         return {
             "host": host,
             "normalized_host": normalized_host,
-            "status": "Failed to ping host",
-            "found": False,
-            "error": str(e)
+            "resolved_ip": resolved_ip,
+            "alive": True,
+            "status": "UP (system ping)",
+            "response_time_ms": None,
+            "found": True,
+            "reason": "ICMP via ping do sistema",
         }
+    tcp_alive, tcp_port = _tcp_reachable(normalized_host)
+    return {
+        "host": host,
+        "normalized_host": normalized_host,
+        "resolved_ip": resolved_ip,
+        "alive": tcp_alive,
+        "status": f"UP (TCP:{tcp_port})" if tcp_alive else "DOWN",
+        "response_time_ms": None,
+        "found": True,
+        "reason": (
+            f"Sem permissão para ICMP; alcançável via TCP porta {tcp_port}"
+            if tcp_alive
+            else "Sem permissão para ICMP e sem resposta TCP"
+        ),
+    }
