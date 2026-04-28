@@ -426,24 +426,16 @@
   .spf-drop {
     display: none; position: absolute; top: calc(100% + 6px); left: 0; z-index: 99;
     background: var(--card); border: 1px solid var(--border); border-radius: 10px;
-    padding: 10px; box-shadow: 0 10px 40px -10px rgba(0,0,0,0.7);
-    width: max-content; max-width: 480px;
+    padding: 6px 0; min-width: 210px; box-shadow: var(--shadow-card);
   }
-  
-  .spf-tag.spf-has-drop.open .spf-drop { 
-    display: flex; flex-wrap: wrap; gap: 6px; 
-  }
-  
+  .spf-tag.spf-has-drop.open .spf-drop { display: block; }
   .spf-drop-item {
-    padding: 6px 12px; font: 500 12px 'Fira Code', monospace;
-    background: var(--card-2); border: 1px solid var(--border-soft); border-radius: 6px;
-    color: var(--text); white-space: nowrap; transition: 0.15s;
+    padding: 5px 14px; font: 500 12px 'Fira Code', monospace;
+    color: var(--muted); white-space: nowrap;
   }
-  
-  .spf-drop-item:hover { 
-    background: var(--sidebar-soft); border-color: var(--primary); color: var(--primary-glow); 
-  }
+  .spf-drop-item:hover { background: var(--sidebar-soft); color: var(--text); }
 
+  /* ===== MIGRATION ===== */
   .mig-topbar { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; }
   .mig-cid-wrap {
     flex: 1; min-width: 200px; display: flex; align-items: center; gap: 8px;
@@ -1289,8 +1281,6 @@
       setMessage('Executando requisição...', false);
       if (recArea) recArea.innerHTML = '';
       btn.disabled = true;
-      out.style.overflow = '';
-      out.parentElement.style.overflow = '';
       btn.innerHTML = `<svg class="spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M21 12a9 9 0 1 1-6.22-8.56"/></svg><span>Carregando...</span>`;
       try {
         let url = `${API}${route.path}`;
@@ -1877,8 +1867,6 @@
     document.getElementById('mainCard').innerHTML =
       `<div class="card" style="border-color:var(--danger);color:var(--danger);font-family:'Fira Code',monospace;font-size:12px;white-space:pre-wrap;">INIT ERROR:\n${e.message}\n\n${e.stack||''}</div>`;
   }
-  container.style.overflow = 'visible';
-  container.parentElement.style.overflow = 'visible';
 </script>
 </body>
 </html>
