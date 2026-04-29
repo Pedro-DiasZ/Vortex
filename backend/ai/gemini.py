@@ -81,7 +81,7 @@ def diagnose_email_content(kind: str, content: str) -> dict:
         response = requests.post(
             GEMINI_API_URL,
             params={"key": api_key},
-            timeout=8,
+            timeout=3,
             json={
                 "contents": [
                     {
