@@ -20,7 +20,7 @@ def check_http_status(url: str) -> dict:
     try:
         response = httpx.get(
             normalized_url,
-            follow_redirects=True,
+            follow_redirects=False,
             timeout=10,
             headers={"user-agent": "VortexTools"},
         )

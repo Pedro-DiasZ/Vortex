@@ -11,7 +11,7 @@ def get_http_headers(domain):
 
     try:
         url = f"https://{domain}"
-        response = requests.get(url, timeout=10)
+        response = requests.get(url, timeout=10, allow_redirects=False)
         headers_recebidos = response.headers
 
         found_list= []

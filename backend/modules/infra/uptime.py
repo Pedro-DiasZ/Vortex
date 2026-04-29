@@ -4,7 +4,7 @@ def check_uptime(url):
     if not url.startswith("http"):
         url = f"https://{url}"
     try:
-        response = requests.get(url, timeout=10)
+        response = requests.get(url, timeout=10, allow_redirects=False)
         return {
             "url": url,
             "status_code": response.status_code,

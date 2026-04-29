@@ -1544,8 +1544,8 @@
   }
 
   function bindMigration() {
-    migRows    = JSON.parse(sessionStorage.getItem('migRows') || '[]');
-    migCompany = sessionStorage.getItem('migCompany') || '';
+    migRows    = [];
+    migCompany = '';
     const cidEl = document.getElementById('migCid');
     if (cidEl) cidEl.value = migCompany;
 
@@ -1553,7 +1553,6 @@
 
     document.getElementById('migCid').oninput = (e) => {
       migCompany = e.target.value;
-      sessionStorage.setItem('migCompany', migCompany);
     };
 
     document.getElementById('migAddBtn').onclick = () => {
@@ -1596,7 +1595,7 @@
   function closeConfirmModal() { document.getElementById('confirmModal').classList.remove('show'); }
   function executeClear() { migRows = []; saveMigRows(); renderMigTable(); closeConfirmModal(); }
 
-  function saveMigRows() { sessionStorage.setItem('migRows', JSON.stringify(migRows)); }
+  function saveMigRows() {}
 
   function getCid() {
     const raw = (document.getElementById('migCid')?.value || migCompany || 'cliente').trim();
