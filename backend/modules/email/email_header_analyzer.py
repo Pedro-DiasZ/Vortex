@@ -1,72 +1,108 @@
-import email
+import re
 from email.parser import HeaderParser
+from email.utils import parsedate_to_datetime
 
 
-def _local_header_diagnosis(data: dict) -> dict:
+IPV4_RE = re.compile(r"\b(?:\d{1,3}\.){3}\d{1,3}\b")
+AUTH_RE = re.compile(r"\b(spf|dkim|dmarc)\s*=\s*([a-zA-Z0-9_-]+)", re.IGNORECASE)
+
+
+def _clean(value):
+    return " ".join(str(value or "").replace("\r", " ").replace("\n", " ").split())
+
+
+def _all_headers(msg, name):
+    return [_clean(value) for value in (msg.get_all(name) or [])]
+
+
+def _first_public_ip(text):
+    for ip in IPV4_RE.findall(text or ""):
+        parts = [int(part) for part in ip.split(".") if part.isdigit()]
+        if len(parts) != 4:
+            continue
+        if parts[0] in (10, 127) or parts[:2] == [192, 168] or (parts[0] == 172 and 16 <= parts[1] <= 31):
+            continue
+        return ip
+    return None
+
+
+def _auth_status(auth_results):
+    status = {"spf": "Not Found", "dkim": "Not Found", "dmarc": "Not Found"}
+    details = []
+    for header in auth_results:
+        for method, result in AUTH_RE.findall(header):
+            method = method.lower()
+            normalized = result.lower()
+            status[method] = normalized.capitalize()
+            details.append({"method": method.upper(), "result": normalized, "raw": header[:240]})
+    return status, details
+
+
+def _risk_and_diagnosis(data, auth_details, received_count):
     signals = []
-    if data.get("spf") == "Pass":
-        signals.append("SPF passou")
-    if data.get("dkim") == "Pass":
-        signals.append("DKIM passou")
-    if data.get("dmarc") == "Pass":
-        signals.append("DMARC passou")
+    recommendations = []
+    score = 0
 
-    missing_auth = [name for name in ("spf", "dkim", "dmarc") if data.get(name) == "Not Found"]
-    if missing_auth:
-        signals.append("Autenticacao nao encontrada: " + ", ".join(missing_auth).upper())
+    for method in ("spf", "dkim", "dmarc"):
+        value = data.get(method, "Not Found")
+        if value == "Pass":
+            signals.append(f"{method.upper()} aprovado")
+        elif value == "Not Found":
+            score += 1
+            signals.append(f"{method.upper()} nao encontrado")
+            recommendations.append(f"Verificar por que {method.upper()} nao aparece no Authentication-Results.")
+        else:
+            score += 2
+            signals.append(f"{method.upper()} retornou {value}")
+            recommendations.append(f"Investigar falha de {method.upper()} no provedor de envio.")
 
-    risk = "low" if len(signals) >= 3 and not missing_auth else "unknown"
-    summary = (
-        "Cabecalho reconhecido, mas nao ha autenticacao SPF/DKIM/DMARC visivel."
-        if missing_auth
-        else "Cabecalho reconhecido com autenticacao de e-mail aprovada."
-    )
+    if received_count == 0:
+        score += 1
+        signals.append("Sem cadeia Received")
+        recommendations.append("Validar se o cabecalho bruto foi colado completo.")
+
+    if not data.get("message_id"):
+        score += 1
+        signals.append("Message-ID ausente")
+
+    if data.get("origin_ip") == "Unknown":
+        recommendations.append("Conferir Received para identificar o IP de origem.")
+
+    if score >= 4:
+        risk = "high"
+        summary = "Cabecalho com falhas relevantes de autenticacao ou rastreabilidade."
+    elif score >= 2:
+        risk = "medium"
+        summary = "Cabecalho reconhecido, mas com sinais que merecem revisao."
+    elif score == 1:
+        risk = "low"
+        summary = "Cabecalho parece consistente, com pequena pendencia de validacao."
+    else:
+        risk = "low"
+        summary = "Cabecalho consistente e autenticacao de e-mail aprovada."
+
     return {
         "enabled": True,
         "summary": summary,
         "risk": risk,
-        "signals": signals[:3],
+        "score": score,
+        "signals": signals[:5],
+        "recommendations": recommendations[:4],
+        "auth_details": auth_details[:6],
         "source": "local",
     }
 
 
-def _merge_diagnosis(ai_diag: dict, fallback: dict) -> dict:
-    if not ai_diag or not ai_diag.get("enabled"):
-        return fallback
-
-    generic = "Conteudo reconhecido, mas sem sinais suficientes"
-    if not ai_diag.get("summary") or ai_diag.get("summary", "").startswith(generic):
-        fallback["model"] = ai_diag.get("model")
-        fallback["source"] = "local_fallback"
-        return fallback
-
-    return ai_diag
-
-
-def _is_email_header(msg, raw_str: str) -> bool:
+def _is_email_header(msg, raw_str):
     if not raw_str or len(raw_str.strip()) < 20:
         return False
+    names = ("From", "To", "Subject", "Date", "Message-ID", "Received", "Authentication-Results", "Return-Path")
+    return sum(1 for name in names if msg.get(name) or msg.get_all(name)) >= 2
 
-    header_hits = sum(
-        1
-        for name in (
-            "From",
-            "To",
-            "Subject",
-            "Date",
-            "Message-ID",
-            "Received",
-            "Authentication-Results",
-            "Return-Path",
-        )
-        if msg.get(name) or msg.get_all(name)
-    )
-    return header_hits >= 2
 
 def analyze_header(raw_str: str) -> dict:
     try:
-        parser = HeaderParser()
-        msg = parser.parsestr(raw_str)
+        msg = HeaderParser().parsestr(raw_str or "")
         if not _is_email_header(msg, raw_str):
             return {
                 "found": False,
@@ -79,33 +115,40 @@ def analyze_header(raw_str: str) -> dict:
                 },
             }
 
-        data = {
-            "from": msg.get("From"),
-            "to": msg.get("To"),
-            "subject": msg.get("Subject"),
-            "body": msg.get_payload(),
-            "date": msg.get("Date"),
-            "message_id": msg.get("Message-ID"),
-            "spf": "Not Found",
-            "dkim": "Not Found",
-            "dmarc": "Not Found",
-            "origin_ip": "Unknown",
-            "found": True
-        }
-        auth_results = msg.get("Authentication-Results", "")
-        if auth_results:
-            if "spf=pass" in auth_results.lower(): data["spf"] = "Pass"
-            if "dkim=pass" in auth_results.lower(): data["dkim"] = "Pass"
-            if "dmarc=pass" in auth_results.lower(): data["dmarc"] = "Pass"
-        received = msg.get_all("Received")
-        if received:
-            pass
-        from backend.ai.gemini import diagnose_email_content
+        received = _all_headers(msg, "Received")
+        auth_results = _all_headers(msg, "Authentication-Results")
+        auth_status, auth_details = _auth_status(auth_results)
+        received_joined = " ".join(received)
+        origin_ip = _first_public_ip(received_joined) or "Unknown"
 
-        data["diagnostico"] = _merge_diagnosis(
-            diagnose_email_content("cabecalho de e-mail", raw_str),
-            _local_header_diagnosis(data),
-        )
+        date_raw = msg.get("Date")
+        parsed_date = None
+        if date_raw:
+            try:
+                parsed_date = parsedate_to_datetime(date_raw).isoformat()
+            except Exception:
+                parsed_date = None
+
+        data = {
+            "from": _clean(msg.get("From")),
+            "to": _clean(msg.get("To")),
+            "reply_to": _clean(msg.get("Reply-To")),
+            "return_path": _clean(msg.get("Return-Path")),
+            "subject": _clean(msg.get("Subject")),
+            "body": msg.get_payload(),
+            "date": _clean(date_raw),
+            "date_iso": parsed_date,
+            "message_id": _clean(msg.get("Message-ID")),
+            "spf": auth_status["spf"],
+            "dkim": auth_status["dkim"],
+            "dmarc": auth_status["dmarc"],
+            "origin_ip": origin_ip,
+            "received_count": len(received),
+            "received_chain": received[:8],
+            "authentication_results": auth_results[:4],
+            "found": True,
+        }
+        data["diagnostico"] = _risk_and_diagnosis(data, auth_details, len(received))
         return data
     except Exception as e:
         return {"found": False, "error": str(e)}
