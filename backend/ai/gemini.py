@@ -4,7 +4,8 @@ import re
 
 
 GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
-GEMINI_API_URL = f"https://generativelanguage.googleapis.com/v1beta/models/{GEMINI_MODEL}:generateContent"
+GEMINI_FALLBACK_MODEL = os.getenv("GEMINI_FALLBACK_MODEL", "gemini-2.5-flash-lite")
+GEMINI_API_BASE = "https://generativelanguage.googleapis.com/v1beta/models"
 MAX_AI_INPUT = 12_000
 
 
@@ -77,6 +78,36 @@ def _parse_json(text: str) -> dict:
     }
 
 
+def _request_model(requests, api_key: str, model: str, kind: str, content: str):
+    return requests.post(
+        f"{GEMINI_API_BASE}/{model}:generateContent",
+        params={"key": api_key},
+        timeout=3,
+        json={
+            "contents": [
+                {
+                    "role": "user",
+                    "parts": [{"text": _build_prompt(kind, content)}],
+                }
+            ],
+            "generationConfig": {
+                "temperature": 0.1,
+                "maxOutputTokens": 180,
+                "responseMimeType": "application/json",
+            },
+        },
+    )
+
+
+def _read_response(response) -> dict:
+    data = response.json()
+    parts = data.get("candidates", [{}])[0].get("content", {}).get("parts", [])
+    text = "\n".join(str(part.get("text", "")) for part in parts if isinstance(part, dict))
+    if not text:
+        return _empty("Resposta da IA veio vazia.")
+    return _parse_json(text)
+
+
 def diagnose_email_content(kind: str, content: str) -> dict:
     api_key = os.getenv("GEMINI_API_KEY")
     if not api_key:
@@ -85,32 +116,19 @@ def diagnose_email_content(kind: str, content: str) -> dict:
     try:
         import requests
 
-        response = requests.post(
-            GEMINI_API_URL,
-            params={"key": api_key},
-            timeout=3,
-            json={
-                "contents": [
-                    {
-                        "role": "user",
-                        "parts": [{"text": _build_prompt(kind, content)}],
-                    }
-                ],
-                "generationConfig": {
-                    "temperature": 0.1,
-                    "maxOutputTokens": 180,
-                    "responseMimeType": "application/json",
-                },
-            },
-        )
-        if response.status_code == 404:
-            return _empty(f"Modelo Gemini nao encontrado: {GEMINI_MODEL}.")
-        response.raise_for_status()
-        data = response.json()
-        parts = data.get("candidates", [{}])[0].get("content", {}).get("parts", [])
-        text = "\n".join(str(part.get("text", "")) for part in parts if isinstance(part, dict))
-        if not text:
-            return _empty("Resposta da IA veio vazia.")
-        return _parse_json(text)
+        last_status = None
+        for model in (GEMINI_MODEL, GEMINI_FALLBACK_MODEL):
+            response = _request_model(requests, api_key, model, kind, content)
+            if response.ok:
+                result = _read_response(response)
+                if result.get("enabled"):
+                    result["model"] = model
+                return result
+
+            last_status = response.status_code
+            if response.status_code not in {404, 429, 500, 502, 503, 504}:
+                break
+
+        return _empty(f"Gemini indisponivel ou recusou a requisicao. Status: {last_status}.")
     except Exception as e:
-        return _empty(f"Falha ao consultar IA: {str(e)}")
+        return _empty(f"Falha ao consultar IA: {e.__class__.__name__}.")
