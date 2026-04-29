@@ -1,34 +1,13 @@
 import ipaddress
 import re
 import socket
-import time
-from collections import defaultdict, deque
 from urllib.parse import urlparse
 
-from fastapi import HTTPException, Request
-from fastapi.responses import JSONResponse
-from starlette.middleware.base import BaseHTTPMiddleware
+from fastapi import HTTPException
 
 
 HOST_RE = re.compile(r"^(?=.{1,253}$)(?!-)[A-Za-z0-9.-]+(?<!-)$")
 MAX_TEXT_SIZE = 100_000
-RATE_LIMIT_WINDOW = 60
-RATE_LIMIT_DEFAULT = 60
-RATE_LIMIT_STRICT = 20
-
-STRICT_PATHS = (
-    "/api/blacklists",
-    "/api/dns-propagation",
-    "/api/http-status",
-    "/api/ping",
-    "/api/port-checker",
-    "/api/security/hibp/password",
-    "/api/smtp",
-    "/api/ssl",
-    "/api/uptime",
-)
-
-
 def _bad_request(message: str) -> None:
     raise HTTPException(status_code=400, detail=message)
 
@@ -137,43 +116,3 @@ def limit_text(value: str, max_size: int = MAX_TEXT_SIZE) -> str:
     if len(value) > max_size:
         _bad_request("Conteudo muito grande para analise.")
     return value
-
-
-class SecurityHeadersMiddleware(BaseHTTPMiddleware):
-    async def dispatch(self, request: Request, call_next):
-        response = await call_next(request)
-        response.headers.setdefault("X-Content-Type-Options", "nosniff")
-        response.headers.setdefault("X-Frame-Options", "DENY")
-        response.headers.setdefault("Referrer-Policy", "strict-origin-when-cross-origin")
-        response.headers.setdefault("Permissions-Policy", "camera=(), microphone=(), geolocation=()")
-        return response
-
-
-class RateLimitMiddleware(BaseHTTPMiddleware):
-    def __init__(self, app):
-        super().__init__(app)
-        self.requests = defaultdict(deque)
-
-    async def dispatch(self, request: Request, call_next):
-        if not request.url.path.startswith("/api"):
-            return await call_next(request)
-
-        forwarded_for = request.headers.get("x-forwarded-for", "")
-        client_ip = forwarded_for.split(",", 1)[0].strip() if forwarded_for else ""
-        client_ip = client_ip or (request.client.host if request.client else "unknown")
-        key = (client_ip, request.url.path)
-        limit = RATE_LIMIT_STRICT if request.url.path in STRICT_PATHS else RATE_LIMIT_DEFAULT
-        now = time.monotonic()
-        bucket = self.requests[key]
-
-        while bucket and now - bucket[0] > RATE_LIMIT_WINDOW:
-            bucket.popleft()
-
-        if len(bucket) >= limit:
-            return JSONResponse(
-                status_code=429,
-                content={"detail": "Muitas requisicoes. Tente novamente em instantes."},
-            )
-
-        bucket.append(now)
-        return await call_next(request)
