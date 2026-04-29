@@ -98,3 +98,5 @@ def check_spf(domain):
         return {"found": False, "record": None, "resolved": {}, "status": "No TXT records found"}
     except dns.resolver.NXDOMAIN:
         return {"found": False, "record": None, "resolved": {}, "status": "Domain not found"}
+    except Exception as e:
+        return {"found": False, "record": None, "resolved": {}, "status": "SPF check failed", "error": str(e)}
