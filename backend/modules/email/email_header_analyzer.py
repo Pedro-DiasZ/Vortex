@@ -1,10 +1,6 @@
 import email
 from email.parser import HeaderParser
 
-<<<<<<< HEAD
-=======
-from backend.ai.gemini import diagnose_email_content
-
 
 def _is_email_header(msg, raw_str: str) -> bool:
     if not raw_str or len(raw_str.strip()) < 20:
@@ -26,23 +22,10 @@ def _is_email_header(msg, raw_str: str) -> bool:
     )
     return header_hits >= 2
 
->>>>>>> d861339 (Aplicando IA)
 def analyze_header(raw_str: str) -> dict:
     try:
         parser = HeaderParser()
         msg = parser.parsestr(raw_str)
-<<<<<<< HEAD
-        data = {
-            "from": msg.get("From"),
-            "to": msg.get("To"),
-            "subject": msg.get("Subject"),
-            "body": msg.get_payload(),
-            "date": msg.get("Date"),
-            "message_id": msg.get("Message-ID"),
-            "spf": "Not Found",
-            "dkim": "Not Found",
-            "dmarc": "Not Found",
-=======
         if not _is_email_header(msg, raw_str):
             return {
                 "found": False,
@@ -65,7 +48,6 @@ def analyze_header(raw_str: str) -> dict:
             "spf": "Not Found",
             "dkim": "Not Found",
             "dmarc": "Not Found",
->>>>>>> d861339 (Aplicando IA)
             "origin_ip": "Unknown",
             "found": True
         }
@@ -77,13 +59,9 @@ def analyze_header(raw_str: str) -> dict:
         received = msg.get_all("Received")
         if received:
             pass
-<<<<<<< HEAD
-        return data
-    except Exception as e:
-        return {"found": False, "error": str(e)}
-=======
+        from backend.ai.gemini import diagnose_email_content
+
         data["diagnostico"] = diagnose_email_content("cabecalho de e-mail", raw_str)
         return data
     except Exception as e:
         return {"found": False, "error": str(e)}
->>>>>>> d861339 (Aplicando IA)
