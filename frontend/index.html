@@ -745,7 +745,7 @@
       { path: '/port-checker', title: 'Port Checker', label: 'Port Checker', icon: 'plug', fields: [{ n: 'host', p: 'host' }, { n: 'port', p: 'porta', type: 'number' }] },
       { path: '/geo', title: 'Geolocalização IP', label: 'Geolocalização', icon: 'pin', fields: [{ n: 'ip', p: 'Endereço IP' }] },
       { path: '/ip-info', title: 'IP Information', label: 'IP Info', icon: 'info', fields: [{ n: 'ip', p: 'Endereço IP' }] },
-      { path: '/check-password', title: 'Check Password', label: 'Check Password', icon: 'key', fields: [{ n: 'password', p: 'Senha para verificar', type: 'password' }] },
+      { path: '/security/hibp/password', title: 'Check Password', label: 'Check Password', icon: 'key', method: 'POST', bodyKeys: ['password'], fields: [{ n: 'password', p: 'Senha para verificar', type: 'password' }] },
       { path: '/http-status', title: 'HTTP Status', label: 'HTTP Status', icon: 'monitor', fields: [{ n: 'url', p: 'https://exemplo.com' }] },
     ]},
     { title: 'Segurança', category: 'tools', items: [
