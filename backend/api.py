@@ -19,6 +19,7 @@ from backend.modules.infra.ping import ping_host
 from backend.modules.infra.ip_info import get_ip_info
 from backend.modules.infra.uptime import check_uptime
 from backend.modules.infra.port_checker import check_port
+from backend.modules.infra.traceroute import run_traceroute
 
 from backend.modules.ssl.http_headers import get_http_headers
 from backend.modules.ssl.ssl_checker import check_ssl
@@ -141,6 +142,11 @@ def dns_reverse(ip: str):
 def email_log_analysis(data: dict):
     return analyze_log(data.get("content", ""))
 
-@app.post("/api/security/hibp/password")
-def hibp_password(data: dict):
-    return check_password(data.get("password", ""))
+@app.post("/api/hibp/check-password")
+def check_hibp_password(password: str):
+    return check_password(password)
+
+
+@app.get("/api/traceroute")
+def traceroute(host: str):
+    return run_traceroute(host)
