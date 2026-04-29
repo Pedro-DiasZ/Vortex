@@ -142,9 +142,9 @@ def dns_reverse(ip: str):
 def email_log_analysis(data: dict):
     return analyze_log(data.get("content", ""))
 
-@app.post("/api/hibp/check-password")
-def check_hibp_password(password: str):
-    return check_password(password)
+@app.post("/api/security/hibp/password")
+def check_hibp_password(data: dict):
+    return check_password(data.get("password", ""))
 
 
 @app.get("/api/http-status")
