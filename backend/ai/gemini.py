@@ -19,6 +19,17 @@ def _empty(reason: str) -> dict:
     }
 
 
+def _diagnostic(summary: str, risk: str = "unknown", signals=None) -> dict:
+    signals = signals if isinstance(signals, list) else []
+    risk = risk if risk in {"low", "medium", "high", "unknown"} else "unknown"
+    return {
+        "enabled": True,
+        "summary": str(summary or "")[:180],
+        "risk": risk,
+        "signals": [str(item)[:80] for item in signals[:3]],
+    }
+
+
 def _build_prompt(kind: str, content: str) -> str:
     return f"""
 Voce e um analisador defensivo de seguranca de e-mail.
@@ -56,11 +67,11 @@ def _parse_json(text: str) -> dict:
         start = text.find("{")
         end = text.rfind("}")
         if start == -1 or end == -1 or end <= start:
-            return _empty("Resposta da IA nao veio em JSON.")
+            return _diagnostic(text)
         try:
             parsed = json.loads(text[start : end + 1])
         except json.JSONDecodeError:
-            return _empty("Resposta da IA nao veio em JSON.")
+            return _diagnostic(text)
 
     summary = str(parsed.get("summary", ""))[:180]
     risk = str(parsed.get("risk", "unknown")).lower()
@@ -71,10 +82,7 @@ def _parse_json(text: str) -> dict:
         signals = []
 
     return {
-        "enabled": True,
-        "summary": summary,
-        "risk": risk,
-        "signals": [str(item)[:80] for item in signals[:3]],
+        **_diagnostic(summary, risk, signals),
     }
 
 
@@ -94,6 +102,18 @@ def _request_model(requests, api_key: str, model: str, kind: str, content: str):
                 "temperature": 0.1,
                 "maxOutputTokens": 180,
                 "responseMimeType": "application/json",
+                "responseSchema": {
+                    "type": "OBJECT",
+                    "properties": {
+                        "summary": {"type": "STRING"},
+                        "risk": {"type": "STRING", "enum": ["low", "medium", "high", "unknown"]},
+                        "signals": {
+                            "type": "ARRAY",
+                            "items": {"type": "STRING"},
+                        },
+                    },
+                    "required": ["summary", "risk", "signals"],
+                },
             },
         },
     )
