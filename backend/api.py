@@ -4,8 +4,6 @@ from fastapi.responses import JSONResponse
 
 
 from backend.security import (
-    RateLimitMiddleware,
-    SecurityHeadersMiddleware,
     assert_domain,
     assert_port,
     assert_public_host,
@@ -60,16 +58,14 @@ async def unhandled_exception_handler(request: Request, exc: Exception):
             "status": "Erro interno ao processar a requisicao",
             "error": str(exc),
         },
-    )
+)
 
 
-app.add_middleware(SecurityHeadersMiddleware)
-app.add_middleware(RateLimitMiddleware)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[],
+    allow_origins=["*"],
     allow_methods=["GET", "POST"],
-    allow_headers=["content-type"]
+    allow_headers=["*"]
 )
 
 @app.get("/api")
