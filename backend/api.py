@@ -148,5 +148,5 @@ def check_hibp_password(password: str):
 
 
 @app.get("/api/traceroute")
-def traceroute(host: str):
-    return run_traceroute(host)
+def traceroute(host: str, mx: bool = False):
+    return run_traceroute(host, resolve_mx=mx)
