@@ -1,5 +1,6 @@
 import json
 import os
+import re
 
 
 GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
@@ -28,7 +29,8 @@ Tipo esperado: {kind}
 Se o conteudo nao for claramente um {kind}, retorne somente:
 {{"summary":"","risk":"unknown","signals":[]}}
 
-Responda somente JSON valido, sem markdown, com este formato:
+Responda somente com um objeto JSON valido. Nao use markdown, nao use ```json, nao adicione texto antes ou depois.
+Formato obrigatorio:
 {{
   "summary": "diagnostico curto em pt-BR, no maximo 160 caracteres",
   "risk": "low|medium|high|unknown",
@@ -42,6 +44,11 @@ Responda somente JSON valido, sem markdown, com este formato:
 
 
 def _parse_json(text: str) -> dict:
+    text = (text or "").strip()
+    fenced = re.match(r"^```(?:json)?\s*(.*?)\s*```$", text, re.IGNORECASE | re.DOTALL)
+    if fenced:
+        text = fenced.group(1).strip()
+
     try:
         parsed = json.loads(text)
     except json.JSONDecodeError:
@@ -100,7 +107,10 @@ def diagnose_email_content(kind: str, content: str) -> dict:
             return _empty(f"Modelo Gemini nao encontrado: {GEMINI_MODEL}.")
         response.raise_for_status()
         data = response.json()
-        text = data["candidates"][0]["content"]["parts"][0]["text"]
+        parts = data.get("candidates", [{}])[0].get("content", {}).get("parts", [])
+        text = "\n".join(str(part.get("text", "")) for part in parts if isinstance(part, dict))
+        if not text:
+            return _empty("Resposta da IA veio vazia.")
         return _parse_json(text)
     except Exception as e:
         return _empty(f"Falha ao consultar IA: {str(e)}")
