@@ -1,5 +1,12 @@
 import dns.resolver
 
+
+def _resolve(name, record_type):
+    resolver = dns.resolver.Resolver()
+    resolver.timeout = 1.5
+    resolver.lifetime = 3
+    return resolver.resolve(name, record_type)
+
 def resolve_spf_mechanism(mechanism, depth=0):
     """Resolve um mecanismo SPF e retorna lista de IPs/CIDRs."""
     if depth > 5:
@@ -10,7 +17,7 @@ def resolve_spf_mechanism(mechanism, depth=0):
     try:
         if mechanism.startswith('include:'):
             domain = mechanism[8:]
-            records = dns.resolver.resolve(domain, 'TXT')
+            records = _resolve(domain, 'TXT')
             for r in records:
                 txt = r.to_text().strip('"')
                 if txt.startswith('v=spf1'):
@@ -24,10 +31,10 @@ def resolve_spf_mechanism(mechanism, depth=0):
         elif mechanism == 'mx' or mechanism.startswith('mx:'):
             domain = mechanism[3:] if mechanism.startswith('mx:') else None
             if domain:
-                mx_records = dns.resolver.resolve(domain, 'MX')
+                mx_records = _resolve(domain, 'MX')
                 for mx in mx_records:
                     try:
-                        a_records = dns.resolver.resolve(str(mx.exchange), 'A')
+                        a_records = _resolve(str(mx.exchange), 'A')
                         for a in a_records:
                             ips.append(f"ip4:{a.address}/32")
                     except Exception:
@@ -35,7 +42,7 @@ def resolve_spf_mechanism(mechanism, depth=0):
 
         elif mechanism.startswith('a:'):
             domain = mechanism[2:]
-            a_records = dns.resolver.resolve(domain, 'A')
+            a_records = _resolve(domain, 'A')
             for a in a_records:
                 ips.append(f"ip4:{a.address}/32")
 
@@ -47,7 +54,7 @@ def resolve_spf_mechanism(mechanism, depth=0):
 
 def check_spf(domain):
     try:
-        records = dns.resolver.resolve(domain, 'TXT')
+        records = _resolve(domain, 'TXT')
         for record in records:
             text = record.to_text().strip('"')
             if text.startswith('v=spf1'):
@@ -66,10 +73,10 @@ def check_spf(domain):
 
                     elif part == 'mx':
                         try:
-                            mx_records = dns.resolver.resolve(domain, 'MX')
+                            mx_records = _resolve(domain, 'MX')
                             for mx in mx_records:
                                 try:
-                                    a_records = dns.resolver.resolve(str(mx.exchange), 'A')
+                                    a_records = _resolve(str(mx.exchange), 'A')
                                     for a in a_records:
                                         ips.append(f"ip4:{a.address}/32")
                                 except Exception:
