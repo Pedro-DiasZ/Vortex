@@ -41,7 +41,7 @@ Tipo esperado: {kind}
 Se o conteudo nao for claramente um {kind}, retorne somente:
 {{"summary":"","risk":"unknown","signals":[]}}
 
-Responda somente com um objeto JSON valido. Nao use markdown, nao use ```json, nao adicione texto antes ou depois.
+Responda somente o objeto JSON abaixo preenchido. Nao escreva introducao. Nao escreva "Here is". Nao use markdown.
 Formato obrigatorio:
 {{
   "summary": "diagnostico curto em pt-BR, no maximo 160 caracteres",
@@ -60,6 +60,7 @@ def _parse_json(text: str) -> dict:
     fenced = re.match(r"^```(?:json)?\s*(.*?)\s*```$", text, re.IGNORECASE | re.DOTALL)
     if fenced:
         text = fenced.group(1).strip()
+    text = re.sub(r"^(here is|segue|aqui esta|aqui está).*?:\s*", "", text, flags=re.IGNORECASE | re.DOTALL)
 
     try:
         parsed = json.loads(text)
@@ -123,6 +124,8 @@ def _read_response(response) -> dict:
     data = response.json()
     parts = data.get("candidates", [{}])[0].get("content", {}).get("parts", [])
     text = "\n".join(str(part.get("text", "")) for part in parts if isinstance(part, dict))
+    if not text:
+        text = json.dumps(data.get("candidates", [{}])[0].get("content", {}), ensure_ascii=False)
     if not text:
         return _empty("Resposta da IA veio vazia.")
     return _parse_json(text)
