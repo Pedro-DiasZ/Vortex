@@ -22,6 +22,7 @@ from backend.modules.infra.port_checker import check_port
 
 from backend.modules.ssl.http_headers import get_http_headers
 from backend.modules.ssl.ssl_checker import check_ssl
+from backend.modules.ssl.hibp import check_password
 
 from backend.modules.utils.base64_tool import base64_decode, base64_encode
 from backend.modules.utils.cidr import is_valid_cidr
@@ -139,3 +140,7 @@ def dns_reverse(ip: str):
 @app.post("/api/email_log_analysis") 
 def email_log_analysis(data: dict):
     return analyze_log(data.get("content", ""))
+
+@app.post("/api/hibp/check-password")
+def check_hibp_password(password: str):
+    return check_password(password)
