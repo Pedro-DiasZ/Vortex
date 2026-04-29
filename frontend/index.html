@@ -1725,7 +1725,7 @@
 
   function getCid() {
     const raw = (document.getElementById('migCid')?.value || migCompany || 'cliente').trim();
-    return raw.replace(/\s+/g, '_').toLowerCase() || 'cliente';
+    return raw.replace(/\s+/g, '_').replace(/[^\w.-]/g, '_').toLowerCase() || 'cliente';
   }
 
   function renderMigTable() {
@@ -1897,23 +1897,37 @@
   }
 
   // ======= DOWNLOAD =======
+  function csvCell(value) {
+    const text = String(value ?? '').replace(/\r?\n/g, ' ');
+    if (/[;"\s]/.test(text)) return `"${text.replace(/"/g, '""')}"`;
+    return text;
+  }
+
+  function csvLine(values) {
+    return values.map(csvCell).join(';');
+  }
+
   function downloadFile(content, filename, mime) {
-    const blob = new Blob([content], { type: mime });
+    const blob = new Blob(['\ufeff' + content], { type: mime });
     const url  = URL.createObjectURL(blob);
     const a    = document.createElement('a');
-    a.href = url; a.download = filename; a.click();
+    a.style.display = 'none';
+    a.href = url; a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
     setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
 
   function _doDownloadLote() {
-    const lines = migRows.map(r => [r.firstName, r.lastName, r.emailTo, r.passTo, r.plan].join(';'));
+    const lines = migRows.map(r => csvLine([r.firstName, r.lastName, r.emailTo, r.passTo, r.plan]));
     const cid   = getCid();
     downloadFile(lines.join('\n'), `lote_${cid}.csv`, 'text/csv;charset=utf-8');
     showToast(`lote_${cid}.csv gerado com ${migRows.length} linha(s).`);
   }
 
   function _doDownloadAcc() {
-    const lines = migRows.map(r => [r.emailFrom, r.passFrom, r.emailTo, r.passTo].join(';'));
+    const lines = migRows.map(r => csvLine([r.emailFrom, r.passFrom, r.emailTo, r.passTo]));
     const cid   = getCid();
     downloadFile(lines.join('\n'), `acc_${cid}.csv`, 'text/csv;charset=utf-8');
     showToast(`acc_${cid}.csv gerado com ${migRows.length} linha(s).`);
@@ -1921,25 +1935,16 @@
 
   function downloadLote() {
     if (!migRows.length) { showToast('Nenhuma conta para exportar.', 'warn'); return; }
-    const errs = countMigErrors();
-    if (errs > 0) { openMigErrModal(() => _doDownloadLote()); return; }
     _doDownloadLote();
   }
 
   function downloadAcc() {
     if (!migRows.length) { showToast('Nenhuma conta para exportar.', 'warn'); return; }
-    const errs = countMigErrors();
-    if (errs > 0) { openMigErrModal(() => _doDownloadAcc()); return; }
     _doDownloadAcc();
   }
 
   function downloadBoth() {
     if (!migRows.length) { showToast('Nenhuma conta para exportar.', 'warn'); return; }
-    const errs = countMigErrors();
-    if (errs > 0) {
-      openMigErrModal(() => { _doDownloadLote(); setTimeout(_doDownloadAcc, 200); });
-      return;
-    }
     _doDownloadLote(); setTimeout(_doDownloadAcc, 200);
   }
 
