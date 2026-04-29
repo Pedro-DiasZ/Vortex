@@ -146,7 +146,6 @@ def email_log_analysis(data: dict):
 def check_hibp_password(password: str):
     return check_password(password)
 
-
 @app.get("/api/traceroute")
-def traceroute(host: str, mx: bool = False):
-    return run_traceroute(host, resolve_mx=mx)
+def traceroute(host: str):
+    return run_traceroute(host)
