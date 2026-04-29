@@ -1,6 +1,7 @@
 import socket
 import subprocess
 import sys
+from typing import Optional, Tuple
 from urllib.parse import urlparse
 
 
@@ -13,7 +14,7 @@ def _normalize_host(host: str) -> str:
     return cleaned.strip().strip("/")
 
 
-def _tcp_reachable(host: str, timeout: int = 5) -> tuple[bool, int | None]:
+def _tcp_reachable(host: str, timeout: int = 5) -> Tuple[bool, Optional[int]]:
     """Fallback: verifica alcançabilidade via TCP nas portas 443 e 80."""
     for port in (443, 80):
         try:
