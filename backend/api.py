@@ -1,23 +1,12 @@
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
 
 
-from backend.security import (
-    assert_domain,
-    assert_port,
-    assert_public_host,
-    assert_public_ip,
-    assert_public_url,
-    limit_text,
-)
 from backend.modules.email.spf import check_spf
 from backend.modules.email.dmarc import check_dmarc
 from backend.modules.email.dkim import check_dkim
 from backend.modules.email.blks import check_blacklists
 from backend.modules.email.smtp_checker import check_smtp
-from backend.modules.email.email_header_analyzer import analyze_header
-from backend.modules.email.log_analyzer import analyze_log
 
 from backend.modules.dns.whois import get_whois_info
 from backend.modules.dns.lookup import dns_lookup
@@ -39,27 +28,18 @@ from backend.modules.utils.cidr import is_valid_cidr
 from backend.modules.utils.password_generator import generate_strong_password
 from backend.modules.utils.ttl_converter import ttl_seconds_to_human
 
+
+def limit_text(value: str, max_size: int = 100_000) -> str:
+    value = value or ""
+    if len(value) > max_size:
+        return value[:max_size]
+    return value
+
 app = FastAPI(
     title="VortexAPI",
-    openapi_url=None,
-    docs_url=None,
-    redoc_url=None
+    openapi_url="/api/openapi.json",
+    docs_url="/api/docs"
 )
-
-
-@app.exception_handler(Exception)
-async def unhandled_exception_handler(request: Request, exc: Exception):
-    if isinstance(exc, HTTPException):
-        return JSONResponse(status_code=exc.status_code, content={"detail": exc.detail})
-    return JSONResponse(
-        status_code=500,
-        content={
-            "found": False,
-            "status": "Erro interno ao processar a requisicao",
-            "error": str(exc),
-        },
-)
-
 
 app.add_middleware(
     CORSMiddleware,
@@ -75,82 +55,67 @@ def root():
 
 @app.get("/api/spf") 
 def spf(domain: str):
-    domain = assert_domain(domain)
     return check_spf(domain)
 
 @app.get("/api/dmarc")
 def dmarc(domain: str):
-    domain = assert_domain(domain)
     return check_dmarc(domain)
 
 @app.get("/api/dkim")
 def dkim(domain: str, selector: str = "default"):
-    domain = assert_domain(domain)
-    selector = assert_domain(selector)
     return check_dkim(domain, selector)
 
 @app.get("/api/blacklists")
 def blacklists(domain: str):
-    domain = assert_domain(domain)
     return check_blacklists(domain)
 
 @app.get("/api/smtp")
 def smtp(host: str, port: int = 587):
-    host = assert_public_host(host)
-    port = assert_port(port)
     return check_smtp(host, port)
 
 @app.post("/api/analyze-header")
 def header_analyzer(raw_header: dict):
+    from backend.modules.email.email_header_analyzer import analyze_header
+
     return analyze_header(limit_text(raw_header.get("content", "")))
 
 
 @app.get("/api/whois")
 def whois(domain: str):
-    domain = assert_domain(domain)
     return get_whois_info(domain)
 
 @app.get("/api/dns")
 def dns(domain: str, record_type: str = "A"):
-    domain = assert_domain(domain)
     return dns_lookup(domain, record_type)
 
 @app.get("/api/dns-propagation")
 def dns_propagation(domain: str, record_type: str = "A"):
-    domain = assert_domain(domain)
     return check_propagation(domain, record_type)
 
 
 @app.get("/api/geo")
 def geo(ip: str):
-    ip = assert_public_ip(ip)
     return geolocate_ip(ip)
 
 @app.get("/api/ping")
 def ping(host: str):
-    host = assert_public_host(host)
     return ping_host(host)
 
 @app.get("/api/ip-info")
 def ip_info(ip: str):
-    ip = assert_public_ip(ip)
     return get_ip_info(ip)
 
 @app.get("/api/uptime")
 def uptime(url: str):
-    url = assert_public_url(url)
     return check_uptime(url)
 
 @app.get("/api/port-checker")
 def port_checker(host: str, port: int):
-    host = assert_public_host(host)
-    port = assert_port(port)
     return check_port(host, port)
 
 
 @app.get("/api/ssl")
 def ssl(domain: str):
-    domain = assert_public_host(domain)
     ssl_info = check_ssl(domain)
     headers = get_http_headers(domain)
     return {"ssl_info": ssl_info, "http_headers": headers}
@@ -180,20 +145,20 @@ def ttl_humanize(seconds: int):
 
 @app.get("/api/dns_reverse")
 def dns_reverse(ip: str):
-    ip = assert_public_ip(ip)
     from backend.modules.dns.dns_reverse import dns_reverse_resolver
     return dns_reverse_resolver(ip)
 
 @app.post("/api/email_log_analysis") 
 def email_log_analysis(data: dict):
+    from backend.modules.email.log_analyzer import analyze_log
+
     return analyze_log(limit_text(data.get("content", "")))
 
 @app.post("/api/security/hibp/password")
 def check_hibp_password(data: dict):
-    return check_password(limit_text(data.get("password", ""), max_size=256))
+    return check_password(limit_text(data.get("password", ""), 256))
 
 
 @app.get("/api/http-status")
 def http_status(url: str):
-    url = assert_public_url(url)
     return check_http_status(url)
