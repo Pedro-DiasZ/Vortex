@@ -1,12 +1,5 @@
 import re
 
-<<<<<<< HEAD
-def analyze_log(raw_log: str) -> dict:
-    try:
-        # Regex para capturar informações fundamentais
-=======
-from backend.ai.gemini import diagnose_email_content
-
 
 def _is_email_log(raw_log: str) -> bool:
     if not raw_log or len(raw_log.strip()) < 20:
@@ -43,7 +36,6 @@ def analyze_log(raw_log: str) -> dict:
                 },
             }
 
->>>>>>> d861339 (Aplicando IA)
         patterns = {
             "from": r"from=<([^>]+)>",
             "to": r"to=<([^>]+)>",
@@ -55,27 +47,10 @@ def analyze_log(raw_log: str) -> dict:
             "dsn": r"dsn=([\d\.]+)",
         }
 
-<<<<<<< HEAD
-        extracted = {k: (re.search(v, raw_log).group(1) if re.search(v, raw_log) else None) for k, v in patterns.items()}
-        
-        score_val = float(extracted["sa_score"]) if extracted["sa_score"] else 0.0
-        
-
-        status = "Desconhecido"
-        color = "var(--muted)" 
-        
-        if "reject:" in raw_log:
-            status = "Rejeitado"
-            color = "var(--danger)"
-        elif "to spam quarantine" in raw_log:
-            status = "Quarentena"
-            color = "var(--warning)"
-        elif "status=sent" in raw_log:
-=======
-        extracted = {
-            key: (match.group(1) if (match := re.search(pattern, raw_log, re.IGNORECASE)) else None)
-            for key, pattern in patterns.items()
-        }
+        extracted = {}
+        for key, pattern in patterns.items():
+            match = re.search(pattern, raw_log, re.IGNORECASE)
+            extracted[key] = match.group(1) if match else None
 
         score_val = float(extracted["sa_score"]) if extracted["sa_score"] else 0.0
 
@@ -90,7 +65,6 @@ def analyze_log(raw_log: str) -> dict:
             status = "Quarentena"
             color = "var(--warning)"
         elif "status=sent" in lowered:
->>>>>>> d861339 (Aplicando IA)
             if score_val >= 5:
                 status = "Aceito (Spam)"
                 color = "var(--warning)"
@@ -98,25 +72,14 @@ def analyze_log(raw_log: str) -> dict:
                 status = "Entregue"
                 color = "var(--success)"
 
+        from backend.ai.gemini import diagnose_email_content
+
         return {
             "found": True,
             "summary": {
                 "status": status,
                 "color": color,
                 "score": f"{score_val}/5",
-<<<<<<< HEAD
-                "rule": extracted["rule"] or "Nenhuma regra específica"
-            },
-            "details": {
-                "sender": extracted["from"] or "Não identificado",
-                "recipient": extracted["to"] or "Não identificado",
-                "origin_ip": extracted["client_ip"] or "Desconhecido",
-                "relay_final": extracted["relay"] or "N/A",
-                "message_id": extracted["msg_id"] or "N/A",
-                "dsn_code": extracted["dsn"] or "N/A"
-            },
-            "raw_analysis": "Análise concluída"
-=======
                 "rule": extracted["rule"] or "Nenhuma regra especifica",
             },
             "details": {
@@ -129,19 +92,11 @@ def analyze_log(raw_log: str) -> dict:
             },
             "raw_analysis": "Analise concluida",
             "diagnostico": diagnose_email_content("log de e-mail", raw_log),
->>>>>>> d861339 (Aplicando IA)
         }
 
     except Exception as e:
         return {
-<<<<<<< HEAD
-            "found": False, 
-            "error": f"Erro ao processar log: {str(e)}",
-            "color": "var(--danger)"
-        }
-=======
             "found": False,
             "error": f"Erro ao processar log: {str(e)}",
             "color": "var(--danger)",
         }
->>>>>>> d861339 (Aplicando IA)
