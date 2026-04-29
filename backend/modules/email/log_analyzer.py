@@ -1,6 +1,51 @@
 import re
 
 
+def _local_log_diagnosis(status: str, score_val: float, extracted: dict) -> dict:
+    signals = []
+    if extracted.get("dsn"):
+        signals.append(f"DSN {extracted['dsn']}")
+    if extracted.get("rule"):
+        signals.append(f"Regra: {extracted['rule']}")
+    if score_val:
+        signals.append(f"Score antispam {score_val}/5")
+
+    risk = "unknown"
+    if status in {"Rejeitado", "Quarentena", "Aceito (Spam)"}:
+        risk = "medium"
+    elif status == "Entregue" and score_val < 5:
+        risk = "low"
+
+    summary = f"Log reconhecido com status: {status}."
+    if status == "Rejeitado":
+        summary = "Mensagem rejeitada pelo servidor de e-mail."
+    elif status == "Quarentena":
+        summary = "Mensagem enviada para quarentena de spam."
+    elif status == "Entregue":
+        summary = "Mensagem entregue sem sinais fortes de bloqueio."
+
+    return {
+        "enabled": True,
+        "summary": summary,
+        "risk": risk,
+        "signals": signals[:3],
+        "source": "local",
+    }
+
+
+def _merge_diagnosis(ai_diag: dict, fallback: dict) -> dict:
+    if not ai_diag or not ai_diag.get("enabled"):
+        return fallback
+
+    generic = "Conteudo reconhecido, mas sem sinais suficientes"
+    if not ai_diag.get("summary") or ai_diag.get("summary", "").startswith(generic):
+        fallback["model"] = ai_diag.get("model")
+        fallback["source"] = "local_fallback"
+        return fallback
+
+    return ai_diag
+
+
 def _is_email_log(raw_log: str) -> bool:
     if not raw_log or len(raw_log.strip()) < 20:
         return False
@@ -91,7 +136,10 @@ def analyze_log(raw_log: str) -> dict:
                 "dsn_code": extracted["dsn"] or "N/A",
             },
             "raw_analysis": "Analise concluida",
-            "diagnostico": diagnose_email_content("log de e-mail", raw_log),
+            "diagnostico": _merge_diagnosis(
+                diagnose_email_content("log de e-mail", raw_log),
+                _local_log_diagnosis(status, score_val, extracted),
+            ),
         }
 
     except Exception as e:
