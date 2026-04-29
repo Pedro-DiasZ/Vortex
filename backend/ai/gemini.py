@@ -2,7 +2,7 @@ import json
 import os
 
 
-GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-1.5-flash")
+GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
 GEMINI_API_URL = f"https://generativelanguage.googleapis.com/v1beta/models/{GEMINI_MODEL}:generateContent"
 MAX_AI_INPUT = 12_000
 
@@ -96,6 +96,8 @@ def diagnose_email_content(kind: str, content: str) -> dict:
                 },
             },
         )
+        if response.status_code == 404:
+            return _empty(f"Modelo Gemini nao encontrado: {GEMINI_MODEL}.")
         response.raise_for_status()
         data = response.json()
         text = data["candidates"][0]["content"]["parts"][0]["text"]
