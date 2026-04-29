@@ -13,3 +13,5 @@ def check_dmarc(domain):
         return {"found": False, "record": None, "status": "No TXT records found for DMARC"}
     except dns.resolver.NXDOMAIN:
         return {"found": False, "record": None, "status": "Domain not found for DMARC"}
+    except Exception as e:
+        return {"found": False, "record": None, "status": "DMARC check failed", "error": str(e)}
