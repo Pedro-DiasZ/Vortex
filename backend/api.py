@@ -2,33 +2,6 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 
-from backend.modules.email.spf import check_spf
-from backend.modules.email.dmarc import check_dmarc
-from backend.modules.email.dkim import check_dkim
-from backend.modules.email.blks import check_blacklists
-from backend.modules.email.smtp_checker import check_smtp
-
-from backend.modules.dns.whois import get_whois_info
-from backend.modules.dns.lookup import dns_lookup
-from backend.modules.dns.propagation import check_propagation
-
-from backend.modules.infra.geo import geolocate_ip
-from backend.modules.infra.ping import ping_host
-from backend.modules.infra.ip_info import get_ip_info
-from backend.modules.infra.uptime import check_uptime
-from backend.modules.infra.port_checker import check_port
-from backend.modules.infra.http_status import check_http_status
-
-from backend.modules.ssl.http_headers import get_http_headers
-from backend.modules.ssl.ssl_checker import check_ssl
-from backend.modules.ssl.hibp import check_password
-
-from backend.modules.utils.base64_tool import base64_decode, base64_encode
-from backend.modules.utils.cidr import is_valid_cidr
-from backend.modules.utils.password_generator import generate_strong_password
-from backend.modules.utils.ttl_converter import ttl_seconds_to_human
-
-
 def limit_text(value: str, max_size: int = 100_000) -> str:
     value = value or ""
     if len(value) > max_size:
@@ -55,22 +28,32 @@ def root():
 
 @app.get("/api/spf") 
 def spf(domain: str):
+    from backend.modules.email.spf import check_spf
+
     return check_spf(domain)
 
 @app.get("/api/dmarc")
 def dmarc(domain: str):
+    from backend.modules.email.dmarc import check_dmarc
+
     return check_dmarc(domain)
 
 @app.get("/api/dkim")
 def dkim(domain: str, selector: str = "default"):
+    from backend.modules.email.dkim import check_dkim
+
     return check_dkim(domain, selector)
 
 @app.get("/api/blacklists")
 def blacklists(domain: str):
+    from backend.modules.email.blks import check_blacklists
+
     return check_blacklists(domain)
 
 @app.get("/api/smtp")
 def smtp(host: str, port: int = 587):
+    from backend.modules.email.smtp_checker import check_smtp
+
     return check_smtp(host, port)
 
 @app.post("/api/analyze-header")
@@ -82,65 +65,94 @@ def header_analyzer(raw_header: dict):
 
 @app.get("/api/whois")
 def whois(domain: str):
+    from backend.modules.dns.whois import get_whois_info
+
     return get_whois_info(domain)
 
 @app.get("/api/dns")
 def dns(domain: str, record_type: str = "A"):
+    from backend.modules.dns.lookup import dns_lookup
+
     return dns_lookup(domain, record_type)
 
 @app.get("/api/dns-propagation")
 def dns_propagation(domain: str, record_type: str = "A"):
+    from backend.modules.dns.propagation import check_propagation
+
     return check_propagation(domain, record_type)
 
 
 @app.get("/api/geo")
 def geo(ip: str):
+    from backend.modules.infra.geo import geolocate_ip
+
     return geolocate_ip(ip)
 
 @app.get("/api/ping")
 def ping(host: str):
+    from backend.modules.infra.ping import ping_host
+
     return ping_host(host)
 
 @app.get("/api/ip-info")
 def ip_info(ip: str):
+    from backend.modules.infra.ip_info import get_ip_info
+
     return get_ip_info(ip)
 
 @app.get("/api/uptime")
 def uptime(url: str):
+    from backend.modules.infra.uptime import check_uptime
+
     return check_uptime(url)
 
 @app.get("/api/port-checker")
 def port_checker(host: str, port: int):
+    from backend.modules.infra.port_checker import check_port
+
     return check_port(host, port)
 
 
 @app.get("/api/ssl")
 def ssl(domain: str):
+    from backend.modules.ssl.http_headers import get_http_headers
+    from backend.modules.ssl.ssl_checker import check_ssl
+
     ssl_info = check_ssl(domain)
     headers = get_http_headers(domain)
     return {"ssl_info": ssl_info, "http_headers": headers}
 
 @app.get("/api/utils/cidr")
 def cidr(cidr: str):
+    from backend.modules.utils.cidr import is_valid_cidr
+
     return {"is_valid": is_valid_cidr(cidr)}
 
 @app.get("/api/utils/base64/encode")
 def b64_encode(text: str):
+    from backend.modules.utils.base64_tool import base64_encode
+
     text = limit_text(text)
     return {"encoded": base64_encode(text)}
 
 @app.get("/api/utils/base64/decode")
 def b64_decode(text: str):
+    from backend.modules.utils.base64_tool import base64_decode
+
     text = limit_text(text)
     return {"decoded": base64_decode(text)}
 
 @app.get("/api/utils/password/strong")
 def strong_password(length: int = 16):
+    from backend.modules.utils.password_generator import generate_strong_password
+
     length = max(8, min(length, 128))
     return {"password": generate_strong_password(length)}
 
 @app.get("/api/utils/ttl/humanize")
 def ttl_humanize(seconds: int):
+    from backend.modules.utils.ttl_converter import ttl_seconds_to_human
+
     return {"humanized": ttl_seconds_to_human(seconds)}
 
 @app.get("/api/dns_reverse")
@@ -156,9 +168,13 @@ def email_log_analysis(data: dict):
 
 @app.post("/api/security/hibp/password")
 def check_hibp_password(data: dict):
+    from backend.modules.ssl.hibp import check_password
+
     return check_password(limit_text(data.get("password", ""), 256))
 
 
 @app.get("/api/http-status")
 def http_status(url: str):
+    from backend.modules.infra.http_status import check_http_status
+
     return check_http_status(url)
