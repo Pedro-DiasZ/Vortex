@@ -4,3 +4,4 @@ requests
 ping3
 fastapi
 uvicorn
+httpx
