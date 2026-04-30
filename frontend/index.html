@@ -288,6 +288,34 @@
   }
   .textarea { font-family: var(--font-mono); font-size: 13px; min-height: 150px; resize: vertical; }
 
+  .ai-token-box {
+    margin-top: 14px;
+    display: grid;
+    gap: 6px;
+  }
+  .ai-token-box label {
+    display: block;
+    font: 700 10.5px var(--font-sans);
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--muted);
+  }
+  .ai-token-input {
+    width: 100%;
+    padding: 11px 13px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--input-bg);
+    color: var(--text);
+    font: 400 14px var(--font-sans);
+    outline: none;
+    transition: border-color .12s, box-shadow .12s;
+  }
+  .ai-token-input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 18%, transparent);
+  }
+
   .type-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
   .type-btn {
     padding: 8px 16px; border-radius: 8px; border: 1px solid var(--border);
@@ -1513,10 +1541,23 @@
         <input class="input" id="f_${f.n}" type="${f.type === 'number' ? 'number' : 'text'}" placeholder="${f.p}" value="${f.v ?? ''}">
       </div>`;
     }).join('');
+    const aiTokenHtml = aiConfig ? `
+      <div class="ai-token-box">
+        <label for="aiAccessToken">Token de acesso IA</label>
+        <input
+          type="password"
+          id="aiAccessToken"
+          class="ai-token-input"
+          placeholder="Digite o token para usar IA"
+          autocomplete="off"
+        />
+      </div>
+    ` : '';
 
     return `
       <div class="card">
         ${fieldsHtml}
+        ${aiTokenHtml}
         <div class="btn-row">
           <button class="btn" id="execBtn">${ICONS.play}<span>Executar</span></button>
           ${aiConfig ? `<button class="btn secondary" id="aiActionBtn">${ICONS.lightbulb}<span>${aiConfig.button}</span></button>` : ''}
@@ -1551,13 +1592,9 @@
     }
 
     const token = getAIToken(document);
-    const payload = {
-      domain: cleanDomain,
-      content: cleanDomain
-    };
 
-    if (token) {
-      payload.ai_token = token;
+    if (!token) {
+      throw new Error("Informe o token de acesso para utilizar a IA.");
     }
 
     const data = await fetchJSON("/api/ai/email-health", {
@@ -1565,7 +1602,11 @@
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify(payload)
+      body: JSON.stringify({
+        domain: cleanDomain,
+        content: cleanDomain,
+        ai_token: token
+      })
     });
 
     if (data.error) {
@@ -1575,13 +1616,15 @@
     return data.data;
   }
 
-  function getAIToken(doc) {
+  function getAIToken(container) {
+    const localInput = container?.querySelector(".ai-token-input");
+    const globalInput = document.querySelector("#aiAccessToken");
+
     return (
-      doc.querySelector('#aiToken')?.value ||
-      doc.querySelector('[name="ai_token"]')?.value ||
-      doc.querySelector('[data-ai-token]')?.dataset?.aiToken ||
+      localInput?.value?.trim() ||
+      globalInput?.value?.trim() ||
       ''
-    ).trim();
+    );
   }
 
   async function analyzeReputationWithAI(content) {
@@ -1589,13 +1632,20 @@
   }
 
   async function analyzeAIEndpoint(endpoint, content, fallbackMessage) {
+    const token = getAIToken(document);
+
+    if (!token) {
+      throw new Error("Informe o token de acesso para utilizar a IA.");
+    }
+
     const data = await fetchJSON(endpoint, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        content
+        content,
+        ai_token: token
       })
     });
 

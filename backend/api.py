@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from urllib.parse import urlparse
 
@@ -85,20 +85,24 @@ def header_analyzer(raw_header: dict):
 
 @app.post("/api/ai/header")
 def ai_header_analyzer(data: dict):
-    from backend.ai.prompts import AI_HEADER_SYSTEM_PROMPT
-    from backend.ai.service import ask_gemini_json
-
-    raw_header = data.get("content", "")
-
-    if not raw_header or not raw_header.strip():
-        return {
-            "error": True,
-            "message": "Nenhum header foi enviado para análise."
-        }
-
-    raw_header = raw_header[:80000]
-
     try:
+        from backend.ai.auth import validate_ai_token
+
+        validate_ai_token(data)
+
+        raw_header = data.get("content", "")
+
+        if not raw_header or not raw_header.strip():
+            return {
+                "error": True,
+                "message": "Nenhum header foi enviado para análise."
+            }
+
+        raw_header = raw_header[:80000]
+
+        from backend.ai.prompts import AI_HEADER_SYSTEM_PROMPT
+        from backend.ai.service import ask_gemini_json
+
         result = ask_gemini_json(
             system_prompt=AI_HEADER_SYSTEM_PROMPT,
             user_content=f"Analise o seguinte header de e-mail:\n\n{raw_header}",
@@ -110,6 +114,12 @@ def ai_header_analyzer(data: dict):
             "data": result
         }
 
+    except HTTPException as e:
+        return {
+            "error": True,
+            "message": e.detail
+        }
+
     except Exception as e:
         return {
             "error": True,
@@ -118,20 +128,24 @@ def ai_header_analyzer(data: dict):
 
 @app.post("/api/ai/logs")
 def ai_logs_analyzer(data: dict):
-    from backend.ai.prompts import AI_LOGS_SYSTEM_PROMPT
-    from backend.ai.service import ask_gemini_json
-
-    raw_logs = data.get("content", "")
-
-    if not raw_logs or not raw_logs.strip():
-        return {
-            "error": True,
-            "message": "Nenhum log foi enviado para análise."
-        }
-
-    raw_logs = raw_logs[:80000]
-
     try:
+        from backend.ai.auth import validate_ai_token
+
+        validate_ai_token(data)
+
+        raw_logs = data.get("content", "")
+
+        if not raw_logs or not raw_logs.strip():
+            return {
+                "error": True,
+                "message": "Nenhum log foi enviado para análise."
+            }
+
+        raw_logs = raw_logs[:80000]
+
+        from backend.ai.prompts import AI_LOGS_SYSTEM_PROMPT
+        from backend.ai.service import ask_gemini_json
+
         result = ask_gemini_json(
             system_prompt=AI_LOGS_SYSTEM_PROMPT,
             user_content=f"Analise os seguintes logs técnicos:\n\n{raw_logs}",
@@ -143,6 +157,12 @@ def ai_logs_analyzer(data: dict):
             "data": result
         }
 
+    except HTTPException as e:
+        return {
+            "error": True,
+            "message": e.detail
+        }
+
     except Exception as e:
         return {
             "error": True,
@@ -151,24 +171,28 @@ def ai_logs_analyzer(data: dict):
 
 @app.post("/api/ai/email-health")
 def ai_email_health_analyzer(data: dict):
-    raw_domain = data.get("domain") or data.get("content") or ""
-
-    if not raw_domain or not raw_domain.strip():
-        return {
-            "error": True,
-            "message": "Nenhum domínio foi enviado para análise."
-        }
-
-    clean_domain = normalize_email_health_domain(raw_domain)
-
-    if not clean_domain:
-        return {
-            "error": True,
-            "message": "Informe um domínio válido para análise."
-        }
-
     try:
         import json
+
+        from backend.ai.auth import validate_ai_token
+
+        validate_ai_token(data)
+
+        raw_domain = data.get("domain") or data.get("content") or ""
+
+        if not raw_domain or not raw_domain.strip():
+            return {
+                "error": True,
+                "message": "Nenhum domínio foi enviado para análise."
+            }
+
+        clean_domain = normalize_email_health_domain(raw_domain)
+
+        if not clean_domain:
+            return {
+                "error": True,
+                "message": "Informe um domínio válido para análise."
+            }
 
         from backend.ai.email_health_collector import collect_email_health_data
         from backend.ai.prompts import AI_EMAIL_HEALTH_SYSTEM_PROMPT
@@ -193,6 +217,12 @@ def ai_email_health_analyzer(data: dict):
             "raw": collected_data
         }
 
+    except HTTPException as e:
+        return {
+            "error": True,
+            "message": e.detail
+        }
+
     except Exception as e:
         return {
             "error": True,
@@ -201,20 +231,24 @@ def ai_email_health_analyzer(data: dict):
 
 @app.post("/api/ai/reputation")
 def ai_reputation_analyzer(data: dict):
-    from backend.ai.prompts import AI_REPUTATION_SYSTEM_PROMPT
-    from backend.ai.service import ask_gemini_json
-
-    raw_data = data.get("content", "")
-
-    if not raw_data or not raw_data.strip():
-        return {
-            "error": True,
-            "message": "Nenhum dado de reputação foi enviado para análise."
-        }
-
-    raw_data = raw_data[:80000]
-
     try:
+        from backend.ai.auth import validate_ai_token
+
+        validate_ai_token(data)
+
+        raw_data = data.get("content", "")
+
+        if not raw_data or not raw_data.strip():
+            return {
+                "error": True,
+                "message": "Nenhum dado de reputação foi enviado para análise."
+            }
+
+        raw_data = raw_data[:80000]
+
+        from backend.ai.prompts import AI_REPUTATION_SYSTEM_PROMPT
+        from backend.ai.service import ask_gemini_json
+
         result = ask_gemini_json(
             system_prompt=AI_REPUTATION_SYSTEM_PROMPT,
             user_content=f"Analise os seguintes dados de reputação:\n\n{raw_data}",
@@ -224,6 +258,12 @@ def ai_reputation_analyzer(data: dict):
         return {
             "error": False,
             "data": result
+        }
+
+    except HTTPException as e:
+        return {
+            "error": True,
+            "message": e.detail
         }
 
     except Exception as e:
