@@ -130,29 +130,38 @@ def ai_logs_analyzer(data: dict):
 
 @app.post("/api/ai/email-health")
 def ai_email_health_analyzer(data: dict):
+    import json
+
+    from backend.ai.email_health_collector import collect_email_health_data
     from backend.ai.prompts import AI_EMAIL_HEALTH_SYSTEM_PROMPT
     from backend.ai.service import ask_gemini_json
 
-    raw_data = data.get("content", "")
+    raw_domain = data.get("domain") or data.get("content") or ""
 
-    if not raw_data or not raw_data.strip():
+    if not raw_domain or not raw_domain.strip():
         return {
             "error": True,
-            "message": "Nenhum dado de DNS/e-mail foi enviado para análise."
+            "message": "Nenhum domínio foi enviado para análise."
         }
 
-    raw_data = raw_data[:80000]
-
     try:
+        collected_data = collect_email_health_data(raw_domain)
+
         result = ask_gemini_json(
             system_prompt=AI_EMAIL_HEALTH_SYSTEM_PROMPT,
-            user_content=f"Analise os seguintes dados de DNS/e-mail health:\n\n{raw_data}",
+            user_content=(
+                "Analise os dados técnicos reais de DNS/e-mail abaixo. "
+                "Use apenas esses dados. Não invente registros ausentes. "
+                "Se algum check estiver indisponível ou inconclusivo, informe como não validado.\n\n"
+                + json.dumps(collected_data, ensure_ascii=False, indent=2)
+            ),
             max_tokens=4096
         )
 
         return {
             "error": False,
-            "data": result
+            "data": result,
+            "raw": collected_data
         }
 
     except Exception as e:

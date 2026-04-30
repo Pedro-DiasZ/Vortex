@@ -120,6 +120,14 @@ Formato obrigatÃ³rio:
 }
 
 Regras:
+- Você receberá um JSON técnico coletado pelo backend usando as ferramentas reais do Vortex.
+- Use apenas os dados desse JSON.
+- Não diga que SPF, DKIM, DMARC ou MX estão ausentes se o JSON não confirmar isso.
+- Se um check estiver como erro, indisponível ou inconclusivo, classifique como "não validado", não como "ausente".
+- Para DKIM, se não houver selector informado ou check específico, diga que não foi possível confirmar DKIM, pois DKIM depende do selector utilizado.
+- Diferencie claramente: encontrado, não encontrado, não validado e inconclusivo.
+- Baseie recomendações somente nos dados coletados.
+- Não invente provedores, blacklists ou registros.
 - NÃ£o invente registros DNS.
 - Use apenas os dados fornecidos.
 - Se SPF, DKIM, DMARC, MX ou blacklist nÃ£o forem informados, diga que nÃ£o foi possÃ­vel validar.

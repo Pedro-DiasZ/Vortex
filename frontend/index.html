@@ -1544,7 +1544,22 @@
   }
 
   async function analyzeEmailHealthWithAI(content) {
-    return analyzeAIEndpoint("/api/ai/email-health", content, "Erro ao analisar saúde de e-mail com IA.");
+    const data = await fetchJSON("/api/ai/email-health", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        domain: content,
+        content
+      })
+    });
+
+    if (data.error) {
+      throw new Error(data.message || "Erro ao analisar saúde de e-mail com IA.");
+    }
+
+    return data.data;
   }
 
   async function analyzeReputationWithAI(content) {
