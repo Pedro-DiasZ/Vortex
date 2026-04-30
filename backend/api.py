@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from urllib.parse import urlparse
 
 
 def limit_text(value: str, max_size: int = 100_000) -> str:
@@ -7,6 +8,26 @@ def limit_text(value: str, max_size: int = 100_000) -> str:
     if len(value) > max_size:
         return value[:max_size]
     return value
+
+
+def normalize_email_health_domain(value: str) -> str:
+    value = (value or "").strip()
+
+    if not value:
+        return ""
+
+    parsed = urlparse(value if "://" in value else f"//{value}")
+    domain = (parsed.hostname or value).strip().rstrip(".")
+
+    if "." not in domain:
+        return ""
+
+    try:
+        from backend.security import assert_domain
+
+        return assert_domain(domain)
+    except Exception:
+        return ""
 
 app = FastAPI(
     title="VortexAPI",
@@ -130,12 +151,6 @@ def ai_logs_analyzer(data: dict):
 
 @app.post("/api/ai/email-health")
 def ai_email_health_analyzer(data: dict):
-    import json
-
-    from backend.ai.email_health_collector import collect_email_health_data
-    from backend.ai.prompts import AI_EMAIL_HEALTH_SYSTEM_PROMPT
-    from backend.ai.service import ask_gemini_json
-
     raw_domain = data.get("domain") or data.get("content") or ""
 
     if not raw_domain or not raw_domain.strip():
@@ -144,8 +159,22 @@ def ai_email_health_analyzer(data: dict):
             "message": "Nenhum domínio foi enviado para análise."
         }
 
+    clean_domain = normalize_email_health_domain(raw_domain)
+
+    if not clean_domain:
+        return {
+            "error": True,
+            "message": "Informe um domínio válido para análise."
+        }
+
     try:
-        collected_data = collect_email_health_data(raw_domain)
+        import json
+
+        from backend.ai.email_health_collector import collect_email_health_data
+        from backend.ai.prompts import AI_EMAIL_HEALTH_SYSTEM_PROMPT
+        from backend.ai.service import ask_gemini_json
+
+        collected_data = collect_email_health_data(clean_domain)
 
         result = ask_gemini_json(
             system_prompt=AI_EMAIL_HEALTH_SYSTEM_PROMPT,

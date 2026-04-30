@@ -1544,15 +1544,28 @@
   }
 
   async function analyzeEmailHealthWithAI(content) {
+    const cleanDomain = (content || '').trim();
+
+    if (!cleanDomain) {
+      throw new Error("Informe um domínio para analisar com IA.");
+    }
+
+    const token = getAIToken(document);
+    const payload = {
+      domain: cleanDomain,
+      content: cleanDomain
+    };
+
+    if (token) {
+      payload.ai_token = token;
+    }
+
     const data = await fetchJSON("/api/ai/email-health", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({
-        domain: content,
-        content
-      })
+      body: JSON.stringify(payload)
     });
 
     if (data.error) {
@@ -1560,6 +1573,15 @@
     }
 
     return data.data;
+  }
+
+  function getAIToken(doc) {
+    return (
+      doc.querySelector('#aiToken')?.value ||
+      doc.querySelector('[name="ai_token"]')?.value ||
+      doc.querySelector('[data-ai-token]')?.dataset?.aiToken ||
+      ''
+    ).trim();
   }
 
   async function analyzeReputationWithAI(content) {
@@ -1698,6 +1720,18 @@
       ].filter(Boolean).join('\n\n');
     }
 
+    function getEmailHealthDomain() {
+      const domainInput = document.getElementById('f_domain')
+        || document.querySelector("[name='domain']")
+        || document.querySelector("[name='DOMAIN']")
+        || document.querySelector("[name='dominio']")
+        || document.querySelector("[name='domínio']")
+        || document.querySelector("[name='host']")
+        || document.querySelector(".domain-input");
+
+      return domainInput?.value?.trim() || "";
+    }
+
     if (aiActionBtn && aiResult && aiConfig) {
       aiActionBtn.onclick = async () => {
         const content = collectAIContent();
@@ -1711,7 +1745,9 @@
         aiResult.innerHTML = `<div class="result ai-card"><div class="output-wrap"><div class="placeholder">Analisando com IA...</div></div></div>`;
 
         try {
-          const result = await analyzeAIEndpoint(aiConfig.endpoint, content, aiConfig.error);
+          const result = aiConfig.type === 'email-health'
+            ? await analyzeEmailHealthWithAI(getEmailHealthDomain())
+            : await analyzeAIEndpoint(aiConfig.endpoint, content, aiConfig.error);
           aiResult.innerHTML = renderAIResult(result, { title: aiConfig.button, type: aiConfig.type });
         } catch (e) {
           aiResult.innerHTML = `<div class="alert">Não foi possível concluir a análise com IA. Detalhes: ${escapeHtml(e.message || aiConfig.error)}</div>`;
