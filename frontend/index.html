@@ -495,6 +495,147 @@
     text-transform: uppercase; letter-spacing: 0.16em;
   }
 
+  .ttl-converter {
+    display: grid;
+    gap: 18px;
+  }
+  .ttl-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    gap: 14px;
+    align-items: center;
+  }
+  .ttl-field {
+    border: 1px solid var(--border);
+    background: var(--card-2);
+    border-radius: var(--radius);
+    padding: 14px;
+  }
+  .ttl-field label {
+    display: block;
+    font: 800 10.5px var(--font-sans);
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--muted);
+    margin-bottom: 9px;
+  }
+  .ttl-value {
+    width: 100%;
+    border: none;
+    border-bottom: 1px solid var(--border);
+    background: transparent;
+    color: var(--text);
+    font: 800 30px var(--font-sans);
+    padding: 4px 0 10px;
+    outline: none;
+  }
+  .ttl-value:focus { border-color: var(--primary); }
+  .ttl-value[readonly] { color: var(--primary-glow); }
+  .ttl-unit {
+    width: 100%;
+    margin-top: 12px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--input-bg);
+    color: var(--text);
+    padding: 10px 12px;
+    outline: none;
+  }
+  .ttl-unit:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 18%, transparent);
+  }
+  .ttl-equals {
+    display: grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    color: var(--primary);
+    background: var(--card-2);
+    font: 900 20px var(--font-sans);
+  }
+  .ttl-formula {
+    border: 1px solid var(--border);
+    background: color-mix(in srgb, var(--primary) 5%, var(--card));
+    border-radius: 10px;
+    padding: 12px 14px;
+    color: var(--muted);
+    font: 600 13px var(--font-sans);
+    line-height: 1.5;
+  }
+  .ttl-chips {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .ttl-chip {
+    border: 1px solid var(--border);
+    background: var(--card-2);
+    color: var(--text);
+    border-radius: 999px;
+    padding: 8px 11px;
+    font: 700 11px var(--font-sans);
+    cursor: pointer;
+    transition: border-color .12s, color .12s, transform .12s;
+  }
+  .ttl-chip:hover {
+    border-color: var(--primary);
+    color: var(--primary-glow);
+    transform: translateY(-1px);
+  }
+  .ct-summary {
+    padding: 14px;
+    border-bottom: 1px solid var(--border);
+    color: var(--muted);
+    font: 600 13px var(--font-sans);
+  }
+  .ct-list {
+    display: grid;
+    gap: 10px;
+    padding: 12px;
+  }
+  .ct-cert {
+    border: 1px solid var(--border-soft);
+    border-radius: 10px;
+    background: var(--card);
+    padding: 13px;
+  }
+  .ct-cert.expired { border-color: color-mix(in srgb, var(--danger) 45%, var(--border)); }
+  .ct-cert.soon { border-color: color-mix(in srgb, var(--warning) 45%, var(--border)); }
+  .ct-cert-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+  }
+  .ct-cert-title { font-weight: 800; color: var(--text); }
+  .ct-badge {
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 3px 8px;
+    color: var(--muted);
+    font: 700 10px var(--font-sans);
+    text-transform: uppercase;
+    letter-spacing: .08em;
+  }
+  .ct-meta {
+    display: grid;
+    grid-template-columns: 120px minmax(0, 1fr);
+    gap: 7px 12px;
+    font-size: 12.5px;
+  }
+  .ct-meta .k { color: var(--muted); font-weight: 700; }
+  .ct-meta .v { color: var(--text); word-break: break-word; font-family: var(--font-mono); }
+
+  @media (max-width: 680px) {
+    .ttl-row { grid-template-columns: 1fr; }
+    .ttl-equals { width: 100%; }
+    .ct-meta { grid-template-columns: 1fr; }
+  }
+
   /* ===== RECOMMENDATIONS ===== */
   .rec-strip {
     margin-top: 14px;
@@ -1046,6 +1187,7 @@
     ]},
     { title: 'Infra & SSL', category: 'checks', items: [
       { path: '/ssl', title: 'SSL & HTTP Headers', label: 'SSL / Headers', icon: 'lock', fields: [{ n: 'domain', p: 'exemplo.com' }] },
+      { path: '/ct-logs', title: 'CT Log Viewer', label: 'CT Logs', desc: 'Mostra certificados emitidos para um domínio — útil para detectar certificados não autorizados.', icon: 'search', fields: [{ n: 'domain', p: 'exemplo.com' }], variant: 'ctLogs', buttonLabel: 'Consultar CT Logs' },
       { path: '/ping', title: 'Ping Test', label: 'Ping', icon: 'activity', fields: [{ n: 'host', p: 'host ou IP' }] },
       { path: '/uptime', title: 'Uptime Monitor', label: 'Uptime', icon: 'timer', fields: [{ n: 'url', p: 'https://exemplo.com' }] },
       { path: '/port-checker', title: 'Port Checker', label: 'Port Checker', icon: 'plug', fields: [{ n: 'host', p: 'host' }, { n: 'port', p: 'porta', type: 'number' }] },
@@ -1063,7 +1205,7 @@
     ]},
     { title: 'Network Utils', category: 'tools', items: [
       { path: '/utils/cidr', title: 'Validar CIDR', label: 'Validar CIDR', icon: 'network', fields: [{ n: 'cidr', p: '192.168.1.0/24' }] },
-      { path: '/utils/ttl/humanize', title: 'TTL Humanizer', label: 'TTL Humanize', icon: 'clock', fields: [{ n: 'seconds', p: 'Ex.: 3600', type: 'number' }] },
+      { path: '/utils/ttl/humanize', title: 'TTL Converter', label: 'TTL Converter', icon: 'clock', variant: 'ttl' },
     ]},
     { title: 'Migration', category: 'tools', items: [
       { path: '/migration/email', title: 'E-mail Migration', label: 'E-mail Migration', desc: 'Gerencie contas para migração e exporte os arquivos LOTE e ACC prontos para uso.', icon: 'move', variant: 'migration' },
@@ -1496,7 +1638,10 @@
     } else {
       footnote.style.display = 'block';
       document.getElementById('footEndpoint').innerText = route.path;
-      if (route.variant === 'password') {
+      if (route.variant === 'ttl') {
+        document.getElementById('mainCard').innerHTML = renderTTLUI();
+        bindTTLConverter();
+      } else if (route.variant === 'password') {
         document.getElementById('mainCard').innerHTML = renderPasswordUI();
         bindPassword();
       } else {
@@ -1559,7 +1704,7 @@
         ${fieldsHtml}
         ${aiTokenHtml}
         <div class="btn-row">
-          <button class="btn" id="execBtn">${ICONS.play}<span>Executar</span></button>
+          <button class="btn" id="execBtn">${ICONS.play}<span>${route.buttonLabel || 'Executar'}</span></button>
           ${aiConfig ? `<button class="btn secondary" id="aiActionBtn">${ICONS.lightbulb}<span>${aiConfig.button}</span></button>` : ''}
         </div>
       </div>
@@ -1900,7 +2045,7 @@
           if (qs) url += `?${qs}`;
         }
         const data = await fetchJSON(url, init);
-        out.innerHTML = renderTable(data);
+        out.innerHTML = route.variant === 'ctLogs' ? renderCTLogs(data) : renderTable(data);
         if (route.path === '/spf') renderSPFTags(data, out);
         const rawText = typeof data === 'string' ? data : JSON.stringify(data, null, 2);
         showRecommendations(route.path, rawText);
@@ -1912,10 +2057,140 @@
         setMessage(String(e), true);
       } finally {
         btn.disabled = false;
-        btn.innerHTML = `${ICONS.play}<span>Executar</span>`;
+        btn.innerHTML = `${ICONS.play}<span>${route.buttonLabel || 'Executar'}</span>`;
       }
     }
     btn.onclick = execute;
+  }
+
+  const TIME_UNITS = {
+    seconds: { label: "Segundo", plural: "segundos", seconds: 1 },
+    minutes: { label: "Minuto", plural: "minutos", seconds: 60 },
+    hours: { label: "Hora", plural: "horas", seconds: 3600 },
+    days: { label: "Dia", plural: "dias", seconds: 86400 },
+    weeks: { label: "Semana", plural: "semanas", seconds: 604800 }
+  };
+
+  const TTL_PRESETS = [
+    { seconds: 300, label: "300s = 5 min" },
+    { seconds: 600, label: "600s = 10 min" },
+    { seconds: 1800, label: "1800s = 30 min" },
+    { seconds: 3600, label: "3600s = 1 hora" },
+    { seconds: 14400, label: "14400s = 4 horas" },
+    { seconds: 86400, label: "86400s = 1 dia" }
+  ];
+
+  function formatTTLResult(value) {
+    if (!Number.isFinite(value)) return "0";
+    if (Number.isInteger(value)) return String(value);
+    return parseFloat(value.toFixed(6)).toString();
+  }
+
+  function renderUnitOptions(selected) {
+    return Object.entries(TIME_UNITS).map(([key, unit]) =>
+      `<option value="${key}" ${key === selected ? 'selected' : ''}>${unit.label}</option>`
+    ).join('');
+  }
+
+  function renderTTLUI() {
+    return `
+      <div class="card ttl-converter">
+        <div class="ttl-row">
+          <div class="ttl-field">
+            <label for="ttlInput">Valor</label>
+            <input id="ttlInput" class="ttl-value" type="number" min="0" step="any" value="3600">
+            <select id="ttlFrom" class="ttl-unit">${renderUnitOptions('seconds')}</select>
+          </div>
+          <div class="ttl-equals">=</div>
+          <div class="ttl-field">
+            <label for="ttlOutput">Resultado</label>
+            <input id="ttlOutput" class="ttl-value" readonly value="1">
+            <select id="ttlTo" class="ttl-unit">${renderUnitOptions('hours')}</select>
+          </div>
+        </div>
+        <div id="ttlFormula" class="ttl-formula"></div>
+        <div class="ttl-chips">
+          ${TTL_PRESETS.map(p => `<button class="ttl-chip" type="button" data-seconds="${p.seconds}">${p.label}</button>`).join('')}
+        </div>
+      </div>
+    `;
+  }
+
+  function bindTTLConverter() {
+    const input = document.getElementById('ttlInput');
+    const output = document.getElementById('ttlOutput');
+    const from = document.getElementById('ttlFrom');
+    const to = document.getElementById('ttlTo');
+    const formula = document.getElementById('ttlFormula');
+
+    function update() {
+      const value = parseFloat(input.value || '0');
+      const fromUnit = TIME_UNITS[from.value];
+      const toUnit = TIME_UNITS[to.value];
+      const baseSeconds = value * fromUnit.seconds;
+      const result = baseSeconds / toUnit.seconds;
+      output.value = formatTTLResult(result);
+
+      const relation = formatTTLResult(fromUnit.seconds / toUnit.seconds);
+      const action = fromUnit.seconds < toUnit.seconds
+        ? `divida por ${formatTTLResult(toUnit.seconds / fromUnit.seconds)}`
+        : fromUnit.seconds > toUnit.seconds
+          ? `multiplique por ${formatTTLResult(fromUnit.seconds / toUnit.seconds)}`
+          : "mantenha o mesmo valor";
+
+      formula.textContent = `1 ${fromUnit.label.toLowerCase()} = ${relation} ${toUnit.plural}. Para converter ${fromUnit.plural} para ${toUnit.plural}, ${action}.`;
+    }
+
+    [input, from, to].forEach(el => el.addEventListener('input', update));
+    document.querySelectorAll('.ttl-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        input.value = chip.dataset.seconds;
+        from.value = 'seconds';
+        update();
+      });
+    });
+
+    update();
+  }
+
+  function renderCTLogs(data) {
+    const certs = Array.isArray(data?.certificates) ? data.certificates : [];
+
+    if (data?.error) {
+      return `<div class="placeholder">${escapeHtml(data.error)}</div>`;
+    }
+
+    if (!certs.length) {
+      return `<div class="placeholder">Nenhum certificado encontrado para ${escapeHtml(data?.domain || 'o domínio informado')}.</div>`;
+    }
+
+    const now = Date.now();
+    const summary = `<div class="ct-summary">Foram exibidos ${certs.length} certificado(s) para ${escapeHtml(data.domain)}.</div>`;
+    const cards = certs.map(cert => {
+      const expiry = cert.not_after ? new Date(cert.not_after).getTime() : NaN;
+      const days = Number.isFinite(expiry) ? Math.ceil((expiry - now) / 86400000) : null;
+      const state = days !== null && days < 0 ? 'expired' : days !== null && days <= 30 ? 'soon' : '';
+      const badge = days === null ? 'validade indefinida' : days < 0 ? 'expirado' : `${days} dias restantes`;
+
+      return `
+        <article class="ct-cert ${state}">
+          <div class="ct-cert-head">
+            <div class="ct-cert-title">${escapeHtml(cert.common_name || cert.name_value || 'Certificado')}</div>
+            <div class="ct-badge">${escapeHtml(badge)}</div>
+          </div>
+          <div class="ct-meta">
+            <div class="k">Emissor</div><div class="v">${escapeHtml(cert.issuer_name || '-')}</div>
+            <div class="k">Common Name</div><div class="v">${escapeHtml(cert.common_name || '-')}</div>
+            <div class="k">Domínios/SANs</div><div class="v">${escapeHtml(cert.name_value || '-')}</div>
+            <div class="k">Início</div><div class="v">${escapeHtml(cert.not_before || '-')}</div>
+            <div class="k">Final</div><div class="v">${escapeHtml(cert.not_after || '-')}</div>
+            <div class="k">Timestamp</div><div class="v">${escapeHtml(cert.entry_timestamp || '-')}</div>
+          </div>
+        </article>
+      `;
+    }).join('');
+
+    return `${summary}<div class="ct-list">${cards}</div>`;
   }
 
   // ======= PASSWORD GENERATOR =======

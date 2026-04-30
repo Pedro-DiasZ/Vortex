@@ -332,6 +332,13 @@ def ssl(domain: str):
     headers = get_http_headers(domain)
     return {"ssl_info": ssl_info, "http_headers": headers}
 
+
+@app.get("/api/ct-logs")
+def ct_logs(domain: str):
+    from backend.modules.ssl.ct_logs import get_ct_logs
+
+    return get_ct_logs(domain)
+
 @app.get("/api/utils/cidr")
 def cidr(cidr: str):
     from backend.modules.utils.cidr import is_valid_cidr
