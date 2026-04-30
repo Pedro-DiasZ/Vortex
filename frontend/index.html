@@ -302,13 +302,99 @@
     background: var(--gradient-primary); color: var(--primary-foreground);
     font: 800 12px var(--font-sans); text-transform: uppercase; letter-spacing: 0.16em;
     cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-    box-shadow: var(--shadow-elegant); transition: opacity .12s;
+    box-shadow: var(--shadow-elegant); transition: opacity .12s, transform .12s ease, box-shadow .12s ease, border-color .12s ease, background-color .12s ease;
     margin-top: 18px;
   }
-  .btn:hover:not(:disabled) { opacity: .92; }
+  .btn:hover:not(:disabled) { opacity: .95; transform: translateY(-1px); box-shadow: 0 7px 18px color-mix(in srgb, var(--primary) 26%, transparent); }
+  .btn:active:not(:disabled) { transform: translateY(1px) scale(.99); box-shadow: 0 2px 8px color-mix(in srgb, var(--primary) 18%, transparent); }
   .btn:disabled { opacity: .6; cursor: not-allowed; }
   .btn svg { width: 16px; height: 16px; }
+  .btn-row { display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 18px; }
+  .btn-row .btn { margin-top: 0; }
+  .btn.secondary {
+    background: var(--card-2);
+    color: var(--text);
+    border: 1px solid var(--border);
+    box-shadow: none;
+  }
+  .btn.secondary:hover:not(:disabled) {
+    border-color: var(--primary);
+    color: var(--primary-glow);
+    opacity: 1;
+  }
 
+  .ai-card {
+    margin-top: 22px;
+    border: 1px solid color-mix(in srgb, var(--primary) 28%, var(--border));
+    background:
+      linear-gradient(180deg, color-mix(in srgb, var(--primary) 7%, transparent), transparent 170px),
+      var(--card);
+    box-shadow: var(--shadow-card), 0 0 0 1px color-mix(in srgb, var(--primary) 5%, transparent);
+    animation: aiCardIn .18s ease-out;
+  }
+  @keyframes aiCardIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .ai-card-header {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    padding: 14px 16px; border-bottom: 1px solid var(--border);
+    background: color-mix(in srgb, var(--card-2) 88%, var(--primary));
+  }
+  .ai-card-title {
+    display: flex; align-items: center; gap: 8px;
+    color: var(--text); font: 800 12px var(--font-sans);
+    text-transform: uppercase; letter-spacing: 0.16em;
+  }
+  .ai-card-title svg { width: 15px; height: 15px; color: var(--primary-glow); }
+  .ai-badge {
+    padding: 5px 9px; border-radius: 999px;
+    border: 1px solid color-mix(in srgb, var(--primary) 35%, transparent);
+    background: color-mix(in srgb, var(--primary) 12%, transparent);
+    color: var(--primary-glow);
+    font: 800 10px var(--font-sans); text-transform: uppercase; letter-spacing: 0.16em;
+  }
+  .ai-metrics {
+    display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px;
+    padding: 16px; border-bottom: 1px solid var(--border);
+  }
+  .ai-metric {
+    border: 1px solid var(--border-soft); border-radius: 10px;
+    padding: 12px; background: color-mix(in srgb, var(--card-2) 82%, transparent);
+  }
+  .ai-metric span {
+    display: block; color: var(--muted);
+    font: 800 9.5px var(--font-sans); letter-spacing: 0.16em; text-transform: uppercase;
+  }
+  .ai-metric strong {
+    display: block; margin-top: 6px; color: var(--text);
+    font: 800 18px var(--font-sans); word-break: break-word;
+  }
+  .ai-body { padding: 16px; display: grid; gap: 14px; }
+  .ai-section {
+    border: 1px solid var(--border-soft); border-radius: 10px;
+    background: color-mix(in srgb, var(--card-2) 72%, transparent);
+    padding: 14px;
+  }
+  .ai-section-title {
+    margin: 0 0 9px; color: var(--primary-glow);
+    font: 800 10.5px var(--font-sans); letter-spacing: 0.16em; text-transform: uppercase;
+  }
+  .ai-section p,
+  .ai-section li {
+    color: var(--text); font: 500 13px var(--font-sans); line-height: 1.55;
+  }
+  .ai-section p { margin: 0; white-space: pre-wrap; }
+  .ai-section ul { margin: 0; padding-left: 0; display: grid; gap: 9px; list-style: none; }
+  .ai-issue,
+  .ai-positive {
+    border-left: 3px solid var(--primary);
+    padding: 9px 10px; border-radius: 8px;
+    background: color-mix(in srgb, var(--primary) 5%, transparent);
+  }
+  .ai-positive { border-left-color: var(--success); }
+  .ai-issue-title { color: var(--text); font-weight: 800; margin-bottom: 3px; }
+  .ai-issue-meta { color: var(--muted); font-size: 12px; margin-top: 3px; }
   .result {
     margin-top: 22px; border-radius: var(--radius); overflow: hidden;
     border: 1px solid var(--border); background: var(--card);
@@ -330,9 +416,11 @@
     margin-left: 10px; height: 28px; padding: 0 10px; border-radius: 8px;
     background: transparent; color: var(--text); border: 1px solid var(--border);
     font: 600 11px var(--font-sans); cursor: pointer; display: inline-flex; align-items: center; gap: 5px;
+    transition: transform .12s ease, background-color .12s ease, border-color .12s ease, color .12s ease;
   }
   .copy-btn svg { width: 14px; height: 14px; flex-shrink: 0; }
-  .copy-btn:hover { background: var(--sidebar-soft); }
+  .copy-btn:hover { background: var(--sidebar-soft); border-color: var(--primary); transform: translateY(-1px); }
+  .copy-btn:active { transform: translateY(1px) scale(.98); }
   .output-wrap {
     background: var(--card-2);
     max-height: 480px; overflow: auto;
@@ -438,10 +526,74 @@
     border: none; border-radius: 10px; cursor: pointer;
     display: inline-flex; align-items: center; justify-content: center; gap: 6px;
     font: 700 12px var(--font-sans);
+    transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease, opacity .12s ease, background-color .12s ease, color .12s ease;
   }
   .pwd-btn-icon { width: 46px; background: var(--sidebar-soft); color: var(--text); border: 1px solid var(--border); }
   .pwd-btn-copy { padding: 0 18px; background: var(--gradient-primary); color: var(--primary-foreground); }
+  .pwd-btn:hover:not(:disabled) { transform: translateY(-1px); opacity: .95; box-shadow: var(--shadow-elegant); }
+  .pwd-btn:active:not(:disabled) { transform: translateY(1px) scale(.98); box-shadow: var(--shadow-card); }
   .pwd-btn svg { width: 16px; height: 16px; }
+  .pwd-batch {
+    margin-top: 22px;
+    padding: 18px;
+    border: 1px solid color-mix(in srgb, var(--primary) 22%, var(--border));
+    border-radius: var(--radius);
+    background: color-mix(in srgb, var(--primary) 5%, var(--card-2));
+  }
+  .pwd-batch-grid {
+    display: grid;
+    grid-template-columns: minmax(120px, 180px) 1fr;
+    gap: 10px;
+    align-items: end;
+  }
+  .pwd-batch-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .pwd-batch-generate {
+    min-height: 46px;
+    padding: 0 18px;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    box-shadow: var(--shadow-elegant);
+  }
+  .pwd-batch-copy {
+    min-height: 46px;
+  }
+  .pwd-batch-table-wrap {
+    margin-top: 12px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: auto;
+    max-height: 280px;
+    background: var(--card);
+  }
+  .pwd-batch-table {
+    width: 100%;
+    border-collapse: collapse;
+    font: 700 12.5px var(--font-mono);
+  }
+  .pwd-batch-table th,
+  .pwd-batch-table td {
+    padding: 9px 12px;
+    border-bottom: 1px solid var(--border-soft);
+    text-align: left;
+  }
+  .pwd-batch-table th {
+    position: sticky;
+    top: 0;
+    background: var(--card-2);
+    color: var(--muted);
+    font: 800 10px var(--font-sans);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+  .pwd-batch-table tr:last-child td { border-bottom: none; }
+  .pwd-batch-table td:first-child { width: 60px; color: var(--muted); }
+  .pwd-batch-table td:last-child { color: var(--primary-glow); }
+  .pwd-batch-empty {
+    padding: 18px;
+    color: var(--muted);
+    font: 500 12px var(--font-mono);
+  }
 
   .range-row { margin-top: 22px; }
   .range-label { display: flex; justify-content: space-between; align-items: center; font-size: 14px; }
@@ -752,7 +904,43 @@
 <input type="file" id="migFileInput" accept=".xlsx,.xls,.csv" style="display:none">
 
 <script>
-  const API = "/api";
+  const API_BASE_URL =
+    window.location.protocol === "file:" ||
+    window.location.hostname === "localhost" ||
+    window.location.hostname === "127.0.0.1"
+      ? "http://localhost:8000"
+      : "";
+
+  async function fetchJSON(url, options = {}) {
+    const fullUrl = `${API_BASE_URL}${url}`;
+
+    const response = await fetch(fullUrl, options);
+    const text = await response.text();
+
+    if (!text) {
+      throw new Error(
+        `A API não retornou resposta. Status: ${response.status} ${response.statusText}`
+      );
+    }
+
+    let data;
+
+    try {
+      data = JSON.parse(text);
+    } catch (error) {
+      throw new Error(
+        `A API retornou uma resposta inválida. Status: ${response.status}`
+      );
+    }
+
+    if (!response.ok) {
+      throw new Error(
+        data.message || data.detail || `Erro HTTP ${response.status}`
+      );
+    }
+
+    return data;
+  }
 
   function showToast(message, type) {
     let container = document.getElementById('toastContainer');
@@ -856,6 +1044,32 @@
 
   const ALL_ROUTES = ROUTE_GROUPS.flatMap(g => g.items);
   const findRoute = (p) => ALL_ROUTES.find(r => r.path === p);
+  const AI_ROUTE_CONFIG = {
+    '/analyze-header': {
+      button: 'Analisar com IA',
+      endpoint: '/api/ai/header',
+      type: 'header',
+      error: 'Erro ao analisar header com IA.'
+    },
+    '/email_log_analysis': {
+      button: 'Analisar logs com IA',
+      endpoint: '/api/ai/logs',
+      type: 'logs',
+      error: 'Erro ao analisar logs com IA.'
+    },
+    '/dns': {
+      button: 'Analisar saúde com IA',
+      endpoint: '/api/ai/email-health',
+      type: 'email-health',
+      error: 'Erro ao analisar saúde de e-mail com IA.'
+    },
+    '/blacklists': {
+      button: 'Analisar reputação com IA',
+      endpoint: '/api/ai/reputation',
+      type: 'reputation',
+      error: 'Erro ao analisar reputação com IA.'
+    }
+  };
 
   let currentTab = 'checks';
   let currentPath = '/spf';
@@ -1273,6 +1487,7 @@
   }
 
   function renderFormUI(route) {
+    const aiConfig = AI_ROUTE_CONFIG[route.path];
     const fieldsHtml = (route.fields || []).map(f => {
       const label = f.n.replace(/_/g, ' ');
       if (f.options) {
@@ -1302,7 +1517,10 @@
     return `
       <div class="card">
         ${fieldsHtml}
-        <button class="btn" id="execBtn">${ICONS.play}<span>Executar</span></button>
+        <div class="btn-row">
+          <button class="btn" id="execBtn">${ICONS.play}<span>Executar</span></button>
+          ${aiConfig ? `<button class="btn secondary" id="aiActionBtn">${ICONS.lightbulb}<span>${aiConfig.button}</span></button>` : ''}
+        </div>
       </div>
       <div class="result">
         <div class="result-head">
@@ -1312,7 +1530,123 @@
         </div>
         <div class="output-wrap" id="output"><div class="placeholder">Aguardando execução...</div></div>
       </div>
+      ${aiConfig ? '<div id="aiResult"></div>' : ''}
       <div id="recArea"></div>
+    `;
+  }
+
+  async function analyzeHeaderWithAI(headers) {
+    return analyzeAIEndpoint("/api/ai/header", headers, "Erro ao analisar header com IA.");
+  }
+
+  async function analyzeLogsWithAI(content) {
+    return analyzeAIEndpoint("/api/ai/logs", content, "Erro ao analisar logs com IA.");
+  }
+
+  async function analyzeEmailHealthWithAI(content) {
+    return analyzeAIEndpoint("/api/ai/email-health", content, "Erro ao analisar saúde de e-mail com IA.");
+  }
+
+  async function analyzeReputationWithAI(content) {
+    return analyzeAIEndpoint("/api/ai/reputation", content, "Erro ao analisar reputação com IA.");
+  }
+
+  async function analyzeAIEndpoint(endpoint, content, fallbackMessage) {
+    const data = await fetchJSON(endpoint, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        content
+      })
+    });
+
+    if (data.error) {
+      throw new Error(data.message || fallbackMessage);
+    }
+
+    return data.data;
+  }
+
+  function escapeHtml(value) {
+    return String(value ?? '').replace(/[&<>"']/g, c =>
+      ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+  }
+
+  function renderAIResult(data, options = {}) {
+    const issues = Array.isArray(data?.issues) ? data.issues : [];
+    const positives = Array.isArray(data?.positive_points) ? data.positive_points : [];
+    const checks = Array.isArray(data?.checks_to_run) ? data.checks_to_run : [];
+    const dnsRecommendations = Array.isArray(data?.dns_recommendations) ? data.dns_recommendations : [];
+    const issueHtml = issues.length ? issues.map(issue => `
+      <li class="ai-issue">
+        <div class="ai-issue-title">${escapeHtml(issue.title || 'Problema identificado')}</div>
+        <div class="ai-issue-meta">Severidade: ${escapeHtml(issue.severity || '-')}</div>
+        <div>${escapeHtml(issue.description || '')}</div>
+        ${issue.evidence ? `<div class="ai-issue-meta">Evidencia: ${escapeHtml(issue.evidence)}</div>` : ''}
+        ${issue.recommendation ? `<div>${escapeHtml(issue.recommendation)}</div>` : ''}
+      </li>
+    `).join('') : '<li>Nenhum problema listado pela IA.</li>';
+    const positiveHtml = positives.length ? positives.map(item => `
+      <li class="ai-positive">${escapeHtml(item)}</li>
+    `).join('') : '<li>Nenhum ponto positivo listado pela IA.</li>';
+    const extraSections = [
+      data?.probable_cause ? { title: 'Causa provável', content: data.probable_cause } : null,
+      data?.reputation_status ? { title: 'Status de reputação', content: data.reputation_status } : null,
+      data?.deliverability_impact ? { title: 'Impacto na entregabilidade', content: data.deliverability_impact } : null,
+    ].filter(Boolean).map(section => `
+      <div class="ai-section">
+        <h3 class="ai-section-title">${escapeHtml(section.title)}</h3>
+        <p>${escapeHtml(section.content)}</p>
+      </div>
+    `).join('');
+    const checksHtml = checks.length ? `
+      <div class="ai-section">
+        <h3 class="ai-section-title">Validações recomendadas</h3>
+        <ul>${checks.map(item => `<li class="ai-positive">${escapeHtml(item)}</li>`).join('')}</ul>
+      </div>
+    ` : '';
+    const dnsHtml = dnsRecommendations.length ? `
+      <div class="ai-section">
+        <h3 class="ai-section-title">Recomendações DNS</h3>
+        <ul>${dnsRecommendations.map(item => `<li class="ai-positive">${escapeHtml(item)}</li>`).join('')}</ul>
+      </div>
+    ` : '';
+
+    return `
+      <div class="result ai-card">
+        <div class="ai-card-header">
+          <div class="ai-card-title">${ICONS.lightbulb}<span>${escapeHtml(options.title || 'Análise com IA')}</span></div>
+          <span class="ai-badge">Gemini</span>
+        </div>
+        <div class="ai-metrics">
+          <div class="ai-metric"><span>Score</span><strong>${escapeHtml(data?.score ?? '-')}</strong></div>
+          <div class="ai-metric"><span>Risco</span><strong>${escapeHtml(data?.risk_level || '-')}</strong></div>
+          <div class="ai-metric"><span>Problemas</span><strong>${issues.length}</strong></div>
+        </div>
+        <div class="ai-body">
+          <div class="ai-section">
+            <h3 class="ai-section-title">Resumo</h3>
+            <p>${escapeHtml(data?.summary || '-')}</p>
+          </div>
+          ${extraSections}
+          <div class="ai-section">
+            <h3 class="ai-section-title">Issues</h3>
+            <ul>${issueHtml}</ul>
+          </div>
+          <div class="ai-section">
+            <h3 class="ai-section-title">Pontos positivos</h3>
+            <ul>${positiveHtml}</ul>
+          </div>
+          ${checksHtml}
+          ${dnsHtml}
+          <div class="ai-section">
+            <h3 class="ai-section-title">Explicação técnica</h3>
+            <p>${escapeHtml(data?.technical_explanation || '-')}</p>
+          </div>
+        </div>
+      </div>
     `;
   }
 
@@ -1320,6 +1654,9 @@
     const out  = document.getElementById('output');
     const btn  = document.getElementById('execBtn');
     const recArea = document.getElementById('recArea');
+    const aiConfig = AI_ROUTE_CONFIG[route.path];
+    const aiActionBtn = document.getElementById('aiActionBtn');
+    const aiResult = document.getElementById('aiResult');
 
     document.querySelectorAll('#mainCard .input, #mainCard .textarea').forEach(el => {
       el.addEventListener('keydown', (e) => { if (e.key === 'Enter' && el.tagName !== 'TEXTAREA') execute(); });
@@ -1330,6 +1667,45 @@
       if (!text || text === 'Aguardando execução...') return;
       try { await navigator.clipboard.writeText(text); showToast('Resultado copiado!'); } catch {}
     };
+
+    function collectAIContent() {
+      const fields = (route.fields || []).map(f => {
+        const el = document.getElementById(`f_${f.n}`);
+        return `${f.n}: ${el ? el.value : ''}`;
+      }).join('\n');
+      const currentOutput = (out.innerText || '').trim();
+      const hasOutput = currentOutput && !currentOutput.includes('Aguardando');
+
+      return [
+        `Ferramenta: ${route.title}`,
+        fields ? `Dados informados:\n${fields}` : '',
+        hasOutput ? `Resultado técnico atual:\n${currentOutput}` : ''
+      ].filter(Boolean).join('\n\n');
+    }
+
+    if (aiActionBtn && aiResult && aiConfig) {
+      aiActionBtn.onclick = async () => {
+        const content = collectAIContent();
+        if (!content.trim()) {
+          aiResult.innerHTML = `<div class="alert">Nenhum conteúdo foi enviado para análise com IA.</div>`;
+          return;
+        }
+
+        aiActionBtn.disabled = true;
+        aiActionBtn.innerHTML = `<svg class="spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M21 12a9 9 0 1 1-6.22-8.56"/></svg><span>Analisando...</span>`;
+        aiResult.innerHTML = `<div class="result ai-card"><div class="output-wrap"><div class="placeholder">Analisando com IA...</div></div></div>`;
+
+        try {
+          const result = await analyzeAIEndpoint(aiConfig.endpoint, content, aiConfig.error);
+          aiResult.innerHTML = renderAIResult(result, { title: aiConfig.button, type: aiConfig.type });
+        } catch (e) {
+          aiResult.innerHTML = `<div class="alert">Não foi possível concluir a análise com IA. Detalhes: ${escapeHtml(e.message || aiConfig.error)}</div>`;
+        } finally {
+          aiActionBtn.disabled = false;
+          aiActionBtn.innerHTML = `${ICONS.lightbulb}<span>${aiConfig.button}</span>`;
+        }
+      };
+    }
 
     function setMessage(msg, isError) {
       out.innerHTML = `<div class="${isError ? 'err-msg' : 'placeholder'}"></div>`;
@@ -1399,10 +1775,11 @@
     async function execute() {
       setMessage('Executando requisição...', false);
       if (recArea) recArea.innerHTML = '';
+      if (aiResult) aiResult.innerHTML = '';
       btn.disabled = true;
       btn.innerHTML = `<svg class="spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M21 12a9 9 0 1 1-6.22-8.56"/></svg><span>Carregando...</span>`;
       try {
-        let url = `${API}${route.path}`;
+        let url = `/api${route.path}`;
         const init = { method: route.method || 'GET' };
         if (route.method === 'POST') {
           init.headers = { 'Content-Type': 'application/json' };
@@ -1421,20 +1798,17 @@
           const qs = params.toString();
           if (qs) url += `?${qs}`;
         }
-        const res = await fetch(url, init);
-        const ct  = res.headers.get('content-type') || '';
-        const data = ct.includes('application/json') ? await res.json() : await res.text();
-        if (!res.ok) {
-          const msg = typeof data === 'string' ? data : `Erro ${res.status}\n${JSON.stringify(data, null, 2)}`;
-          setMessage(msg, true);
-        } else {
-          out.innerHTML = renderTable(data);
-          if (route.path === '/spf') renderSPFTags(data, out);
-          const rawText = typeof data === 'string' ? data : JSON.stringify(data, null, 2);
-          showRecommendations(route.path, rawText);
-        }
+        const data = await fetchJSON(url, init);
+        out.innerHTML = renderTable(data);
+        if (route.path === '/spf') renderSPFTags(data, out);
+        const rawText = typeof data === 'string' ? data : JSON.stringify(data, null, 2);
+        showRecommendations(route.path, rawText);
       } catch (e) {
-        setMessage(`Não foi possível conectar à API em ${API}.\nVerifique se o servidor local está em execução.`, true);
+        if (e && e.message) {
+          setMessage(e.message, true);
+          return;
+        }
+        setMessage(String(e), true);
       } finally {
         btn.disabled = false;
         btn.innerHTML = `${ICONS.play}<span>Executar</span>`;
@@ -1468,6 +1842,19 @@
         <div class="strength">
           <div class="strength-label"><span>Força</span><b id="strengthLabel">—</b></div>
           <div class="strength-bar"><div class="strength-fill" id="strengthFill" style="width:0%;background:var(--border);"></div></div>
+        </div>
+        <div class="pwd-batch">
+          <label class="field-label" for="pwdBatchCount">Criacao de senhas em lote</label>
+          <div class="pwd-batch-grid">
+            <input class="input" id="pwdBatchCount" type="number" min="1" max="500" step="1" value="10" inputmode="numeric">
+            <div class="pwd-batch-actions">
+              <button class="pwd-btn pwd-btn-copy pwd-batch-generate" id="pwdBatchGenerate">${ICONS.refresh}<span>Gerar lote</span></button>
+              <button class="pwd-btn pwd-btn-icon pwd-batch-copy" id="pwdBatchCopy" title="Copiar lote">${ICONS.copy}</button>
+            </div>
+          </div>
+          <div class="pwd-batch-table-wrap" id="pwdBatchTable">
+            <div class="pwd-batch-empty">Gere um lote para visualizar as senhas em tabela.</div>
+          </div>
         </div>
         <div id="pwdAlert"></div>
       </div>
@@ -1503,32 +1890,73 @@
     const cbLower = document.getElementById('f_lower');
     const cbNums  = document.getElementById('f_nums');
     const cbSym   = document.getElementById('f_sym');
+    const batchCountEl = document.getElementById('pwdBatchCount');
+    const batchTable = document.getElementById('pwdBatchTable');
+    const batchGenerateBtn = document.getElementById('pwdBatchGenerate');
+    const batchCopyBtn = document.getElementById('pwdBatchCopy');
+    let batchPasswords = [];
 
     function updateStrength(p) { const s = strengthOf(p); sLabel.innerText = s.label; sFill.style.width = s.pct + '%'; sFill.style.background = s.color; }
-    function generate() {
+    function getPasswordOptions() {
       alertEl.innerHTML = '';
       const length = parseInt(lenEl.value);
       const useUpper = cbUpper.checked, useLower = cbLower.checked;
       const useNums  = cbNums.checked,  useSym   = cbSym.checked;
       if (!useUpper && !useLower && !useNums && !useSym) {
-        input.value = ''; updateStrength('');
         alertEl.innerHTML = `<div class="alert">Selecione pelo menos um tipo de caractere.</div>`;
-        return;
+        return null;
       }
-      const chars = { upper: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', lower: 'abcdefghijklmnopqrstuvwxyz', nums: '0123456789', sym: '!@#$%^&*()_+~`|}{[]:;?><,./-=' };
+      const chars = { upper: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', lower: 'abcdefghijklmnopqrstuvwxyz', nums: '0123456789', sym: '!@#$%^&*()_+~`|}{[]?><,-=' };
       let charset = '';
       if (useUpper) charset += chars.upper;
       if (useLower) charset += chars.lower;
       if (useNums)  charset += chars.nums;
       if (useSym)   charset += chars.sym;
+      return { length, useUpper, useLower, useNums, useSym, chars, charset };
+    }
+    function createPassword() {
+      const options = getPasswordOptions();
+      if (!options) return '';
+      const { length, useUpper, useLower, useNums, useSym, chars, charset } = options;
       let pwd = '';
       if (useUpper) pwd += chars.upper[Math.floor(Math.random() * chars.upper.length)];
       if (useLower) pwd += chars.lower[Math.floor(Math.random() * chars.lower.length)];
       if (useNums)  pwd += chars.nums[Math.floor(Math.random() * chars.nums.length)];
       if (useSym)   pwd += chars.sym[Math.floor(Math.random() * chars.sym.length)];
       while (pwd.length < length) pwd += charset[Math.floor(Math.random() * charset.length)];
-      pwd = pwd.split('').sort(() => 0.5 - Math.random()).join('').substring(0, length);
+      return pwd.split('').sort(() => 0.5 - Math.random()).join('').substring(0, length);
+    }
+    function generate() {
+      const pwd = createPassword();
+      if (!pwd) {
+        input.value = ''; updateStrength('');
+        return;
+      }
       input.value = pwd; updateStrength(pwd);
+    }
+    function generateBatch() {
+      if (!batchTable || !batchCountEl) return;
+      const count = Math.max(1, Math.min(parseInt(batchCountEl.value, 10) || 1, 500));
+      batchCountEl.value = count;
+      const passwords = [];
+      for (let i = 0; i < count; i++) {
+        const pwd = createPassword();
+        if (!pwd) {
+          batchPasswords = [];
+          batchTable.innerHTML = `<div class="pwd-batch-empty">Selecione pelo menos um tipo de caractere para gerar o lote.</div>`;
+          return;
+        }
+        passwords.push(pwd);
+      }
+      batchPasswords = passwords;
+      batchTable.innerHTML = `
+        <table class="pwd-batch-table">
+          <thead><tr><th>#</th><th>Senha</th></tr></thead>
+          <tbody>
+            ${passwords.map((pwd, idx) => `<tr><td>${idx + 1}</td><td>${escapeHtml(pwd)}</td></tr>`).join('')}
+          </tbody>
+        </table>
+      `;
     }
     lenEl.oninput = () => { lenVal.innerText = lenEl.value; generate(); };
     cbUpper.onchange = cbLower.onchange = cbNums.onchange = cbSym.onchange = generate;
@@ -1536,6 +1964,15 @@
     document.getElementById('pwdCopy').onclick = async () => {
       if (!input.value) return;
       try { await navigator.clipboard.writeText(input.value); showToast('Senha copiada!'); } catch {}
+    };
+    batchGenerateBtn.onclick = generateBatch;
+    batchCopyBtn.onclick = async () => {
+      if (!batchPasswords.length) return;
+      try { await navigator.clipboard.writeText(batchPasswords.join('\n')); showToast('Lote de senhas copiado em coluna!'); } catch {}
+    };
+    batchCountEl.oninput = () => {
+      const value = batchCountEl.value.replace(/[^\d]/g, '');
+      batchCountEl.value = value;
     };
     generate();
   }

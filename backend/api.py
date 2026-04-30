@@ -62,6 +62,134 @@ def header_analyzer(raw_header: dict):
 
     return analyze_header(limit_text(raw_header.get("content", "")))
 
+@app.post("/api/ai/header")
+def ai_header_analyzer(data: dict):
+    from backend.ai.prompts import AI_HEADER_SYSTEM_PROMPT
+    from backend.ai.service import ask_gemini_json
+
+    raw_header = data.get("content", "")
+
+    if not raw_header or not raw_header.strip():
+        return {
+            "error": True,
+            "message": "Nenhum header foi enviado para análise."
+        }
+
+    raw_header = raw_header[:80000]
+
+    try:
+        result = ask_gemini_json(
+            system_prompt=AI_HEADER_SYSTEM_PROMPT,
+            user_content=f"Analise o seguinte header de e-mail:\n\n{raw_header}"
+        )
+
+        return {
+            "error": False,
+            "data": result
+        }
+
+    except Exception as e:
+        return {
+            "error": True,
+            "message": f"Erro ao analisar header com IA: {str(e)}"
+        }
+
+@app.post("/api/ai/logs")
+def ai_logs_analyzer(data: dict):
+    from backend.ai.prompts import AI_LOGS_SYSTEM_PROMPT
+    from backend.ai.service import ask_gemini_json
+
+    raw_logs = data.get("content", "")
+
+    if not raw_logs or not raw_logs.strip():
+        return {
+            "error": True,
+            "message": "Nenhum log foi enviado para análise."
+        }
+
+    raw_logs = raw_logs[:80000]
+
+    try:
+        result = ask_gemini_json(
+            system_prompt=AI_LOGS_SYSTEM_PROMPT,
+            user_content=f"Analise os seguintes logs técnicos:\n\n{raw_logs}"
+        )
+
+        return {
+            "error": False,
+            "data": result
+        }
+
+    except Exception as e:
+        return {
+            "error": True,
+            "message": f"Erro ao analisar logs com IA: {str(e)}"
+        }
+
+@app.post("/api/ai/email-health")
+def ai_email_health_analyzer(data: dict):
+    from backend.ai.prompts import AI_EMAIL_HEALTH_SYSTEM_PROMPT
+    from backend.ai.service import ask_gemini_json
+
+    raw_data = data.get("content", "")
+
+    if not raw_data or not raw_data.strip():
+        return {
+            "error": True,
+            "message": "Nenhum dado de DNS/e-mail foi enviado para análise."
+        }
+
+    raw_data = raw_data[:80000]
+
+    try:
+        result = ask_gemini_json(
+            system_prompt=AI_EMAIL_HEALTH_SYSTEM_PROMPT,
+            user_content=f"Analise os seguintes dados de DNS/e-mail health:\n\n{raw_data}"
+        )
+
+        return {
+            "error": False,
+            "data": result
+        }
+
+    except Exception as e:
+        return {
+            "error": True,
+            "message": f"Erro ao analisar saúde de e-mail com IA: {str(e)}"
+        }
+
+@app.post("/api/ai/reputation")
+def ai_reputation_analyzer(data: dict):
+    from backend.ai.prompts import AI_REPUTATION_SYSTEM_PROMPT
+    from backend.ai.service import ask_gemini_json
+
+    raw_data = data.get("content", "")
+
+    if not raw_data or not raw_data.strip():
+        return {
+            "error": True,
+            "message": "Nenhum dado de reputação foi enviado para análise."
+        }
+
+    raw_data = raw_data[:80000]
+
+    try:
+        result = ask_gemini_json(
+            system_prompt=AI_REPUTATION_SYSTEM_PROMPT,
+            user_content=f"Analise os seguintes dados de reputação:\n\n{raw_data}"
+        )
+
+        return {
+            "error": False,
+            "data": result
+        }
+
+    except Exception as e:
+        return {
+            "error": True,
+            "message": f"Erro ao analisar reputação com IA: {str(e)}"
+        }
+
 
 @app.get("/api/whois")
 def whois(domain: str):

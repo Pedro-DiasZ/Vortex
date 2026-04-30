@@ -5,3 +5,4 @@ ping3
 fastapi
 uvicorn
 httpx
+google-genai
