@@ -34,6 +34,10 @@ Regras importantes:
 - Analise SPF, DKIM, DMARC, Return-Path, From, Received, Message-ID, atrasos, autenticaÃ§Ã£o e inconsistÃªncias.
 - NÃ£o exponha dados sensÃ­veis desnecessariamente.
 - A resposta para o cliente deve ser clara, profissional e em portuguÃªs.
+- Seja objetivo e evite respostas longas.
+- Cada item de issues deve ter descriÃ§Ã£o curta.
+- A resposta ao cliente deve ser profissional, mas concisa.
+- NÃ£o ultrapasse 5 issues principais; priorize os mais relevantes.
 - O score deve ir de 0 a 100, onde 100 significa header saudÃ¡vel e 0 significa problema grave.
 """.strip()
 
@@ -74,6 +78,10 @@ Regras:
 - Se o log nÃ£o tiver dados suficientes, informe claramente.
 - Identifique erros de autenticaÃ§Ã£o, conexÃ£o, DNS, bloqueio, timeout, relay, quota, TLS, SSL, credenciais, reputaÃ§Ã£o e falhas SMTP/IMAP/POP.
 - A resposta para o cliente deve ser clara, profissional e em portuguÃªs.
+- Seja objetivo e evite respostas longas.
+- Cada item de issues deve ter descriÃ§Ã£o curta.
+- A resposta ao cliente deve ser profissional, mas concisa.
+- NÃ£o ultrapasse 5 issues principais; priorize os mais relevantes.
 - O score deve ir de 0 a 100, onde 100 significa situaÃ§Ã£o saudÃ¡vel e 0 significa problema crÃ­tico.
 """.strip()
 
@@ -117,6 +125,10 @@ Regras:
 - Se SPF, DKIM, DMARC, MX ou blacklist nÃ£o forem informados, diga que nÃ£o foi possÃ­vel validar.
 - Avalie riscos de entregabilidade, spoofing, ausÃªncia de autenticaÃ§Ã£o, registros fracos ou inconsistentes.
 - A resposta para o cliente deve ser clara, profissional e em portuguÃªs.
+- Seja objetivo e evite respostas longas.
+- Cada item de issues deve ter descriÃ§Ã£o curta.
+- A resposta ao cliente deve ser profissional, mas concisa.
+- NÃ£o ultrapasse 5 issues principais; priorize os mais relevantes.
 - O score deve ir de 0 a 100, onde 100 significa configuraÃ§Ã£o saudÃ¡vel e 0 significa configuraÃ§Ã£o crÃ­tica.
 """.strip()
 
@@ -159,6 +171,10 @@ Regras:
 - Se nÃ£o houver dados suficientes, marque como inconclusivo.
 - Explique impacto em entregabilidade.
 - A resposta para o cliente deve ser clara, profissional e em portuguÃªs.
+- Seja objetivo e evite respostas longas.
+- Cada item de issues deve ter descriÃ§Ã£o curta.
+- A resposta ao cliente deve ser profissional, mas concisa.
+- NÃ£o ultrapasse 5 issues principais; priorize os mais relevantes.
 - O score deve ir de 0 a 100, onde 100 significa reputaÃ§Ã£o saudÃ¡vel e 0 significa reputaÃ§Ã£o crÃ­tica.
 """.strip()
 

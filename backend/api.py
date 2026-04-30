@@ -80,7 +80,8 @@ def ai_header_analyzer(data: dict):
     try:
         result = ask_gemini_json(
             system_prompt=AI_HEADER_SYSTEM_PROMPT,
-            user_content=f"Analise o seguinte header de e-mail:\n\n{raw_header}"
+            user_content=f"Analise o seguinte header de e-mail:\n\n{raw_header}",
+            max_tokens=4096
         )
 
         return {
@@ -112,7 +113,8 @@ def ai_logs_analyzer(data: dict):
     try:
         result = ask_gemini_json(
             system_prompt=AI_LOGS_SYSTEM_PROMPT,
-            user_content=f"Analise os seguintes logs técnicos:\n\n{raw_logs}"
+            user_content=f"Analise os seguintes logs técnicos:\n\n{raw_logs}",
+            max_tokens=4096
         )
 
         return {
@@ -144,7 +146,8 @@ def ai_email_health_analyzer(data: dict):
     try:
         result = ask_gemini_json(
             system_prompt=AI_EMAIL_HEALTH_SYSTEM_PROMPT,
-            user_content=f"Analise os seguintes dados de DNS/e-mail health:\n\n{raw_data}"
+            user_content=f"Analise os seguintes dados de DNS/e-mail health:\n\n{raw_data}",
+            max_tokens=4096
         )
 
         return {
@@ -176,7 +179,8 @@ def ai_reputation_analyzer(data: dict):
     try:
         result = ask_gemini_json(
             system_prompt=AI_REPUTATION_SYSTEM_PROMPT,
-            user_content=f"Analise os seguintes dados de reputação:\n\n{raw_data}"
+            user_content=f"Analise os seguintes dados de reputação:\n\n{raw_data}",
+            max_tokens=4096
         )
 
         return {
