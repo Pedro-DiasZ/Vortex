@@ -3787,7 +3787,7 @@
     a.style.left = '-9999px';
     a.style.top = '-9999px';
     document.body.appendChild(a);
-    a.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window }));
+    a.click();
     a.remove();
     setTimeout(() => URL.revokeObjectURL(url), 3000);
   }
@@ -3808,15 +3808,15 @@
   }
 
   function _doDownloadLote() {
-    const files = getMigrationExportFiles();
-    downloadFile(files.lote.content, files.lote.name, 'text/csv;charset=utf-8');
-    showToast(`${files.lote.name} gerado com ${migRows.length} linha(s).`);
+    const { lote } = getMigrationExportFiles();
+    downloadFile(lote.content, lote.name, 'text/csv;charset=utf-8');
+    showToast(`${lote.name} gerado com ${migRows.length} linha(s).`);
   }
 
   function _doDownloadAcc() {
-    const files = getMigrationExportFiles();
-    downloadFile(files.acc.content, files.acc.name, 'text/plain;charset=utf-8');
-    showToast(`${files.acc.name} gerado com ${migRows.length} linha(s).`);
+    const { acc } = getMigrationExportFiles();
+    downloadFile(acc.content, acc.name, 'application/octet-stream');
+    showToast(`${acc.name} gerado com ${migRows.length} linha(s).`);
   }
 
   function requestMigrationWarningConfirmation(downloadFn) {
@@ -3870,8 +3870,10 @@
 
   function downloadBoth() {
     if (!migRows.length) { showToast('Nenhuma conta para exportar.', 'warn'); return; }
-    _doDownloadLote();
-    _doDownloadAcc();
+    const { lote, acc } = getMigrationExportFiles();
+    downloadFile(lote.content, lote.name, 'text/csv;charset=utf-8');
+    downloadFile(acc.content, acc.name, 'application/octet-stream');
+    showToast(`${lote.name} e ${acc.name} gerados.`);
   }
 
   // ======= SPF VISUAL TAGS =======
