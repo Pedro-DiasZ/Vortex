@@ -395,3 +395,79 @@ def http_status(url: str):
     from backend.modules.infra.http_status import check_http_status
 
     return check_http_status(url)
+
+
+@app.post("/api/diagnose")
+def vortex_diagnose(data: dict):
+    try:
+        from backend.modules.diagnostics.diagnose import diagnose
+
+        data["smtp_error"] = limit_text(data.get("smtp_error") or data.get("log") or data.get("content") or "", 20_000)
+        return diagnose(data)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@app.post("/api/smtp/analyze")
+def smtp_error_analyzer(data: dict):
+    try:
+        from backend.modules.diagnostics.smtp_analyzer import analyze_smtp_error
+
+        return analyze_smtp_error(limit_text(data.get("error") or data.get("content") or "", 20_000))
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@app.post("/api/response/generate")
+def response_generator(data: dict):
+    from backend.modules.diagnostics.response_generator import generate_response
+
+    return generate_response({
+        "problem_type": limit_text(data.get("problem_type", ""), 80),
+        "tone": limit_text(data.get("tone", ""), 80),
+        "customer_name": limit_text(data.get("customer_name", ""), 120),
+        "domain": limit_text(data.get("domain", ""), 255),
+        "email_account": limit_text(data.get("email_account", ""), 255),
+        "error_found": limit_text(data.get("error_found", ""), 2000),
+        "action_done": limit_text(data.get("action_done", ""), 2000),
+        "next_step": limit_text(data.get("next_step", ""), 2000),
+    })
+
+
+@app.post("/api/domain/health")
+def domain_health(data: dict):
+    try:
+        from backend.security import assert_domain
+        from backend.modules.diagnostics.domain_health import check_domain_health
+
+        domain = assert_domain(data.get("domain", ""))
+        selector = limit_text(data.get("selector", ""), 80).strip()
+        return check_domain_health(domain, selector)
+    except HTTPException:
+        raise
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@app.post("/api/markdown/render")
+def markdown_render(data: dict):
+    from backend.modules.diagnostics.markdown_renderer import render_markdown
+
+    return render_markdown(limit_text(data.get("markdown") or data.get("content") or "", 100_000))
+
+
+@app.post("/api/prompt/generate")
+def prompt_generate(data: dict):
+    try:
+        from backend.modules.diagnostics.prompt_generator import generate_prompt
+
+        return generate_prompt(data)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@app.post("/api/migration/review-summary")
+def migration_review_summary(data: dict):
+    from backend.modules.diagnostics.migration_review import summarize_migration_review
+
+    return summarize_migration_review(data)

@@ -191,7 +191,7 @@
 
   .tabs {
     margin-top: 18px;
-    display: grid; grid-template-columns: 1fr 1fr; gap: 4px;
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 4px;
     padding: 4px; background: var(--sidebar-soft);
     border: 1px solid var(--border-soft); border-radius: 12px;
   }
@@ -254,6 +254,7 @@
   }
   .content { flex: 1; overflow-y: auto; padding: 36px 24px 60px; }
   .container { max-width: 760px; margin: 0 auto; }
+  .container.wide-container { max-width: 1180px; }
 
   .page-header { margin-bottom: 26px; }
   .eyebrow { display: flex; align-items: center; gap: 8px; color: var(--primary); font: 800 11px var(--font-sans); text-transform: uppercase; letter-spacing: 0.22em; margin-bottom: 6px; }
@@ -956,6 +957,134 @@
   .modal-btn.confirm-warn { background: rgba(245,158,11,0.12); color: var(--warning); border: 1px solid rgba(245,158,11,0.25); }
   .modal-btn.confirm-warn:hover { background: var(--warning); color: #fff; }
 
+  /* ===== DIAGNOSE SUITE ===== */
+  .diag-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+  .diag-grid .field.full { grid-column: 1 / -1; }
+  .diag-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+  .diag-actions .btn { width: auto; min-width: 150px; flex: 1 1 160px; margin-top: 0; }
+  .diag-result { margin-top: 22px; animation: aiCardIn .18s ease-out; }
+  .diag-summary {
+    display: grid; grid-template-columns: 120px 1fr; gap: 14px;
+    align-items: center; margin-bottom: 14px;
+  }
+  .score-ring {
+    width: 112px; height: 112px; border-radius: 50%;
+    display: grid; place-items: center;
+    background: conic-gradient(var(--primary) calc(var(--score, 0) * 1%), var(--border) 0);
+    box-shadow: var(--shadow-card);
+  }
+  .score-ring-inner {
+    width: 84px; height: 84px; border-radius: 50%;
+    background: var(--card); border: 1px solid var(--border);
+    display: grid; place-items: center;
+    font: 800 22px var(--font-sans); color: var(--text);
+  }
+  .diag-card-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .diag-info-card {
+    border: 1px solid var(--border); border-radius: 12px; background: var(--card);
+    padding: 15px; box-shadow: var(--shadow-card);
+    transition: transform .12s ease, border-color .12s ease;
+  }
+  .diag-info-card:hover { transform: translateY(-1px); border-color: color-mix(in srgb, var(--primary) 48%, var(--border)); }
+  .diag-info-card.full { grid-column: 1 / -1; }
+  .diag-card-title {
+    margin: 0 0 9px; color: var(--primary-glow);
+    font: 800 10.5px var(--font-sans); letter-spacing: .16em; text-transform: uppercase;
+  }
+  .diag-info-card p { margin: 0; color: var(--text); font-size: 13.5px; line-height: 1.55; white-space: pre-wrap; }
+  .diag-info-card ul { margin: 0; padding: 0; display: grid; gap: 8px; list-style: none; }
+  .diag-info-card li {
+    padding-left: 14px; position: relative; color: var(--text);
+    font-size: 13.5px; line-height: 1.45;
+  }
+  .diag-info-card li::before {
+    content: ""; position: absolute; left: 0; top: .62em;
+    width: 5px; height: 5px; border-radius: 50%; background: var(--primary);
+  }
+  .diag-badges { display: flex; flex-wrap: wrap; gap: 7px; margin: 8px 0 0; }
+  .diag-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 5px 8px; border-radius: 999px; border: 1px solid var(--border);
+    background: var(--card-2); color: var(--muted);
+    font: 800 10px var(--font-sans); letter-spacing: .12em; text-transform: uppercase;
+  }
+  .diag-badge.high, .diag-badge.critical, .diag-badge.permanent_failure, .diag-badge.security_policy { color: var(--danger); border-color: color-mix(in srgb, var(--danger) 38%, var(--border)); background: rgba(239,68,68,.08); }
+  .diag-badge.medium, .diag-badge.warning, .diag-badge.temporary_failure, .diag-badge.mailbox_full { color: var(--warning); border-color: color-mix(in srgb, var(--warning) 38%, var(--border)); background: rgba(245,158,11,.08); }
+  .diag-badge.ok, .diag-badge.good, .diag-badge.excellent, .diag-badge.low { color: var(--success); border-color: color-mix(in srgb, var(--success) 38%, var(--border)); background: rgba(34,197,94,.08); }
+  .health-checks { display: grid; gap: 10px; }
+  .health-row {
+    display: grid; grid-template-columns: 120px 92px 1fr; gap: 10px; align-items: start;
+    border: 1px solid var(--border); border-radius: 12px; background: var(--card);
+    padding: 13px;
+  }
+  .health-name { font-weight: 800; color: var(--text); font-size: 13px; }
+  .health-evidence { color: var(--text); font-size: 13px; line-height: 1.45; }
+  .health-evidence small { display: block; color: var(--muted); margin-top: 5px; }
+  .response-box {
+    min-height: 190px; white-space: pre-wrap; line-height: 1.6;
+    font: 500 13.5px var(--font-sans);
+  }
+  .md-shell { display: grid; grid-template-columns: minmax(420px, .95fr) minmax(520px, 1.05fr); gap: 18px; }
+  .md-pane { min-width: 0; }
+  .md-toolbar { display: flex; flex-wrap: wrap; gap: 9px; margin-bottom: 12px; }
+  .md-toolbar .copy-btn { margin-left: 0; height: 34px; }
+  .md-mobile-tabs { display: none; gap: 8px; margin-bottom: 12px; }
+  .md-preview {
+    min-height: 640px; padding: 26px; border-radius: 12px; border: 1px solid var(--border);
+    background: var(--card-2); color: var(--text); overflow: auto;
+    font-size: 16px; line-height: 1.65;
+  }
+  #mdInput { min-height: 640px; font-size: 14px; line-height: 1.55; }
+  .md-preview h1, .md-preview h2, .md-preview h3 { margin: 0 0 14px; letter-spacing: 0; }
+  .md-preview h1 { font-size: 36px; line-height: 1.16; }
+  .md-preview h2 { font-size: 26px; line-height: 1.22; margin-top: 22px; }
+  .md-preview h3 { font-size: 21px; }
+  .md-preview p { line-height: 1.65; color: var(--text); }
+  .md-preview blockquote { margin: 16px 0; padding: 14px 16px; border-left: 3px solid var(--primary); background: color-mix(in srgb, var(--primary) 7%, transparent); border-radius: 8px; }
+  .md-preview code { font-family: var(--font-mono); background: var(--terminal-bg); color: var(--terminal-fg); padding: 2px 5px; border-radius: 6px; }
+  .md-preview pre { background: var(--terminal-bg); color: var(--terminal-fg); padding: 16px; border-radius: 10px; overflow: auto; }
+  .md-preview pre code { padding: 0; background: transparent; }
+  .md-preview table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13px; }
+  .md-preview th, .md-preview td { border: 1px solid var(--border); padding: 8px 10px; text-align: left; }
+  .md-preview th { color: var(--primary-glow); background: var(--card); }
+  .md-counters { color: var(--muted); font: 700 11px var(--font-mono); margin-top: 9px; }
+  .prompt-layout { display: grid; grid-template-columns: minmax(360px, .95fr) minmax(420px, 1.05fr); gap: 16px; align-items: start; }
+  .prompt-card { padding: 20px; }
+  .prompt-presets { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+  .prompt-preset {
+    border: 1px solid var(--border); background: var(--card-2); color: var(--text);
+    border-radius: 9px; padding: 8px 10px; cursor: pointer;
+    font: 800 11px var(--font-sans); transition: transform .12s ease, border-color .12s ease, color .12s ease;
+  }
+  .prompt-preset:hover { transform: translateY(-1px); border-color: var(--primary); color: var(--primary-glow); }
+  .advanced-box {
+    margin-top: 14px; border: 1px solid var(--border); border-radius: 12px;
+    background: color-mix(in srgb, var(--card-2) 70%, transparent); overflow: hidden;
+  }
+  .advanced-toggle {
+    width: 100%; border: 0; background: transparent; color: var(--text);
+    padding: 13px 14px; display: flex; align-items: center; justify-content: space-between;
+    font: 800 11px var(--font-sans); text-transform: uppercase; letter-spacing: .15em; cursor: pointer;
+  }
+  .advanced-toggle svg { width: 15px; height: 15px; transition: transform .12s ease; }
+  .advanced-box.open .advanced-toggle svg { transform: rotate(180deg); }
+  .advanced-content { display: none; padding: 0 14px 14px; }
+  .advanced-box.open .advanced-content { display: block; }
+  .prompt-output {
+    min-height: 580px; max-height: 760px; overflow: auto;
+    background: var(--card-2); border: 1px solid var(--border); border-radius: 12px;
+    padding: 20px; white-space: pre-wrap; color: var(--text);
+    font: 500 13.5px/1.65 var(--font-mono);
+  }
+  .prompt-empty {
+    min-height: 360px; display: grid; place-items: center; text-align: center;
+    color: var(--muted); padding: 24px; border: 1px dashed var(--border);
+    border-radius: 12px; background: color-mix(in srgb, var(--card-2) 72%, transparent);
+  }
+  .prompt-meta { display: flex; flex-wrap: wrap; gap: 7px; margin: 10px 0 14px; }
+  .prompt-tips { margin-top: 12px; }
+  .prompt-tips .diag-info-card { box-shadow: none; }
+
   @media (max-width: 860px) {
     body { overflow: auto; }
     .app { display: block; height: auto; min-height: 100vh; }
@@ -969,6 +1098,11 @@
     .mig-download-row { flex-direction: column; }
     .mig-dl-btn { width: 100%; justify-content: center; }
     .rec-btns { flex-direction: column; }
+    .diag-grid, .diag-card-grid, .md-shell, .prompt-layout { grid-template-columns: 1fr; }
+    .diag-summary { grid-template-columns: 1fr; }
+    .health-row { grid-template-columns: 1fr; }
+    .md-mobile-tabs { display: flex; }
+    .md-pane.is-hidden-mobile { display: none; }
   }
 </style>
 </head>
@@ -1170,6 +1304,9 @@
 
   // ======= ROUTES =======
   const ROUTE_GROUPS = [
+    { title: 'Vortex', category: 'checks', items: [
+      { path: '/domain/health', title: 'Domain Health Check', label: 'Domain Health', desc: 'Vortex: pontua DNS, e-mail, SSL e disponibilidade do dominio em uma visao unica.', icon: 'activity', variant: 'domainHealth' },
+    ]},
     { title: 'E-mail', category: 'checks', items: [
       { path: '/spf',  title: 'SPF Check',  label: 'SPF',  desc: 'Verifica o registro SPF do domínio.', icon: 'mail',  fields: [{ n: 'domain', p: 'exemplo.com' }] },
       { path: '/dkim', title: 'DKIM Check', label: 'DKIM', desc: 'Consulta a chave pública DKIM por seletor.', icon: 'shield', fields: [{ n: 'domain', p: 'exemplo.com' }, { n: 'selector', p: 'selector', v: 'default' }] },
@@ -1212,6 +1349,13 @@
     ]},
   ];
 
+  ROUTE_GROUPS.push(
+    { title: 'Playground', category: 'tools', items: [
+      { path: '/markdown/render', title: 'Markdown Playground', label: 'Markdown Playground', desc: 'Editor Markdown com preview seguro em tempo real.', icon: 'code', variant: 'markdownPlayground' },
+      { path: '/prompt/generate', title: 'Gerador de Prompt', label: 'Gerador de Prompt', desc: 'Transforme uma ideia solta em um prompt claro, completo e pronto para usar em IA.', icon: 'lightbulb', variant: 'promptBuilder' },
+    ]}
+  );
+
   const ALL_ROUTES = ROUTE_GROUPS.flatMap(g => g.items);
   const findRoute = (p) => ALL_ROUTES.find(r => r.path === p);
   const AI_ROUTE_CONFIG = {
@@ -1242,7 +1386,7 @@
   };
 
   let currentTab = 'checks';
-  let currentPath = '/spf';
+  let currentPath = '/domain/health';
 
   // ======= SMART RECOMMENDATIONS =======
   const RECOMMENDATIONS = {
@@ -1623,10 +1767,14 @@
   function renderView() {
     const route = findRoute(currentPath);
     if (!route) return;
+    document.querySelector('.container')?.classList.toggle('wide-container', ['markdownPlayground', 'promptBuilder'].includes(route.variant));
     document.getElementById('viewTitle').innerText = route.title;
     document.getElementById('viewSubtitle').innerText = route.desc || '';
     document.getElementById('viewSubtitle').style.display = route.desc ? 'block' : 'none';
-    document.getElementById('eyebrowText').innerText = currentTab === 'checks' ? 'Diagnóstico' : 'Ferramenta';
+    document.getElementById('eyebrowText').innerText =
+      currentTab === 'checks' ? 'Diagnóstico' :
+      route.variant === 'markdownPlayground' ? 'Playground' :
+      'Ferramenta';
     document.getElementById('eyebrowIcon').innerHTML = `<span style="display:inline-flex;width:16px;height:16px;">${ICONS[route.icon] || ''}</span>`;
 
     const footnote = document.getElementById('footnoteEl');
@@ -1644,6 +1792,26 @@
       } else if (route.variant === 'password') {
         document.getElementById('mainCard').innerHTML = renderPasswordUI();
         bindPassword();
+      } else if (route.variant === 'diagnose') {
+        document.getElementById('mainCard').innerHTML = renderDiagnoseUI();
+        bindDiagnose();
+      } else if (route.variant === 'smtpAnalyzer') {
+        document.getElementById('mainCard').innerHTML = renderSMTPAnalyzerUI();
+        bindSMTPAnalyzer();
+      } else if (route.variant === 'responseGenerator') {
+        document.getElementById('mainCard').innerHTML = renderResponseGeneratorUI();
+        bindResponseGenerator();
+      } else if (route.variant === 'domainHealth') {
+        document.getElementById('mainCard').innerHTML = renderDomainHealthUI();
+        bindDomainHealth();
+      } else if (route.variant === 'markdownPlayground') {
+        footnote.style.display = 'none';
+        document.getElementById('mainCard').innerHTML = renderMarkdownPlaygroundUI();
+        bindMarkdownPlayground();
+      } else if (route.variant === 'promptBuilder') {
+        footnote.style.display = 'none';
+        document.getElementById('mainCard').innerHTML = renderPromptBuilderUI();
+        bindPromptBuilder();
       } else {
         document.getElementById('mainCard').innerHTML = renderFormUI(route);
         bindForm(route);
@@ -1653,7 +1821,8 @@
 
   // ======= FORM =======
   function selectType(fieldName, value, btnElement) {
-    document.getElementById(`f_${fieldName}`).value = value;
+    const target = document.getElementById(`f_${fieldName}`) || document.getElementById(fieldName);
+    if (target) target.value = value;
     const grid = btnElement.parentElement;
     grid.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
     btnElement.classList.add('active');
@@ -1804,6 +1973,537 @@
   function escapeHtml(value) {
     return String(value ?? '').replace(/[&<>"']/g, c =>
       ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+  }
+
+  function listHtml(items) {
+    const list = Array.isArray(items) ? items : (items ? [items] : []);
+    return list.length ? `<ul>${list.map(item => `<li>${escapeHtml(item)}</li>`).join('')}</ul>` : '<p>-</p>';
+  }
+
+  function badgeHtml(value) {
+    const labelMap = {
+      temporary_failure: 'Temporario',
+      permanent_failure: 'Permanente',
+      authentication: 'Autenticacao',
+      dns: 'DNS',
+      security_policy: 'Politica',
+      send_limit: 'Limite',
+      mailbox_full: 'Caixa cheia',
+      external_block: 'Bloqueio externo',
+      critical: 'Critica',
+      high: 'Alta',
+      medium: 'Media',
+      low: 'Baixa',
+      ok: 'OK',
+      warning: 'Atencao',
+      good: 'Bom',
+      excellent: 'Excelente',
+      local_template: 'Template local',
+      gemini: 'Gemini'
+    };
+    return `<span class="diag-badge ${escapeHtml(value)}">${escapeHtml(labelMap[value] || value || '-')}</span>`;
+  }
+
+  async function copyText(text, message = 'Copiado!') {
+    try {
+      await navigator.clipboard.writeText(text || '');
+      showToast(message);
+    } catch {
+      showToast('Nao foi possivel copiar.', 'error');
+    }
+  }
+
+  function setButtonLoading(btn, label) {
+    btn.disabled = true;
+    btn.dataset.original = btn.innerHTML;
+    btn.innerHTML = `<svg class="spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M21 12a9 9 0 1 1-6.22-8.56"/></svg><span>${label}</span>`;
+  }
+
+  function restoreButton(btn) {
+    btn.disabled = false;
+    if (btn.dataset.original) btn.innerHTML = btn.dataset.original;
+  }
+
+  function renderDiagnosticCards(data, mode = 'diagnose') {
+    const title = data.probable_issue || data.title || 'Diagnostico tecnico';
+    const severity = data.severity || 'medium';
+    const badges = data.badges || [data.category, severity].filter(Boolean);
+    const response = data.client_response || data.response || '';
+    const responseCard = mode === 'diagnose' ? '' : `
+          <article class="diag-info-card full">
+            <h3 class="diag-card-title">Resposta pronta ao cliente</h3>
+            <p id="clientResponseText">${escapeHtml(response)}</p>
+            <div class="diag-actions"><button class="btn secondary" id="copyClientResponse">${ICONS.copy}<span>Copiar resposta</span></button></div>
+          </article>
+    `;
+    return `
+      <div class="diag-result">
+        <div class="diag-card-grid">
+          <article class="diag-info-card full">
+            <h3 class="diag-card-title">${mode === 'smtp' ? 'Significado' : 'Problema provavel'}</h3>
+            <p>${escapeHtml(title)}</p>
+            <div class="diag-badges">${badges.map(badgeHtml).join('')}${badgeHtml(severity)}</div>
+          </article>
+          <article class="diag-info-card">
+            <h3 class="diag-card-title">Evidencias</h3>
+            ${listHtml(data.evidence)}
+          </article>
+          <article class="diag-info-card">
+            <h3 class="diag-card-title">Possiveis causas</h3>
+            ${listHtml(data.possible_causes || data.likely_causes)}
+          </article>
+          <article class="diag-info-card">
+            <h3 class="diag-card-title">Proximos passos</h3>
+            ${listHtml(data.next_steps || data.recommended_actions)}
+          </article>
+          <article class="diag-info-card">
+            <h3 class="diag-card-title">Quem atua</h3>
+            ${listHtml(data.responsible_side)}
+          </article>
+          ${data.technical_explanation ? `<article class="diag-info-card"><h3 class="diag-card-title">Tecnico</h3><p>${escapeHtml(data.technical_explanation)}</p></article>` : ''}
+          ${data.simple_explanation ? `<article class="diag-info-card"><h3 class="diag-card-title">Explicacao simples</h3><p>${escapeHtml(data.simple_explanation)}</p></article>` : ''}
+          ${responseCard}
+        </div>
+      </div>
+    `;
+  }
+
+  function renderDiagnoseUI() {
+    return `
+      <div class="card">
+        <div class="diag-grid">
+          <label class="field"><span class="field-label">Dominio</span><input class="input" id="diagDomain" placeholder="exemplo.com"></label>
+          <label class="field"><span class="field-label">Tipo do problema</span><input type="hidden" id="diagProblemType" value="Envio"><div class="type-grid">
+            ${['Envio','Recebimento','DNS','Outlook','SSL','Site','Blacklist','Migracao','Outro'].map((item, index) => `<button class="type-btn ${index === 0 ? 'active' : ''}" onclick="selectType('diagProblemType','${item}',this)">${item}</button>`).join('')}
+          </div></label>
+          <label class="field"><span class="field-label">E-mail remetente</span><input class="input" id="diagSender" placeholder="remetente@exemplo.com"></label>
+          <label class="field"><span class="field-label">E-mail destinatario</span><input class="input" id="diagRecipient" placeholder="destino@exemplo.com"></label>
+          <label class="field full"><span class="field-label">Erro SMTP ou log tecnico</span><textarea class="textarea" id="diagLog" placeholder="550 5.7.1 SPF check failed" rows="8"></textarea></label>
+        </div>
+        <button class="btn" id="diagRun">${ICONS.scan}<span>Analisar diagnostico</span></button>
+      </div>
+      <div id="diagResult"></div>
+    `;
+  }
+
+  function bindDiagnose() {
+    const btn = document.getElementById('diagRun');
+    const result = document.getElementById('diagResult');
+    btn.onclick = async () => {
+      setButtonLoading(btn, 'Analisando...');
+      result.innerHTML = `<div class="result"><div class="output-wrap"><div class="placeholder">Cruzando evidencias locais...</div></div></div>`;
+      try {
+        const data = await fetchJSON('/api/diagnose', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            domain: document.getElementById('diagDomain').value,
+            sender_email: document.getElementById('diagSender').value,
+            recipient_email: document.getElementById('diagRecipient').value,
+            smtp_error: document.getElementById('diagLog').value,
+            problem_type: document.getElementById('diagProblemType').value
+          })
+        });
+        result.innerHTML = renderDiagnosticCards(data);
+      } catch (e) {
+        result.innerHTML = `<div class="alert">${escapeHtml(e.message)}</div>`;
+      } finally {
+        restoreButton(btn);
+      }
+    };
+  }
+
+  function renderSMTPAnalyzerUI() {
+    return `
+      <div class="card">
+        <label class="field"><span class="field-label">Erro SMTP</span><textarea class="textarea" id="smtpErrorInput" placeholder="554 5.7.1 Message rejected due to DMARC policy" rows="9"></textarea></label>
+        <button class="btn" id="smtpAnalyzeBtn">${ICONS.terminal}<span>Analisar erro</span></button>
+      </div>
+      <div id="smtpAnalyzeResult"></div>
+    `;
+  }
+
+  function bindSMTPAnalyzer() {
+    const btn = document.getElementById('smtpAnalyzeBtn');
+    const result = document.getElementById('smtpAnalyzeResult');
+    btn.onclick = async () => {
+      setButtonLoading(btn, 'Analisando...');
+      result.innerHTML = `<div class="result"><div class="output-wrap"><div class="placeholder">Interpretando codigo SMTP...</div></div></div>`;
+      try {
+        const data = await fetchJSON('/api/smtp/analyze', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ error: document.getElementById('smtpErrorInput').value })
+        });
+        result.innerHTML = renderDiagnosticCards(data, 'smtp');
+        const copyResponse = document.getElementById('copyClientResponse');
+        if (copyResponse) copyResponse.onclick = () => copyText(data.client_response, 'Resposta copiada!');
+      } catch (e) {
+        result.innerHTML = `<div class="alert">${escapeHtml(e.message)}</div>`;
+      } finally {
+        restoreButton(btn);
+      }
+    };
+  }
+
+  function renderResponseGeneratorUI() {
+    const problems = ['SPF','DKIM','DMARC','Blacklist','Quarentena','Outlook','DNS','SSL','Limite de envio','Anexo bloqueado','Lentidao','Erro de senha','Caixa cheia','Migracao','Outro'];
+    const tones = ['Tecnico','Leigo','Curto','Detalhado','Assertivo','Suporte humanizado'];
+    return `
+      <div class="card">
+        <div class="diag-grid">
+          <label class="field full"><span class="field-label">Tipo de problema</span><input type="hidden" id="respProblem" value="SPF"><div class="type-grid">${problems.map((p, i) => `<button class="type-btn ${i === 0 ? 'active' : ''}" onclick="selectType('respProblem','${p}',this)">${p}</button>`).join('')}</div></label>
+          <label class="field full"><span class="field-label">Tom da resposta</span><input type="hidden" id="respTone" value="Tecnico"><div class="type-grid">${tones.map((p, i) => `<button class="type-btn ${i === 0 ? 'active' : ''}" onclick="selectType('respTone','${p}',this)">${p}</button>`).join('')}</div></label>
+          <label class="field"><span class="field-label">Nome do cliente</span><input class="input" id="respCustomer"></label>
+          <label class="field"><span class="field-label">Dominio</span><input class="input" id="respDomain" placeholder="exemplo.com"></label>
+          <label class="field"><span class="field-label">Conta de e-mail</span><input class="input" id="respEmail" placeholder="conta@exemplo.com"></label>
+          <label class="field"><span class="field-label">Erro encontrado</span><input class="input" id="respError" placeholder="550 5.7.1 SPF check failed"></label>
+          <label class="field full"><span class="field-label">Acao realizada</span><textarea class="textarea" id="respAction" rows="3"></textarea></label>
+          <label class="field full"><span class="field-label">Proximo passo</span><textarea class="textarea" id="respNext" rows="3"></textarea></label>
+        </div>
+        <div class="diag-actions">
+          <button class="btn" id="respGenerate">${ICONS.play}<span>Gerar resposta</span></button>
+          <button class="btn secondary" id="respClear">${ICONS.trash}<span>Limpar</span></button>
+        </div>
+      </div>
+      <div class="result">
+        <div class="result-head">
+          <div class="result-title">${ICONS.file}<span>Resposta</span></div>
+          <button class="copy-btn" id="respCopy">${ICONS.copy}<span>Copiar resposta</span></button>
+        </div>
+        <div class="output-wrap"><div class="placeholder response-box" id="respOutput">Aguardando geracao...</div></div>
+      </div>
+      <div class="diag-actions" id="respVariants" style="display:none;">
+        <button class="btn secondary" data-variant="short">${ICONS.refresh}<span>Mais curta</span></button>
+        <button class="btn secondary" data-variant="technical">${ICONS.refresh}<span>Mais tecnica</span></button>
+        <button class="btn secondary" data-variant="simple">${ICONS.refresh}<span>Mais simples</span></button>
+        <button class="btn secondary" data-regenerate="1">${ICONS.refresh}<span>Gerar novamente</span></button>
+      </div>
+    `;
+  }
+
+  function bindResponseGenerator() {
+    const output = document.getElementById('respOutput');
+    const generate = document.getElementById('respGenerate');
+    const variants = document.getElementById('respVariants');
+    let lastData = null;
+    async function run() {
+      setButtonLoading(generate, 'Gerando...');
+      try {
+        const data = await fetchJSON('/api/response/generate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            problem_type: document.getElementById('respProblem').value,
+            tone: document.getElementById('respTone').value,
+            customer_name: document.getElementById('respCustomer').value,
+            domain: document.getElementById('respDomain').value,
+            email_account: document.getElementById('respEmail').value,
+            error_found: document.getElementById('respError').value,
+            action_done: document.getElementById('respAction').value,
+            next_step: document.getElementById('respNext').value
+          })
+        });
+        lastData = data;
+        output.classList.remove('err-msg');
+        output.textContent = data.response;
+        variants.style.display = 'flex';
+      } catch (e) {
+        output.textContent = e.message;
+        output.classList.add('err-msg');
+      } finally {
+        restoreButton(generate);
+      }
+    }
+    generate.onclick = run;
+    document.getElementById('respCopy').onclick = () => copyText(output.textContent, 'Resposta copiada!');
+    document.getElementById('respClear').onclick = () => {
+      document.querySelectorAll('#mainCard input.input, #mainCard textarea').forEach(el => el.value = '');
+      output.textContent = 'Aguardando geracao...';
+      variants.style.display = 'none';
+    };
+    variants.onclick = (event) => {
+      const btn = event.target.closest('button');
+      if (!btn) return;
+      if (btn.dataset.regenerate) return run();
+      const key = btn.dataset.variant;
+      if (lastData?.variants?.[key]) output.textContent = lastData.variants[key];
+    };
+  }
+
+  function renderDomainHealthUI() {
+    return `
+      <div class="card">
+        <div class="diag-grid">
+          <label class="field"><span class="field-label">Dominio</span><input class="input" id="healthDomain" placeholder="exemplo.com"></label>
+          <label class="field"><span class="field-label">DKIM selector opcional</span><input class="input" id="healthSelector" placeholder="default, google, s1..."></label>
+        </div>
+        <button class="btn" id="healthRun">${ICONS.activity}<span>Verificar dominio</span></button>
+      </div>
+      <div id="healthResult"></div>
+    `;
+  }
+
+  function bindDomainHealth() {
+    const btn = document.getElementById('healthRun');
+    const result = document.getElementById('healthResult');
+    btn.onclick = async () => {
+      setButtonLoading(btn, 'Verificando...');
+      result.innerHTML = `<div class="result"><div class="output-wrap"><div class="placeholder">Executando checks de DNS, SSL e HTTP...</div></div></div>`;
+      try {
+        const data = await fetchJSON('/api/domain/health', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ domain: document.getElementById('healthDomain').value, selector: document.getElementById('healthSelector').value })
+        });
+        const rows = data.checks.map(check => `
+          <div class="health-row">
+            <div class="health-name">${escapeHtml(check.name)}</div>
+            <div>${badgeHtml(check.status)}</div>
+            <div class="health-evidence">${escapeHtml(check.evidence)}<small>${escapeHtml(check.recommendation)}</small></div>
+          </div>
+        `).join('');
+        result.innerHTML = `
+          <div class="diag-result">
+            <div class="diag-summary">
+              <div class="score-ring" style="--score:${data.score};"><div class="score-ring-inner">${data.score}</div></div>
+              <div class="diag-info-card">
+                <h3 class="diag-card-title">Saude do dominio</h3>
+                <p>${escapeHtml(data.domain)}</p>
+                <div class="diag-badges">${badgeHtml(data.status)}</div>
+              </div>
+            </div>
+            <div class="health-checks">${rows}</div>
+          </div>
+        `;
+      } catch (e) {
+        result.innerHTML = `<div class="alert">${escapeHtml(e.message)}</div>`;
+      } finally {
+        restoreButton(btn);
+      }
+    };
+  }
+
+  const MARKDOWN_EXAMPLE = '# Diagnostico Tecnico\n\n**Problema identificado:** Falha de SPF.\n\n> O servidor destinatario recusou a mensagem por politica de autenticacao.\n\n## Proximos passos\n\n- Validar SPF\n- Conferir DKIM\n- Revisar DMARC\n\n```txt\n550 5.7.1 SPF check failed\n```\n\n| Check | Status |\n| --- | --- |\n| SPF | Falha |\n| DMARC | Revisar |';
+
+  function renderMarkdownPlaygroundUI() {
+    return `
+      <div class="card">
+        <div class="md-toolbar">
+          <button class="copy-btn" id="mdCopy">${ICONS.copy}<span>Copiar Markdown</span></button>
+          <button class="copy-btn" id="htmlCopy">${ICONS.copy}<span>Copiar HTML</span></button>
+          <button class="copy-btn" id="mdExample">${ICONS.file}<span>Inserir exemplo</span></button>
+          <button class="copy-btn" id="mdClear">${ICONS.trash}<span>Limpar</span></button>
+        </div>
+        <div class="md-mobile-tabs">
+          <button class="type-btn active" data-mdtab="editor">Editor</button>
+          <button class="type-btn" data-mdtab="preview">Preview</button>
+        </div>
+        <div class="md-shell">
+          <section class="md-pane" id="mdEditorPane">
+            <label class="field" style="margin-bottom:0;"><span class="field-label">Markdown</span><textarea class="textarea" id="mdInput" rows="18"></textarea></label>
+            <div class="md-counters" id="mdCounters">0 caracteres · 0 palavras</div>
+          </section>
+          <section class="md-pane" id="mdPreviewPane">
+            <div class="field-label">Preview</div>
+            <div class="md-preview" id="mdPreview"></div>
+          </section>
+        </div>
+      </div>
+    `;
+  }
+
+  function bindMarkdownPlayground() {
+    const input = document.getElementById('mdInput');
+    const preview = document.getElementById('mdPreview');
+    const counters = document.getElementById('mdCounters');
+    let lastHtml = '';
+    let timer = null;
+    async function renderNow() {
+      try {
+        const data = await fetchJSON('/api/markdown/render', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ markdown: input.value })
+        });
+        lastHtml = data.html;
+        preview.innerHTML = data.html || '<p style="color:var(--muted);">Preview vazio.</p>';
+        counters.textContent = `${data.characters} caracteres · ${data.words} palavras`;
+      } catch (e) {
+        preview.innerHTML = `<p style="color:var(--danger);">${escapeHtml(e.message)}</p>`;
+      }
+    }
+    input.value = MARKDOWN_EXAMPLE;
+    input.addEventListener('input', () => {
+      clearTimeout(timer);
+      timer = setTimeout(renderNow, 140);
+    });
+    document.getElementById('mdCopy').onclick = () => copyText(input.value, 'Markdown copiado!');
+    document.getElementById('htmlCopy').onclick = () => copyText(lastHtml, 'HTML copiado!');
+    document.getElementById('mdExample').onclick = () => { input.value = MARKDOWN_EXAMPLE; renderNow(); };
+    document.getElementById('mdClear').onclick = () => { input.value = ''; renderNow(); };
+    document.querySelectorAll('[data-mdtab]').forEach(btn => {
+      btn.onclick = () => {
+        document.querySelectorAll('[data-mdtab]').forEach(item => item.classList.toggle('active', item === btn));
+        const showEditor = btn.dataset.mdtab === 'editor';
+        document.getElementById('mdEditorPane').classList.toggle('is-hidden-mobile', !showEditor);
+        document.getElementById('mdPreviewPane').classList.toggle('is-hidden-mobile', showEditor);
+      };
+    });
+    document.getElementById('mdPreviewPane').classList.add('is-hidden-mobile');
+    renderNow();
+  }
+
+  const PROMPT_PRESETS = {
+    site: { label: 'Criar site', objective: 'Criar um site institucional moderno.', context: 'O site sera para uma empresa de tecnologia e servicos digitais.', output_type: 'Código', tone: 'Sênior/Especialista', output_format: 'Código completo', avoid: 'Nao usar layout generico. Manter visual limpo, responsivo e profissional.', extra_info: 'Use uma interface elegante, com boa hierarquia visual, dark mode e mobile bem resolvido.' },
+    text: { label: 'Corrigir texto profissional', objective: 'Revisar e melhorar um texto profissional.', context: 'O texto sera enviado para cliente e precisa soar claro, cordial e confiavel.', output_type: 'Texto profissional', tone: 'Profissional', output_format: 'Texto corrido', avoid: 'Nao mudar o sentido original e nao usar linguagem exagerada.' },
+    code: { label: 'Gerar código', objective: 'Implementar uma funcionalidade em um projeto existente.', context: 'O projeto ja possui padroes definidos e nao deve ter funcionalidades existentes quebradas.', output_type: 'Código', tone: 'Sênior/Especialista', output_format: 'Código completo', avoid: 'Nao fazer refatoracoes desnecessarias e nao remover comportamento existente.', extra_info: 'Explique brevemente arquivos alterados, riscos e como testar.' },
+    image: { label: 'Prompt para imagem', objective: 'Criar um prompt visual para gerar uma imagem.', context: 'A imagem precisa transmitir qualidade, clareza e coerencia com a marca.', output_type: 'Prompt para imagem', tone: 'Criativo', output_format: 'Prompt final pronto para copiar', avoid: 'Evitar elementos genericos, composicao confusa e excesso de detalhes irrelevantes.' },
+    video: { label: 'Prompt para vídeo', objective: 'Criar um prompt para gerar um video curto.', context: 'O video deve ter narrativa clara, ritmo bom e instrucao visual precisa.', output_type: 'Prompt para vídeo', tone: 'Criativo', output_format: 'Estrutura com seções', avoid: 'Nao deixar ambigua a camera, duracao, cena ou movimento.' },
+    client: { label: 'Resposta para cliente', objective: 'Criar uma resposta profissional para cliente sobre um problema tecnico.', context: 'A resposta precisa explicar o problema sem soar fria ou excessivamente tecnica.', output_type: 'E-mail/resposta para cliente', tone: 'Suporte humanizado', output_format: 'Texto corrido', avoid: 'Nao culpar o cliente e nao prometer prazos sem confirmacao.' },
+    plan: { label: 'Planejar projeto', objective: 'Criar um plano de acao para executar um projeto.', context: 'O plano deve ajudar a organizar etapas, prioridades e riscos.', output_type: 'Plano de ação', tone: 'Sênior/Especialista', output_format: 'Passo a passo', avoid: 'Nao criar etapas vagas ou impossiveis de validar.' },
+    error: { label: 'Analisar erro técnico', objective: 'Analisar um erro tecnico e sugerir causa provavel e correcao.', context: 'A analise sera usada por suporte/infra para diagnostico rapido.', output_type: 'Análise técnica', tone: 'Técnico', output_format: 'Estrutura com seções', avoid: 'Nao inventar evidencias. Separar fatos, hipoteses e proximos passos.' }
+  };
+
+  function renderPromptBuilderUI() {
+    const delivery = ['Código','Texto profissional','E-mail/resposta para cliente','Ideias criativas','Roteiro','Análise técnica','Plano de ação','Design/UI','Prompt para imagem','Prompt para vídeo','Automação','Outro'];
+    const details = ['Direto e curto','Médio','Bem detalhado','Extremamente detalhado'];
+    const tones = ['Técnico','Profissional','Didático','Criativo','Sênior/Especialista','Simples e leigo','Assertivo','Persuasivo','Elegante','Descontraído','Premium/luxo','Minimalista'];
+    const formats = ['Texto corrido','Lista organizada','Passo a passo','Tabela','JSON','Markdown','Código completo','Checklist','Estrutura com seções','Prompt final pronto para copiar'];
+    const audience = ['Cliente leigo','Desenvolvedor','Equipe técnica','Gestor','Alunos','Usuários finais','Suporte interno'];
+    const models = ['ChatGPT','Claude','Gemini','Copilot/Codex','Midjourney','Leonardo AI','Runway','Veo','Outro'];
+    const langs = ['Português','Inglês','Espanhol'];
+    const sizes = ['Curta','Média','Longa','Completa/profunda'];
+    const questions = ['Não, deve assumir o melhor caminho','Sim, se faltar informação importante','Sim, sempre fazer perguntas antes'];
+    const yesNo = ['Sim','Não'];
+    const typeButtons = (id, values, selected) => `<input type="hidden" id="${id}" value="${selected || values[0]}"><div class="type-grid">${values.map(v => `<button class="type-btn ${v === (selected || values[0]) ? 'active' : ''}" onclick="selectType('${id}','${v}',this)">${v}</button>`).join('')}</div>`;
+    return `
+      <div class="prompt-layout">
+        <section class="card prompt-card">
+          <div class="prompt-presets">${Object.entries(PROMPT_PRESETS).map(([key, preset]) => `<button class="prompt-preset" data-preset="${key}" type="button">${preset.label}</button>`).join('')}</div>
+          <div class="diag-grid">
+            <label class="field full"><span class="field-label">O que você quer que a IA faça?</span><textarea class="textarea" id="promptObjective" rows="3" placeholder="Ex: Criar um site institucional moderno para uma empresa de tecnologia"></textarea></label>
+            <label class="field full"><span class="field-label">Contexto do projeto ou situação</span><textarea class="textarea" id="promptContext" rows="4" placeholder="Ex: O site será para uma empresa de hospedagem, e-mail corporativo e suporte técnico."></textarea></label>
+            <label class="field full"><span class="field-label">Qual tipo de resultado você quer?</span>${typeButtons('promptOutputType', delivery, 'Código')}</label>
+            <label class="field full"><span class="field-label">Nível de detalhe</span>${typeButtons('promptDetail', details, 'Médio')}</label>
+            <label class="field full"><span class="field-label">Como a IA deve responder?</span>${typeButtons('promptTone', tones, 'Profissional')}</label>
+            <label class="field full"><span class="field-label">Formato de saída desejado</span>${typeButtons('promptFormat', formats, 'Estrutura com seções')}</label>
+            <label class="field full"><span class="field-label">O que a IA deve evitar?</span><textarea class="textarea" id="promptAvoid" rows="3" placeholder="Ex: Não usar linguagem genérica, não criar layout muito chamativo, não remover funcionalidades existentes."></textarea></label>
+            <label class="field full"><span class="field-label">Informações adicionais</span><textarea class="textarea" id="promptExtra" rows="3" placeholder="Ex: O projeto usa FastAPI, HTML, CSS e JavaScript puro. Quero manter dark mode."></textarea></label>
+          </div>
+          <div class="advanced-box" id="promptAdvanced">
+            <button class="advanced-toggle" type="button" id="promptAdvancedToggle"><span>Opções avançadas</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button>
+            <div class="advanced-content"><div class="diag-grid">
+              <label class="field full"><span class="field-label">Público-alvo</span>${typeButtons('promptAudience', audience, 'Desenvolvedor')}</label>
+              <label class="field full"><span class="field-label">Modelo de IA onde será usado</span>${typeButtons('promptModel', models, 'ChatGPT')}</label>
+              <label class="field full"><span class="field-label">Idioma do prompt final</span>${typeButtons('promptLanguage', langs, 'Português')}</label>
+              <label class="field full"><span class="field-label">Tamanho esperado da resposta da IA</span>${typeButtons('promptSize', sizes, 'Média')}</label>
+              <label class="field full"><span class="field-label">Deve fazer perguntas antes de responder?</span>${typeButtons('promptQuestions', questions, 'Sim, se faltar informação importante')}</label>
+              <label class="field"><span class="field-label">Incluir exemplos?</span>${typeButtons('promptExamples', yesNo, 'Sim')}</label>
+              <label class="field"><span class="field-label">Incluir critérios de qualidade?</span>${typeButtons('promptQuality', yesNo, 'Sim')}</label>
+              <label class="field"><span class="field-label">Incluir persona?</span>${typeButtons('promptPersona', yesNo, 'Sim')}</label>
+              <label class="field"><span class="field-label">Incluir contexto técnico?</span>${typeButtons('promptTech', yesNo, 'Sim')}</label>
+              <label class="field full"><span class="field-label">Palavras-chave obrigatórias</span><input class="input" id="promptKeywords" placeholder="Ex: FastAPI, dark mode, dashboard, suporte técnico, DNS"></label>
+            </div></div>
+          </div>
+          <div class="diag-actions">
+            <button class="btn" id="promptGenerate">${ICONS.lightbulb}<span>Gerar prompt otimizado</span></button>
+            <button class="btn secondary" id="promptClear">${ICONS.trash}<span>Limpar</span></button>
+          </div>
+        </section>
+        <section>
+          <div class="result" style="margin-top:0;">
+            <div class="result-head"><div class="result-title">${ICONS.lightbulb}<span>Prompt otimizado</span></div><button class="copy-btn" id="promptCopy">${ICONS.copy}<span>Copiar prompt</span></button></div>
+            <div style="padding:16px;"><div class="prompt-meta" id="promptMeta"></div><div id="promptOutput" class="prompt-empty">Preencha os campos ao lado e gere um prompt otimizado para obter respostas melhores da IA.</div></div>
+          </div>
+          <div class="diag-actions" id="promptVariants" style="display:none;">
+            <button class="btn secondary" data-prompt-action="regenerate">${ICONS.refresh}<span>Gerar novamente</span></button>
+            <button class="btn secondary" data-prompt-action="improve">${ICONS.refresh}<span>Melhorar ainda mais</span></button>
+            <button class="btn secondary" data-prompt-action="short">${ICONS.refresh}<span>Deixar mais curto</span></button>
+            <button class="btn secondary" data-prompt-action="detailed">${ICONS.refresh}<span>Deixar mais detalhado</span></button>
+            <button class="btn secondary" data-prompt-action="english">${ICONS.refresh}<span>Traduzir para inglês</span></button>
+          </div>
+          <div class="prompt-tips" id="promptTips"></div>
+        </section>
+      </div>`;
+  }
+
+  function bindPromptBuilder() {
+    const generateBtn = document.getElementById('promptGenerate');
+    const output = document.getElementById('promptOutput');
+    const meta = document.getElementById('promptMeta');
+    const tips = document.getElementById('promptTips');
+    const variants = document.getElementById('promptVariants');
+    let lastData = null;
+    const getValue = id => document.getElementById(id)?.value || '';
+    const setHidden = (id, value) => {
+      const el = document.getElementById(id);
+      if (el) el.value = value;
+      const wrap = el?.nextElementSibling;
+      if (wrap) wrap.querySelectorAll('.type-btn').forEach(btn => btn.classList.toggle('active', btn.textContent === value));
+    };
+    const payload = (override = {}) => ({
+      objective: getValue('promptObjective'), context: getValue('promptContext'), output_type: getValue('promptOutputType'),
+      detail_level: getValue('promptDetail'), tone: getValue('promptTone'), output_format: getValue('promptFormat'),
+      avoid: getValue('promptAvoid'), extra_info: getValue('promptExtra'), target_audience: getValue('promptAudience'),
+      ai_model: getValue('promptModel'), language: getValue('promptLanguage'), expected_size: getValue('promptSize'),
+      ask_questions: getValue('promptQuestions'), include_examples: getValue('promptExamples') === 'Sim',
+      include_quality_criteria: getValue('promptQuality') === 'Sim', include_persona: getValue('promptPersona') === 'Sim',
+      include_technical_context: getValue('promptTech') === 'Sim', required_keywords: getValue('promptKeywords'), ...override
+    });
+    function renderPromptResult(data) {
+      lastData = data;
+      output.className = 'prompt-output';
+      output.textContent = data.optimized_prompt;
+      meta.innerHTML = `${badgeHtml(data.provider)}${(data.badges || []).map(item => badgeHtml(item)).join('')}`;
+      tips.innerHTML = data.tips?.length ? `<article class="diag-info-card"><h3 class="diag-card-title">Dicas de uso</h3>${listHtml(data.tips)}</article>` : '';
+      variants.style.display = 'flex';
+    }
+    async function run(override = {}) {
+      setButtonLoading(generateBtn, 'Gerando...');
+      output.className = 'prompt-output';
+      output.textContent = 'Montando prompt com contexto, restricoes e criterios de qualidade...';
+      try {
+        const data = await fetchJSON('/api/prompt/generate', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload(override)) });
+        renderPromptResult(data);
+      } catch (e) {
+        output.className = 'prompt-empty';
+        output.innerHTML = `<span style="color:var(--danger);">${escapeHtml(e.message || 'Erro ao gerar prompt.')}</span>`;
+      } finally {
+        restoreButton(generateBtn);
+      }
+    }
+    document.getElementById('promptAdvancedToggle').onclick = () => document.getElementById('promptAdvanced').classList.toggle('open');
+    document.querySelectorAll('[data-preset]').forEach(btn => {
+      btn.onclick = () => {
+        const preset = PROMPT_PRESETS[btn.dataset.preset];
+        if (!preset) return;
+        document.getElementById('promptObjective').value = preset.objective || '';
+        document.getElementById('promptContext').value = preset.context || '';
+        document.getElementById('promptAvoid').value = preset.avoid || '';
+        document.getElementById('promptExtra').value = preset.extra_info || '';
+        setHidden('promptOutputType', preset.output_type || 'Outro');
+        setHidden('promptTone', preset.tone || 'Profissional');
+        setHidden('promptFormat', preset.output_format || 'Estrutura com seções');
+        showToast(`Preset "${preset.label}" aplicado.`);
+      };
+    });
+    generateBtn.onclick = () => run();
+    document.getElementById('promptCopy').onclick = () => copyText(lastData?.optimized_prompt || output.textContent, 'Prompt copiado com sucesso.');
+    document.getElementById('promptClear').onclick = () => {
+      document.querySelectorAll('#mainCard input.input, #mainCard textarea').forEach(el => el.value = '');
+      output.className = 'prompt-empty';
+      output.textContent = 'Preencha os campos ao lado e gere um prompt otimizado para obter respostas melhores da IA.';
+      meta.innerHTML = ''; tips.innerHTML = ''; variants.style.display = 'none'; lastData = null;
+    };
+    variants.onclick = event => {
+      const btn = event.target.closest('button');
+      if (!btn) return;
+      const action = btn.dataset.promptAction;
+      if (action === 'regenerate') return run();
+      if (action === 'improve') return run({ detail_level: 'Extremamente detalhado', include_quality_criteria: true, include_examples: true });
+      if (lastData?.variants?.[action]) { output.className = 'prompt-output'; output.textContent = lastData.variants[action]; }
+    };
   }
 
   function renderAIResult(data, options = {}) {
@@ -2392,6 +3092,352 @@
     };
   }
 
+  function normalizeSpaces(value) {
+    return String(value || '').replace(/\s+/g, ' ').trim();
+  }
+
+  function titleCaseName(value) {
+    return normalizeSpaces(value).toLowerCase().replace(/\b([\p{L}])/gu, m => m.toUpperCase());
+  }
+
+  function isEmptyMigRow(row) {
+    return ['firstName','lastName','emailFrom','passFrom','emailTo','passTo','plan'].every(k => !String(row[k] || '').trim());
+  }
+
+  function getEmailDomain(email) {
+    const clean = String(email || '').trim().toLowerCase();
+    return clean.includes('@') ? clean.split('@').pop() : '';
+  }
+
+  function addMigIssue(item, severity, type, message, recommendation, extra = {}) {
+    const ignoreKey = `${item.rowId}:${type}`;
+    if (ignoredMigIssues.has(ignoreKey) && severity !== 'critical') return;
+    item.issues.push({ severity, type, message, recommendation, ...extra });
+    if (MIG_SEVERITY_RANK[severity] > MIG_SEVERITY_RANK[item.severity]) item.severity = severity;
+  }
+
+  function generateStrongMigrationPassword(row = {}) {
+    const upper = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
+    const lower = 'abcdefghijkmnopqrstuvwxyz';
+    const nums = '23456789';
+    const sym = '!@#$%*?';
+    const all = upper + lower + nums + sym;
+    const forbidden = [row.firstName, row.lastName, row.emailFrom, row.emailTo]
+      .join(' ')
+      .toLowerCase()
+      .split(/[^a-z0-9]+/i)
+      .filter(part => part.length >= 3);
+    for (let attempt = 0; attempt < 80; attempt++) {
+      const chars = [
+        upper[Math.floor(Math.random() * upper.length)],
+        lower[Math.floor(Math.random() * lower.length)],
+        nums[Math.floor(Math.random() * nums.length)],
+        sym[Math.floor(Math.random() * sym.length)],
+      ];
+      while (chars.length < 14) chars.push(all[Math.floor(Math.random() * all.length)]);
+      const pwd = chars.sort(() => Math.random() - 0.5).join('');
+      const lowerPwd = pwd.toLowerCase();
+      if (!forbidden.some(part => lowerPwd.includes(part))) return pwd;
+    }
+    return `Vx@${Date.now().toString(36)}#T9mK`;
+  }
+
+  function analyzePasswordStrength(password, row, label) {
+    const pwd = String(password || '');
+    const issues = [];
+    if (!pwd.trim()) {
+      issues.push({ severity: 'critical', type: `${label}_empty`, message: `Senha ${label === 'passFrom' ? 'origem' : 'destino'} vazia.`, recommendation: 'Informe uma senha antes da migração.' });
+      return issues;
+    }
+    const lower = pwd.toLowerCase();
+    const rowTokens = [row.firstName, row.lastName, row.emailFrom?.split('@')[0], row.emailTo?.split('@')[0]]
+      .map(v => String(v || '').trim().toLowerCase())
+      .filter(v => v.length >= 3);
+    const weakReasons = [];
+    if (pwd.length < 8) weakReasons.push('muito curta');
+    if (pwd.length < 12) weakReasons.push('menos de 12 caracteres');
+    if (!/[0-9]/.test(pwd)) weakReasons.push('sem número');
+    if (!/[A-Z]/.test(pwd)) weakReasons.push('sem letra maiúscula');
+    if (!/[a-z]/.test(pwd)) weakReasons.push('sem letra minúscula');
+    if (!/[^A-Za-z0-9]/.test(pwd)) weakReasons.push('sem caractere especial');
+    if (MIG_OBVIOUS_PASSWORDS.includes(lower)) weakReasons.push('senha óbvia');
+    if (rowTokens.some(token => lower.includes(token))) weakReasons.push('contém nome, sobrenome ou parte do e-mail');
+    if (weakReasons.length) {
+      issues.push({
+        severity: pwd.length < 6 || MIG_OBVIOUS_PASSWORDS.includes(lower) ? 'warning' : 'warning',
+        type: `${label}_weak_password`,
+        message: `Senha ${label === 'passFrom' ? 'origem' : 'destino'} considerada fraca: ${weakReasons.join(', ')}.`,
+        recommendation: 'Trocar por uma senha mais segura antes da migração.',
+        suggestedPassword: generateStrongMigrationPassword(row),
+        passwordField: label
+      });
+    }
+    return issues;
+  }
+
+  function validateMigrationAccounts(accounts, companyCid) {
+    const result = {
+      summary: { total: accounts.length, critical: 0, warnings: 0, suggestions: 0, ok: 0 },
+      items: [],
+      canExport: true,
+      localSummary: ''
+    };
+    const fromMap = {}, toMap = {};
+    accounts.forEach((row, idx) => {
+      const from = String(row.emailFrom || '').trim().toLowerCase();
+      const to = String(row.emailTo || '').trim().toLowerCase();
+      if (from) (fromMap[from] = fromMap[from] || []).push(idx);
+      if (to) (toMap[to] = toMap[to] || []).push(idx);
+    });
+    const duplicateFrom = new Set(Object.values(fromMap).filter(a => a.length > 1).flat());
+    const duplicateTo = new Set(Object.values(toMap).filter(a => a.length > 1).flat());
+    const toDomains = Object.keys(toMap).map(getEmailDomain).filter(Boolean);
+    const dominantToDomain = toDomains.sort((a, b) => toDomains.filter(v => v === b).length - toDomains.filter(v => v === a).length)[0] || '';
+
+    accounts.forEach((row, idx) => {
+      const item = {
+        rowIndex: idx + 1,
+        rowId: row.id,
+        emailOrigin: row.emailFrom || '',
+        emailDestination: row.emailTo || '',
+        severity: 'ok',
+        issues: []
+      };
+      if (isEmptyMigRow(row)) {
+        addMigIssue(item, 'critical', 'empty_row', 'Linha sem dados suficientes.', 'Remova a linha ou preencha os dados obrigatórios.');
+      }
+      [
+        ['firstName', 'Nome'],
+        ['lastName', 'Sobrenome'],
+        ['emailFrom', 'E-mail origem'],
+        ['passFrom', 'Senha origem'],
+        ['emailTo', 'E-mail destino'],
+        ['passTo', 'Senha destino'],
+      ].forEach(([field, label]) => {
+        if (!String(row[field] || '').trim()) addMigIssue(item, 'critical', `${field}_empty`, `${label} vazio.`, `Preencha o campo ${label}.`);
+      });
+      if (!String(row.plan || '').trim()) addMigIssue(item, 'warning', 'plan_empty', 'Plano ausente.', 'Informe o plano se ele for necessário para o lote.');
+
+      ['firstName', 'lastName'].forEach(field => {
+        const value = String(row[field] || '');
+        const label = field === 'firstName' ? 'Nome' : 'Sobrenome';
+        if (value && value !== value.trim()) addMigIssue(item, 'suggestion', `${field}_trim`, `${label} possui espaços extras.`, 'Remover espaços antes/depois.');
+        if (/\d/.test(value)) addMigIssue(item, 'warning', `${field}_number`, `${label} contém números.`, 'Revise se o nome foi importado corretamente.');
+        if (/[^\p{L}\s'.-]/u.test(value)) addMigIssue(item, 'warning', `${field}_strange_chars`, `${label} contém caracteres incomuns.`, 'Remova caracteres que não fazem parte do nome.');
+        if (value.length > 2 && value === value.toUpperCase() && /[A-ZÀ-Ý]/.test(value)) addMigIssue(item, 'suggestion', `${field}_uppercase`, `${label} está todo em caixa alta.`, 'Padronizar capitalização do nome.');
+      });
+
+      [['emailFrom', 'E-mail origem'], ['emailTo', 'E-mail destino']].forEach(([field, label]) => {
+        const value = String(row[field] || '');
+        const clean = value.trim();
+        if (value && value !== clean) addMigIssue(item, 'suggestion', `${field}_trim`, `${label} possui espaços antes/depois.`, 'Remover espaços extras.');
+        if (clean && clean !== clean.toLowerCase()) addMigIssue(item, 'suggestion', `${field}_lowercase`, `${label} possui letras maiúsculas.`, 'Padronizar o e-mail em minúsculas.');
+        if (clean && !isValidEmail(clean)) addMigIssue(item, 'critical', `${field}_invalid`, `${label} inválido.`, 'Corrija o formato do e-mail.');
+      });
+      if (duplicateFrom.has(idx)) addMigIssue(item, 'critical', 'duplicate_origin', 'E-mail origem duplicado.', 'Remova duplicidades ou confirme se são contas distintas.');
+      if (duplicateTo.has(idx)) addMigIssue(item, 'critical', 'duplicate_destination', 'E-mail destino duplicado.', 'Cada destino deve aparecer uma única vez.');
+      const toDomain = getEmailDomain(row.emailTo);
+      if (dominantToDomain && toDomain && toDomain !== dominantToDomain) {
+        addMigIssue(item, 'warning', 'different_destination_domain', `Domínio destino diferente do padrão (${dominantToDomain}).`, 'Confirme se este domínio de destino está correto.');
+      }
+      analyzePasswordStrength(row.passFrom, row, 'passFrom').forEach(issue => addMigIssue(item, issue.severity, issue.type, issue.message, issue.recommendation, issue));
+      analyzePasswordStrength(row.passTo, row, 'passTo').forEach(issue => addMigIssue(item, issue.severity, issue.type, issue.message, issue.recommendation, issue));
+
+      result.items.push(item);
+      if (item.severity === 'critical') result.summary.critical++;
+      else if (item.severity === 'warning') result.summary.warnings++;
+      else if (item.severity === 'suggestion') result.summary.suggestions++;
+      else result.summary.ok++;
+    });
+
+    if (!String(companyCid || '').trim()) {
+      result.summary.critical++;
+      result.items.unshift({
+        rowIndex: 0,
+        rowId: 'company-cid',
+        emailOrigin: '-',
+        emailDestination: '-',
+        severity: 'critical',
+        issues: [{ severity: 'critical', type: 'company_cid_empty', message: 'Company CID vazio.', recommendation: 'Informe o CID da empresa antes de gerar os arquivos.' }]
+      });
+    }
+    result.canExport = result.summary.critical === 0;
+    result.localSummary = result.summary.critical
+      ? 'Existem erros críticos que impedem a geração dos arquivos.'
+      : result.summary.warnings
+        ? 'Encontramos pontos que merecem atenção antes da exportação.'
+        : result.summary.suggestions
+          ? 'Há sugestões de melhoria disponíveis.'
+          : 'Nenhum problema crítico encontrado.';
+    return result;
+  }
+
+  function getValidationSummary(validationResult) {
+    const s = validationResult.summary;
+    return `${s.total} conta(s) analisada(s), ${s.critical} erro(s) crítico(s), ${s.warnings} alerta(s), ${s.suggestions} sugestão(ões).`;
+  }
+
+  function getMigValidationMap(result = migValidationResult) {
+    const map = {};
+    (result?.items || []).forEach(item => {
+      if (item.rowIndex > 0) map[item.rowIndex - 1] = item.severity;
+    });
+    return map;
+  }
+
+  function renderMigrationReview(result) {
+    const panel = document.getElementById('migReviewPanel');
+    if (!panel) return;
+    const s = result.summary;
+    const actionable = result.items.filter(item => item.issues.length && item.rowIndex > 0);
+    const globalItems = result.items.filter(item => item.rowIndex === 0);
+    const rows = [...globalItems, ...actionable].map(item => `
+      <article class="mig-review-item ${item.severity}">
+        <div class="mig-review-item-head">
+          <div>
+            <div class="mig-review-row-title">${item.rowIndex ? `Linha ${item.rowIndex}` : 'Configuração da migração'}</div>
+            <div class="mig-review-meta">${escapeHtml(item.emailOrigin || '-')} → ${escapeHtml(item.emailDestination || '-')}</div>
+          </div>
+          <span class="mig-badge ${item.severity === 'critical' ? 'err' : item.severity === 'warning' ? 'warn' : item.severity === 'suggestion' ? 'info' : 'ok'}">${item.severity === 'critical' ? 'Crítico' : item.severity === 'warning' ? 'Alerta' : item.severity === 'suggestion' ? 'Sugestão' : 'OK'}</span>
+        </div>
+        <ul class="mig-issue-list">
+          ${item.issues.map(issue => `
+            <li class="mig-issue">
+              <strong>${escapeHtml(issue.message)}</strong><br>
+              ${escapeHtml(issue.recommendation || '')}
+              ${issue.suggestedPassword ? `
+                <div class="mig-review-meta" style="margin-top:6px;">Senha sugerida: ${escapeHtml(issue.suggestedPassword)}</div>
+                <div class="mig-issue-actions">
+                  <button class="mig-mini-btn" data-copy-pwd="${escapeHtml(issue.suggestedPassword)}">Copiar senha sugerida</button>
+                  <button class="mig-mini-btn" data-apply-pwd="${item.rowIndex - 1}" data-field="${escapeHtml(issue.passwordField)}" data-password="${escapeHtml(issue.suggestedPassword)}">Aplicar nesta conta</button>
+                </div>` : ''}
+              ${issue.severity !== 'critical' ? `<div class="mig-issue-actions"><button class="mig-mini-btn" data-ignore-issue="${escapeHtml(item.rowId + ':' + issue.type)}">Ignorar alerta</button></div>` : ''}
+            </li>
+          `).join('')}
+        </ul>
+      </article>
+    `).join('');
+
+    panel.innerHTML = `
+      <section class="mig-review-panel">
+        <div class="mig-review-head">
+          <div class="mig-review-title">${ICONS.search}<span>Revisão de contas</span></div>
+          <div class="mig-review-actions">
+            <button class="mig-review-action" id="migAutoFixBtn">${ICONS.check}<span>Corrigir automaticamente o que for seguro</span></button>
+            <button class="mig-review-action" id="migApplyAllPwdBtn">${ICONS.key}<span>Aplicar senhas sugeridas</span></button>
+          </div>
+        </div>
+        <div class="mig-review-summary">
+          <div class="mig-review-metric"><span>Contas</span><strong>${s.total}</strong></div>
+          <div class="mig-review-metric"><span>Críticos</span><strong style="color:var(--danger);">${s.critical}</strong></div>
+          <div class="mig-review-metric"><span>Alertas</span><strong style="color:var(--warning);">${s.warnings}</strong></div>
+          <div class="mig-review-metric"><span>Sugestões</span><strong style="color:var(--primary-glow);">${s.suggestions}</strong></div>
+          <div class="mig-review-metric"><span>OK</span><strong style="color:var(--success);">${s.ok}</strong></div>
+        </div>
+        <div class="mig-review-body">
+          <div class="mig-review-empty" id="migSmartSummary">${escapeHtml(result.localSummary)} ${escapeHtml(getValidationSummary(result))}</div>
+          ${rows || '<div class="mig-review-empty">Nenhum ajuste recomendado para as contas analisadas.</div>'}
+        </div>
+      </section>
+    `;
+    bindMigrationReviewPanel();
+    updateMigrationSmartSummary(result);
+  }
+
+  async function updateMigrationSmartSummary(result) {
+    const target = document.getElementById('migSmartSummary');
+    if (!target) return;
+    try {
+      const data = await fetchJSON('/api/migration/review-summary', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ summary: result.summary, items: result.items.slice(0, 25) })
+      });
+      target.textContent = `${data.summary || result.localSummary} (${data.provider === 'gemini' ? 'resumo Gemini' : 'resumo local'})`;
+    } catch {
+      target.textContent = `${result.localSummary} ${getValidationSummary(result)}`;
+    }
+  }
+
+  function runMigrationReview(showPanel = true) {
+    if (!migRows.length) {
+      showToast('Adicione ou importe contas antes de iniciar a revisão.', 'warn');
+      return null;
+    }
+    migValidationResult = validateMigrationAccounts(migRows, document.getElementById('migCid')?.value || migCompany);
+    if (showPanel) renderMigrationReview(migValidationResult);
+    renderMigTable();
+    if (migValidationResult.summary.critical) showToast('Existem erros críticos que impedem a geração dos arquivos.', 'error');
+    else if (migValidationResult.summary.warnings) showToast('Encontramos pontos que merecem atenção antes da exportação.', 'warn');
+    else showToast('Nenhum problema crítico encontrado.');
+    return migValidationResult;
+  }
+
+  function applySuggestedPassword(rowIndex, field, password) {
+    if (!migRows[rowIndex] || !['passFrom', 'passTo'].includes(field)) return;
+    migRows[rowIndex][field] = password;
+    saveMigRows();
+    runMigrationReview(true);
+  }
+
+  function applyAllSuggestedPasswords() {
+    if (!migValidationResult) return;
+    let changed = 0;
+    migValidationResult.items.forEach(item => {
+      if (item.rowIndex <= 0) return;
+      item.issues.forEach(issue => {
+        if (issue.suggestedPassword && issue.passwordField && migRows[item.rowIndex - 1]) {
+          migRows[item.rowIndex - 1][issue.passwordField] = issue.suggestedPassword;
+          changed++;
+        }
+      });
+    });
+    if (!changed) { showToast('Nenhuma senha sugerida para aplicar.', 'warn'); return; }
+    saveMigRows();
+    showToast(`${changed} senha(s) sugerida(s) aplicada(s).`);
+    runMigrationReview(true);
+  }
+
+  function normalizeAccountData(row) {
+    return {
+      ...row,
+      firstName: titleCaseName(row.firstName),
+      lastName: titleCaseName(row.lastName),
+      emailFrom: String(row.emailFrom || '').trim().toLowerCase(),
+      emailTo: String(row.emailTo || '').trim().toLowerCase(),
+      passFrom: String(row.passFrom || '').trim(),
+      passTo: String(row.passTo || '').trim(),
+      plan: normalizeSpaces(row.plan)
+    };
+  }
+
+  function applySafeAutoFixes() {
+    const before = migRows.length;
+    migRows = migRows.filter(row => !isEmptyMigRow(row)).map(normalizeAccountData);
+    const removed = before - migRows.length;
+    saveMigRows();
+    showToast(removed ? `${removed} linha(s) vazia(s) removida(s) e dados normalizados.` : 'Dados normalizados com segurança.');
+    runMigrationReview(true);
+  }
+
+  function bindMigrationReviewPanel() {
+    document.getElementById('migAutoFixBtn')?.addEventListener('click', applySafeAutoFixes);
+    document.getElementById('migApplyAllPwdBtn')?.addEventListener('click', applyAllSuggestedPasswords);
+    document.querySelectorAll('[data-copy-pwd]').forEach(btn => {
+      btn.onclick = () => copyText(btn.dataset.copyPwd, 'Senha sugerida copiada.');
+    });
+    document.querySelectorAll('[data-apply-pwd]').forEach(btn => {
+      btn.onclick = () => applySuggestedPassword(parseInt(btn.dataset.applyPwd), btn.dataset.field, btn.dataset.password);
+    });
+    document.querySelectorAll('[data-ignore-issue]').forEach(btn => {
+      btn.onclick = () => {
+        ignoredMigIssues.add(btn.dataset.ignoreIssue);
+        showToast('Alerta ignorado nesta revisão.');
+        runMigrationReview(true);
+      };
+    });
+  }
+
   function countMigErrors() {
     const fromEmails = {}, toEmails = {};
     migRows.forEach((r, i) => {
@@ -2532,7 +3578,12 @@
   }
 
   function closeConfirmModal() { document.getElementById('confirmModal').classList.remove('show'); }
-  function executeClear() { migRows = []; saveMigRows(); renderMigTable(); closeConfirmModal(); }
+  function executeClear() {
+    migRows = [];
+    saveMigRows();
+    renderMigTable();
+    closeConfirmModal();
+  }
 
   function saveMigRows() {}
 
@@ -2594,10 +3645,11 @@
       const toOk       = isValidEmail(row.emailTo);
       const passToOk   = row.emailTo ? validatePassword(row.passTo, row, false) : true;
       const hasError   = (!fromOk && row.emailFrom) || (!toOk && row.emailTo) || (row.emailTo && !passToOk);
+      const reviewSeverity = '';
       const rowClass   = isDup ? 'row-duplicate' : hasError ? 'row-error' : '';
 
       return `
-        <tr class="${rowClass}" data-idx="${idx}">
+        <tr class="${rowClass}" data-idx="${idx}" title="${reviewSeverity ? 'Status da revisão: ' + reviewSeverity : ''}">
           <td class="col-num">${idx + 1}</td>
           <td><input class="mig-cell" data-field="firstName" value="${esc(row.firstName)}" placeholder="Nome"></td>
           <td><input class="mig-cell" data-field="lastName"  value="${esc(row.lastName)}"  placeholder="Sobrenome"></td>
@@ -2744,6 +3796,45 @@
     const cid   = getCid();
     downloadFile(lines.join('\n'), `acc_${cid}.csv`, 'text/csv;charset=utf-8');
     showToast(`acc_${cid}.csv gerado com ${migRows.length} linha(s).`);
+  }
+
+  function requestMigrationWarningConfirmation(downloadFn) {
+    pendingMigDownload = downloadFn;
+    pendingDownloadFn = downloadFn;
+    document.getElementById('migErrCount').innerText = migValidationResult?.summary?.warnings || 0;
+    const modal = document.getElementById('migErrModal');
+    const title = modal.querySelector('.modal-title');
+    const desc = modal.querySelector('.modal-desc');
+    const confirmBtn = document.getElementById('migErrConfirmBtn');
+    if (title) title.textContent = 'Continuar mesmo com alertas?';
+    if (desc) {
+      desc.innerHTML = 'Encontramos alertas que nÃ£o impedem a geraÃ§Ã£o, mas recomendamos revisar antes de continuar.<br><br>Deseja gerar os arquivos mesmo assim?';
+    }
+    confirmBtn.textContent = 'Continuar mesmo assim';
+    confirmBtn.onclick = () => {
+      closeMigErrModal();
+      if (typeof pendingMigDownload === 'function') pendingMigDownload();
+      pendingMigDownload = null;
+    };
+    const cancelBtn = modal.querySelector('.modal-btn.cancel');
+    if (cancelBtn) cancelBtn.textContent = 'Revisar agora';
+    modal.classList.add('show');
+  }
+
+  function guardedMigrationDownload(downloadFn) {
+    if (!migRows.length) { showToast('Nenhuma conta para exportar.', 'warn'); return; }
+    const result = runMigrationReview(true);
+    if (!result) return;
+    if (result.summary.critical > 0) {
+      showToast('Existem erros críticos que precisam ser corrigidos antes de gerar os arquivos.', 'error');
+      return;
+    }
+    if (result.summary.warnings > 0) {
+      requestMigrationWarningConfirmation(downloadFn);
+      return;
+    }
+    if (result.summary.suggestions > 0) showToast('Há sugestões de melhoria disponíveis.', 'warn');
+    downloadFn();
   }
 
   function downloadLote() {
