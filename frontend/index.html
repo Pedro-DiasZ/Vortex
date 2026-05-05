@@ -3801,7 +3801,7 @@
         content: migRows.map(r => csvLine([r.firstName, r.lastName, r.emailTo, r.passTo, r.plan])).join('\n')
       },
       acc: {
-        name: `acc_${cid}.acc`,
+        name: `acc_${cid}.csv`,
         content: migRows.map(r => csvLine([r.emailFrom, r.passFrom, r.emailTo, r.passTo])).join('\n')
       }
     };
@@ -3815,7 +3815,7 @@
 
   function _doDownloadAcc() {
     const { acc } = getMigrationExportFiles();
-    downloadFile(acc.content, acc.name, 'application/octet-stream');
+    downloadFile(acc.content, acc.name, 'text/csv;charset=utf-8');
     showToast(`${acc.name} gerado com ${migRows.length} linha(s).`);
   }
 
@@ -3872,7 +3872,7 @@
     if (!migRows.length) { showToast('Nenhuma conta para exportar.', 'warn'); return; }
     const { lote, acc } = getMigrationExportFiles();
     downloadFile(lote.content, lote.name, 'text/csv;charset=utf-8');
-    downloadFile(acc.content, acc.name, 'application/octet-stream');
+    downloadFile(acc.content, acc.name, 'text/csv;charset=utf-8');
     showToast(`${lote.name} e ${acc.name} gerados.`);
   }
 
