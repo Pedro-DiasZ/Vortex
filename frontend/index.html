@@ -3774,28 +3774,49 @@
 
   function downloadFile(content, filename, mime) {
     const blob = new Blob(['\ufeff' + content], { type: mime });
+    downloadBlob(blob, filename);
+  }
+
+  function downloadBlob(blob, filename) {
     const url  = URL.createObjectURL(blob);
     const a    = document.createElement('a');
-    a.style.display = 'none';
-    a.href = url; a.download = filename;
+    a.href = url;
+    a.download = filename;
+    a.rel = 'noopener';
+    a.style.position = 'fixed';
+    a.style.left = '-9999px';
+    a.style.top = '-9999px';
     document.body.appendChild(a);
-    a.click();
+    a.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window }));
     a.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    setTimeout(() => URL.revokeObjectURL(url), 3000);
+  }
+
+  function getMigrationExportFiles() {
+    const cid = getCid();
+    return {
+      cid,
+      lote: {
+        name: `lote_${cid}.csv`,
+        content: migRows.map(r => csvLine([r.firstName, r.lastName, r.emailTo, r.passTo, r.plan])).join('\n')
+      },
+      acc: {
+        name: `acc_${cid}.acc`,
+        content: migRows.map(r => csvLine([r.emailFrom, r.passFrom, r.emailTo, r.passTo])).join('\n')
+      }
+    };
   }
 
   function _doDownloadLote() {
-    const lines = migRows.map(r => csvLine([r.firstName, r.lastName, r.emailTo, r.passTo, r.plan]));
-    const cid   = getCid();
-    downloadFile(lines.join('\n'), `lote_${cid}.csv`, 'text/csv;charset=utf-8');
-    showToast(`lote_${cid}.csv gerado com ${migRows.length} linha(s).`);
+    const files = getMigrationExportFiles();
+    downloadFile(files.lote.content, files.lote.name, 'text/csv;charset=utf-8');
+    showToast(`${files.lote.name} gerado com ${migRows.length} linha(s).`);
   }
 
   function _doDownloadAcc() {
-    const lines = migRows.map(r => csvLine([r.emailFrom, r.passFrom, r.emailTo, r.passTo]));
-    const cid   = getCid();
-    downloadFile(lines.join('\n'), `acc_${cid}.csv`, 'text/csv;charset=utf-8');
-    showToast(`acc_${cid}.csv gerado com ${migRows.length} linha(s).`);
+    const files = getMigrationExportFiles();
+    downloadFile(files.acc.content, files.acc.name, 'text/plain;charset=utf-8');
+    showToast(`${files.acc.name} gerado com ${migRows.length} linha(s).`);
   }
 
   function requestMigrationWarningConfirmation(downloadFn) {
@@ -3849,7 +3870,8 @@
 
   function downloadBoth() {
     if (!migRows.length) { showToast('Nenhuma conta para exportar.', 'warn'); return; }
-    _doDownloadLote(); setTimeout(_doDownloadAcc, 200);
+    _doDownloadLote();
+    _doDownloadAcc();
   }
 
   // ======= SPF VISUAL TAGS =======
