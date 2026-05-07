@@ -77,6 +77,42 @@
     border: 1px solid var(--border); background: var(--card); color: var(--text);
     width: 38px; height: 38px; border-radius: 10px; display: grid; place-items: center;
   }
+  .top-actions { display: flex; align-items: flex-start; gap: 12px; position: relative; }
+  .pwd-trigger {
+    height: 38px; padding: 0 14px; border: 1px solid var(--border); border-radius: 10px;
+    background: var(--card); color: var(--text); display: inline-flex; align-items: center; gap: 8px;
+    font-size: 12px; font-weight: 900; letter-spacing: .08em; text-transform: uppercase;
+  }
+  .pwd-trigger:hover, .pwd-trigger.active { border-color: var(--primary); color: var(--primary-glow); }
+  .pwd-trigger svg { width: 15px; height: 15px; }
+  .pwd-mini {
+    position: absolute; top: calc(100% + 10px); right: 50px; z-index: 10;
+    width: 310px; border: 1px solid var(--border); border-radius: 12px;
+    background: color-mix(in srgb, var(--card) 96%, transparent);
+    box-shadow: var(--shadow-card); padding: 12px; display: grid; gap: 10px;
+  }
+  .pwd-mini[hidden] { display: none; }
+  .pwd-mini-title {
+    display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    color: var(--primary-glow); font-size: 10px; font-weight: 900;
+    letter-spacing: .14em; text-transform: uppercase;
+  }
+  .pwd-mini-row { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 7px; align-items: center; }
+  .pwd-mini-output {
+    min-width: 0; height: 36px; border: 1px solid var(--border); border-radius: 9px;
+    background: var(--input-bg); color: var(--text); padding: 0 10px;
+    font: 800 12px var(--font-mono); outline: none;
+  }
+  .pwd-mini-btn {
+    width: 36px; height: 36px; border-radius: 9px; border: 1px solid var(--border);
+    background: var(--card-2); color: var(--text); display: grid; place-items: center;
+  }
+  .pwd-mini-btn:hover { border-color: var(--primary); color: var(--primary-glow); }
+  .pwd-mini-btn svg { width: 15px; height: 15px; }
+  .pwd-mini-controls { display: grid; grid-template-columns: auto 1fr auto; gap: 8px; align-items: center; }
+  .pwd-mini-controls span { color: var(--muted); font-size: 11px; font-weight: 800; }
+  .pwd-mini-controls input[type="range"] { width: 100%; accent-color: var(--primary); }
+  .pwd-mini-len { color: var(--primary-glow); font: 900 12px var(--font-mono); }
   .hero {
     display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 18px; align-items: end;
     border-bottom: 1px solid var(--border-soft); padding-bottom: 20px; margin-bottom: 18px;
@@ -119,6 +155,7 @@
   .field { display: grid; gap: 7px; min-width: 0; }
   .field.full { grid-column: 1 / -1; }
   .field-label { color: var(--muted); font-size: 12px; font-weight: 800; }
+  .field-help { color: var(--muted); font-size: 11px; line-height: 1.35; }
   .input, .textarea {
     width: 100%; border: 1px solid var(--border); background: var(--input-bg);
     color: var(--text); border-radius: 10px; outline: none; transition: border-color .12s, box-shadow .12s;
@@ -256,10 +293,17 @@
   @media (max-width: 920px) {
     .hero { grid-template-columns: 1fr; }
     .summary-pill { min-width: 0; }
+    .topbar { align-items: stretch; flex-direction: column; }
+    .top-actions { width: 100%; justify-content: flex-end; }
+    .pwd-mini { width: 100%; }
   }
   @media (max-width: 680px) {
     .shell { width: min(100% - 24px, 1500px); padding-top: 16px; }
     .topbar { padding-bottom: 16px; }
+    .top-actions { flex-direction: column-reverse; }
+    .theme-btn { align-self: flex-end; }
+    .pwd-trigger { width: 100%; justify-content: center; }
+    .pwd-mini { position: static; }
     .hero { gap: 12px; padding-bottom: 16px; }
     .card { padding: 16px; }
     .form-grid, .time-grid { grid-template-columns: 1fr; }
@@ -282,9 +326,35 @@
         <span>Formulário de migração</span>
       </div>
     </div>
-    <button class="theme-btn" id="themeBtn" type="button" title="Alternar tema" aria-label="Alternar tema">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="17" height="17"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
-    </button>
+    <div class="top-actions">
+      <button class="pwd-trigger" id="pwdMiniToggle" type="button" aria-expanded="false" aria-controls="pwdMiniPanel">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6"/><path d="m15.5 7.5 3 3L22 7l-3-3"/></svg>
+        Precisa de senha?
+      </button>
+      <div class="pwd-mini" id="pwdMiniPanel" aria-label="Gerador de senha" hidden>
+        <div class="pwd-mini-title">
+          <span>Gerador de senha</span>
+          <span id="pwdMiniStrength">Forte</span>
+        </div>
+        <div class="pwd-mini-row">
+          <input class="pwd-mini-output" id="pwdMiniOutput" readonly aria-label="Senha gerada">
+          <button class="pwd-mini-btn" id="pwdMiniRefresh" type="button" title="Gerar nova senha" aria-label="Gerar nova senha">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10"/><path d="M20.49 15a9 9 0 0 1-14.85 3.36L1 14"/></svg>
+          </button>
+          <button class="pwd-mini-btn" id="pwdMiniCopy" type="button" title="Copiar senha" aria-label="Copiar senha">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          </button>
+        </div>
+        <div class="pwd-mini-controls">
+          <span>Tamanho</span>
+          <input id="pwdMiniLength" type="range" min="8" max="32" value="14" aria-label="Tamanho da senha">
+          <strong class="pwd-mini-len" id="pwdMiniLengthValue">14</strong>
+        </div>
+      </div>
+      <button class="theme-btn" id="themeBtn" type="button" title="Alternar tema" aria-label="Alternar tema">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="17" height="17"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+      </button>
+    </div>
   </header>
 
   <section class="hero">
@@ -323,6 +393,7 @@
           <label class="field">
             <span class="field-label">Data para contato *</span>
             <input class="input" id="migrationDate" type="date" required>
+            <span class="field-help">Somente dias uteis. Sabados, domingos e feriados nacionais nao ficam disponiveis.</span>
           </label>
           <div class="field">
             <span class="field-label">Horario para contato *</span>
@@ -453,12 +524,131 @@
     return new Date(now.getTime() - tzOffset).toISOString().slice(0, 10);
   }
 
+  function dateFromISO(value) {
+    const [year, month, day] = String(value || '').split('-').map(Number);
+    if (!year || !month || !day) return null;
+    return new Date(year, month - 1, day);
+  }
+
+  function isoFromDate(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
+  function addDays(date, days) {
+    const next = new Date(date);
+    next.setDate(next.getDate() + days);
+    return next;
+  }
+
+  function getEasterDate(year) {
+    const a = year % 19;
+    const b = Math.floor(year / 100);
+    const c = year % 100;
+    const d = Math.floor(b / 4);
+    const e = b % 4;
+    const f = Math.floor((b + 8) / 25);
+    const g = Math.floor((b - f + 1) / 3);
+    const h = (19 * a + b - d - g + 15) % 30;
+    const i = Math.floor(c / 4);
+    const k = c % 4;
+    const l = (32 + 2 * e + 2 * i - h - k) % 7;
+    const m = Math.floor((a + 11 * h + 22 * l) / 451);
+    const month = Math.floor((h + l - 7 * m + 114) / 31);
+    const day = ((h + l - 7 * m + 114) % 31) + 1;
+    return new Date(year, month - 1, day);
+  }
+
+  function getNationalHolidays(year) {
+    const easter = getEasterDate(year);
+    return new Set([
+      `${year}-01-01`,
+      `${year}-04-21`,
+      `${year}-05-01`,
+      `${year}-09-07`,
+      `${year}-10-12`,
+      `${year}-11-02`,
+      `${year}-11-15`,
+      `${year}-11-20`,
+      `${year}-12-25`,
+      isoFromDate(addDays(easter, -48)),
+      isoFromDate(addDays(easter, -47)),
+      isoFromDate(addDays(easter, -2)),
+      isoFromDate(addDays(easter, 60))
+    ]);
+  }
+
+  function getBlockedDateReason(value) {
+    const date = dateFromISO(value);
+    if (!date) return '';
+    const day = date.getDay();
+    if (day === 0) return 'Domingos nao estao disponiveis.';
+    if (day === 6) return 'Sabados nao estao disponiveis.';
+    if (getNationalHolidays(date.getFullYear()).has(value)) return 'Feriados nacionais nao estao disponiveis.';
+    return '';
+  }
+
   function escapeHtml(value) {
     return String(value || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   }
 
   function isValidEmail(value) {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(value || '').trim());
+  }
+
+  function passwordStrength(password) {
+    let score = 0;
+    if (password.length >= 12) score++;
+    if (password.length >= 20) score++;
+    if (/[A-Z]/.test(password) && /[a-z]/.test(password)) score++;
+    if (/\d/.test(password)) score++;
+    if (/[^A-Za-z0-9]/.test(password)) score++;
+    return ['Fraca', 'Razoavel', 'Boa', 'Forte', 'Excelente'][Math.min(score, 4)];
+  }
+
+  function randomChar(chars) {
+    const values = new Uint32Array(1);
+    crypto.getRandomValues(values);
+    return chars[values[0] % chars.length];
+  }
+
+  function shufflePassword(chars) {
+    const list = chars.slice();
+    for (let i = list.length - 1; i > 0; i--) {
+      const values = new Uint32Array(1);
+      crypto.getRandomValues(values);
+      const j = values[0] % (i + 1);
+      [list[i], list[j]] = [list[j], list[i]];
+    }
+    return list.join('');
+  }
+
+  function createMiniPassword() {
+    const lengthEl = document.getElementById('pwdMiniLength');
+    const length = Math.max(8, Math.min(parseInt(lengthEl.value, 10) || 14, 32));
+    const chars = {
+      upper: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
+      lower: 'abcdefghijklmnopqrstuvwxyz',
+      nums: '0123456789',
+      sym: '!@#$%&*()_+~`|}{[]?><-='
+    };
+    const charset = chars.upper + chars.lower + chars.nums + chars.sym;
+    const password = [
+      randomChar(chars.upper),
+      randomChar(chars.lower),
+      randomChar(chars.nums),
+      randomChar(chars.sym)
+    ];
+    while (password.length < length) password.push(randomChar(charset));
+    return shufflePassword(password);
+  }
+
+  function generateMiniPassword() {
+    const password = createMiniPassword();
+    document.getElementById('pwdMiniOutput').value = password;
+    document.getElementById('pwdMiniStrength').textContent = passwordStrength(password);
   }
 
   function normalizeDomain(value) {
@@ -618,6 +808,12 @@
     } else if (dateEl.value < todayISO()) {
       dateEl.classList.add('invalid');
       messages.push('A data para contato nao pode ser anterior ao dia atual.');
+    } else {
+      const blockedReason = getBlockedDateReason(dateEl.value);
+      if (blockedReason) {
+        dateEl.classList.add('invalid');
+        messages.push(blockedReason);
+      }
     }
     if (!state.selectedTime) {
       document.querySelectorAll('.time-btn').forEach(btn => btn.classList.add('invalid'));
@@ -721,8 +917,43 @@
   }
 
   function bindEvents() {
+    document.getElementById('pwdMiniToggle').addEventListener('click', () => {
+      const panel = document.getElementById('pwdMiniPanel');
+      const button = document.getElementById('pwdMiniToggle');
+      const isOpen = !panel.hidden;
+      panel.hidden = isOpen;
+      button.classList.toggle('active', !isOpen);
+      button.setAttribute('aria-expanded', String(!isOpen));
+      if (!isOpen) generateMiniPassword();
+    });
+    document.getElementById('pwdMiniRefresh').addEventListener('click', generateMiniPassword);
+    document.getElementById('pwdMiniCopy').addEventListener('click', async () => {
+      const password = document.getElementById('pwdMiniOutput').value;
+      if (!password) return;
+      try {
+        await navigator.clipboard.writeText(password);
+        showToast('Senha copiada!');
+      } catch {
+        showToast('Nao foi possivel copiar a senha automaticamente.', 'warn');
+      }
+    });
+    document.getElementById('pwdMiniLength').addEventListener('input', event => {
+      document.getElementById('pwdMiniLengthValue').textContent = event.target.value;
+      generateMiniPassword();
+    });
     document.getElementById('migrationDate').min = todayISO();
-    document.getElementById('migrationDate').addEventListener('input', updateScheduleLabel);
+    document.getElementById('migrationDate').addEventListener('input', event => {
+      const blockedReason = getBlockedDateReason(event.target.value);
+      if (blockedReason) {
+        event.target.value = '';
+        event.target.classList.add('invalid');
+        updateScheduleLabel();
+        showToast(blockedReason, 'warn');
+        return;
+      }
+      event.target.classList.remove('invalid');
+      updateScheduleLabel();
+    });
     document.getElementById('destinationDomain').addEventListener('input', event => {
       event.target.value = normalizeDomain(event.target.value);
       event.target.classList.remove('invalid');
@@ -790,6 +1021,7 @@
   state.rows.push(createRow());
   renderRows();
   updateScheduleLabel();
+  generateMiniPassword();
 </script>
 </body>
 </html>
