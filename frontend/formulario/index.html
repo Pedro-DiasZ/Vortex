@@ -276,8 +276,6 @@
   <section class="hero">
     <div>
       <div class="eyebrow">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M5 9l-3 3 3 3"/><path d="M9 5l3-3 3 3"/><path d="M15 19l-3 3-3-3"/><path d="M19 9l3 3-3 3"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="12" y1="2" x2="12" y2="22"/></svg>
-        Formulario publico
       </div>
       <h1>Formulário de migração</h1>
       <p class="subtitle">Preencha os dados, informe as contas e gere uma planilha completa para envio ao time responsavel.</p>
@@ -300,38 +298,6 @@
 
   <main class="grid">
     <div>
-      <section class="card">
-        <div class="section-head">
-          <div class="section-title">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
-            Dados gerais
-          </div>
-          <span class="required-note">Campos com * sao obrigatorios</span>
-        </div>
-        <div class="form-grid">
-          <label class="field">
-            <span class="field-label">Empresa / Dominio *</span>
-            <input class="input general-input" id="company" autocomplete="organization" placeholder="empresa.com.br">
-          </label>
-          <label class="field">
-            <span class="field-label">Nome do responsavel *</span>
-            <input class="input general-input" id="responsibleName" autocomplete="name" placeholder="Nome completo">
-          </label>
-          <label class="field">
-            <span class="field-label">E-mail do responsavel *</span>
-            <input class="input general-input" id="responsibleEmail" type="email" autocomplete="email" placeholder="responsavel@empresa.com.br">
-          </label>
-          <label class="field">
-            <span class="field-label">Telefone / WhatsApp *</span>
-            <input class="input general-input" id="phone" autocomplete="tel" placeholder="+55 11 99999-9999">
-          </label>
-          <label class="field full">
-            <span class="field-label">Numero do chamado</span>
-            <input class="input general-input" id="ticket" placeholder="Opcional">
-          </label>
-        </div>
-      </section>
-
       <section class="card">
         <div class="section-head">
           <div class="section-title">
@@ -457,13 +423,6 @@
       'Basic 50 GB'
     ]
   };
-
-  const requiredGeneralFields = [
-    ['company', 'Empresa / Dominio'],
-    ['responsibleName', 'Nome do responsavel'],
-    ['responsibleEmail', 'E-mail do responsavel'],
-    ['phone', 'Telefone / WhatsApp']
-  ];
 
   const requiredAccountFields = [
     ['firstName', 'Nome'],
@@ -630,18 +589,6 @@
   function validateForm() {
     const messages = [];
     clearInvalidMarks();
-    requiredGeneralFields.forEach(([id, label]) => {
-      const el = document.getElementById(id);
-      if (!String(el.value || '').trim()) {
-        el.classList.add('invalid');
-        messages.push(`${label} e obrigatorio.`);
-      }
-    });
-    const responsibleEmail = document.getElementById('responsibleEmail');
-    if (responsibleEmail.value.trim() && !isValidEmail(responsibleEmail.value)) {
-      responsibleEmail.classList.add('invalid');
-      messages.push('E-mail do responsavel esta em formato invalido.');
-    }
     const dateEl = document.getElementById('migrationDate');
     const destinationDomain = document.getElementById('destinationDomain');
     if (!getDestinationDomain()) {
@@ -696,11 +643,6 @@
 
   function getGeneralData() {
     return {
-      company: document.getElementById('company').value.trim(),
-      responsibleName: document.getElementById('responsibleName').value.trim(),
-      responsibleEmail: document.getElementById('responsibleEmail').value.trim(),
-      phone: document.getElementById('phone').value.trim(),
-      ticket: document.getElementById('ticket').value.trim(),
       destinationDomain: getDestinationDomain(),
       migrationDate: document.getElementById('migrationDate').value,
       migrationTime: state.selectedTime
