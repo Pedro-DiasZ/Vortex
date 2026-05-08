@@ -1,19 +1,21 @@
 import hashlib
+
 import httpx
+
+from backend.network import DEFAULT_HTTP_TIMEOUT, safe_httpx_get
 
 
 def check_password(password: str) -> dict:
     if not password:
-        return {"found": False, "status": "Senha inválida"}
+        return {"found": False, "status": "Senha invalida"}
 
     try:
         sha1 = hashlib.sha1(password.encode("utf-8")).hexdigest().upper()
         prefix, suffix = sha1[:5], sha1[5:]
 
-        response = httpx.get(
+        response = safe_httpx_get(
             f"https://api.pwnedpasswords.com/range/{prefix}",
-            headers={"user-agent": "VortexTools"},
-            timeout=10,
+            timeout=DEFAULT_HTTP_TIMEOUT,
         )
 
         if response.status_code != 200:
@@ -31,8 +33,10 @@ def check_password(password: str) -> dict:
         return {
             "found": False,
             "times_exposed": 0,
-            "status": "Senha não encontrada em vazamentos conhecidos",
+            "status": "Senha nao encontrada em vazamentos conhecidos",
         }
 
-    except Exception as e:
-        return {"found": False, "status": f"Erro de conexão: {str(e)}"}
+    except httpx.TimeoutException:
+        return {"found": False, "status": "Timeout na consulta"}
+    except Exception:
+        return {"found": False, "status": "Erro de conexao ao consultar vazamentos"}

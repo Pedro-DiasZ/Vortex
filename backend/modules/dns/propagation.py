@@ -1,6 +1,10 @@
 import dns.resolver
 
+from backend.network import DEFAULT_DNS_TIMEOUT
+from backend.security import assert_domain
+
 def check_propagation(domain: str, record_type: str = 'A') -> dict:
+    safe_domain = assert_domain(domain)
     nameservers = {
         "Google": "8.8.8.8",
         "Cloudflare": "1.1.1.1",
@@ -12,10 +16,10 @@ def check_propagation(domain: str, record_type: str = 'A') -> dict:
         try:
             resolver = dns.resolver.Resolver(configure=False)
             resolver.nameservers = [ns]
-            resolver.timeout = 5
-            resolver.lifetime = 5
+            resolver.timeout = DEFAULT_DNS_TIMEOUT
+            resolver.lifetime = DEFAULT_DNS_TIMEOUT
             
-            query = resolver.resolve(domain, record_type)
+            query = resolver.resolve(safe_domain, record_type)
             ips = [answer.to_text() for answer in query]
             ips.sort()
             
@@ -35,7 +39,7 @@ def check_propagation(domain: str, record_type: str = 'A') -> dict:
             })
     is_propagated = len(unique_answers) == 1 and len(results) == len([r for r in results if r["status"] == "Success"])
     return {
-        "domain": domain,
+        "domain": safe_domain,
         "record_type": record_type,
         "results": results,
         "propagated": is_propagated,

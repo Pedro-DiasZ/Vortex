@@ -1,4 +1,7 @@
 import requests
+from fastapi import HTTPException
+
+from backend.network import DEFAULT_HTTP_TIMEOUT, safe_requests_get
 
 
 def get_http_headers(domain):
@@ -12,7 +15,7 @@ def get_http_headers(domain):
 
     try:
         url = f"https://{domain}"
-        response = requests.get(url, timeout=10, allow_redirects=False)
+        response = safe_requests_get(url, timeout=DEFAULT_HTTP_TIMEOUT, allow_redirects=False)
         headers_recebidos = response.headers
 
         found_list = []
@@ -33,18 +36,29 @@ def get_http_headers(domain):
             "found": True
         }
 
-    except requests.exceptions.RequestException as e:
+    except requests.exceptions.Timeout:
         return {
             "domain": domain,
-            "error": str(e),
+            "error": "Timeout na requisicao",
             "status": "Failed to retrieve HTTP headers",
             "found": False
         }
 
-    except Exception as e:
+    except requests.exceptions.RequestException:
         return {
             "domain": domain,
-            "error": str(e),
+            "error": "Falha ao consultar os headers HTTP",
+            "status": "Failed to retrieve HTTP headers",
+            "found": False
+        }
+
+    except HTTPException:
+        raise
+
+    except Exception:
+        return {
+            "domain": domain,
+            "error": "Falha ao consultar os headers HTTP",
             "status": "Failed to retrieve HTTP headers",
             "found": False
         }

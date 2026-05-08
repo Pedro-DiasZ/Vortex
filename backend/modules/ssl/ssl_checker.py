@@ -2,18 +2,25 @@ import ssl
 import socket
 from datetime import datetime
 
+from fastapi import HTTPException
+
+from backend.network import DEFAULT_SSL_TIMEOUT
+from backend.security import assert_public_host
+
 
 def _tuple_to_dict(items):
     return dict(x[0] for x in items or [])
 
 
 def check_ssl(domain):
+    raw_conn = None
     conn = None
     try:
+        safe_domain = assert_public_host(domain)
         context = ssl.create_default_context()
-        conn = context.wrap_socket(socket.socket(socket.AF_INET), server_hostname=domain)
-        conn.settimeout(10)
-        conn.connect((domain, 443))
+        raw_conn = socket.create_connection((safe_domain, 443), timeout=DEFAULT_SSL_TIMEOUT)
+        conn = context.wrap_socket(raw_conn, server_hostname=safe_domain)
+        raw_conn = None
         cert = conn.getpeercert()
         issuer = _tuple_to_dict(cert.get("issuer"))
         subject = _tuple_to_dict(cert.get("subject"))
@@ -28,7 +35,7 @@ def check_ssl(domain):
         ]
 
         return {
-            "domain": domain,
+            "domain": safe_domain,
             "valid": True,
             "issuer": issuer_name,
             "notBefore": cert.get('notBefore'),
@@ -42,12 +49,16 @@ def check_ssl(domain):
             "status": "SSL certificate is valid",
             "found": True,
         }
-    except ssl.SSLError as e:
-        return {"domain": domain, "valid": False, "error": str(e), "status": "SSL certificate error", "found": False}
-    except socket.error as e:
-        return {"domain": domain, "valid": False, "error": str(e), "status": "Socket error", "found": False}
-    except Exception as e:
-        return {"domain": domain, "valid": False, "error": str(e), "status": "Failed to check SSL certificate", "found": False}
+    except HTTPException:
+        raise
+    except ssl.SSLError:
+        return {"domain": domain, "valid": False, "error": "Erro no certificado SSL", "status": "SSL certificate error", "found": False}
+    except socket.error:
+        return {"domain": domain, "valid": False, "error": "Falha de conexao SSL", "status": "Socket error", "found": False}
+    except Exception:
+        return {"domain": domain, "valid": False, "error": "Falha ao verificar certificado SSL", "status": "Failed to check SSL certificate", "found": False}
     finally:
         if conn:
             conn.close()
+        if raw_conn:
+            raw_conn.close()
