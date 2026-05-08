@@ -1,7 +1,5 @@
 import httpx
-from fastapi import HTTPException
-
-from backend.network import DEFAULT_HTTP_TIMEOUT, safe_httpx_get
+from urllib.parse import urlparse
 
 
 def _normalize_url(url: str) -> str:
@@ -20,10 +18,11 @@ def check_http_status(url: str) -> dict:
         return {"url": url, "found": False, "status": "URL vazia ou inválida"}
 
     try:
-        response = safe_httpx_get(
+        response = httpx.get(
             normalized_url,
             follow_redirects=False,
-            timeout=DEFAULT_HTTP_TIMEOUT,
+            timeout=10,
+            headers={"user-agent": "VortexTools"},
         )
 
         redirect_chain = [str(r.url) for r in response.history]
@@ -44,14 +43,12 @@ def check_http_status(url: str) -> dict:
 
     except httpx.TimeoutException:
         return {"url": url, "normalized_url": normalized_url, "found": False, "status": "Timeout na requisição"}
-    except httpx.SSLError:
-        return {"url": url, "normalized_url": normalized_url, "found": False, "status": "Erro SSL na conexao"}
+    except httpx.SSLError as e:
+        return {"url": url, "normalized_url": normalized_url, "found": False, "status": f"Erro SSL: {str(e)}"}
     except httpx.ConnectError:
         return {"url": url, "normalized_url": normalized_url, "found": False, "status": "Falha na conexão com o host"}
-    except HTTPException:
-        raise
-    except Exception:
-        return {"url": url, "normalized_url": normalized_url, "found": False, "status": "Erro ao consultar a URL"}
+    except Exception as e:
+        return {"url": url, "normalized_url": normalized_url, "found": False, "status": f"Erro: {str(e)}"}
 
 
 def _status_text(code: int) -> str:

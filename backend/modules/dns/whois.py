@@ -1,7 +1,4 @@
 import whois
-from fastapi import HTTPException
-
-from backend.security import assert_domain
 
 def format_date(date):
     if isinstance(date, list):
@@ -12,8 +9,7 @@ def format_date(date):
 
 def get_whois_info(domain):
     try:
-        safe_domain = assert_domain(domain)
-        w = whois.whois(safe_domain)
+        w = whois.whois(domain)
         return {
             "domain_name": w.domain_name,
             "registrar": w.registrar,
@@ -24,7 +20,5 @@ def get_whois_info(domain):
             "status": "WHOIS information retrieved successfully",
             "found": True
         }
-    except HTTPException:
-        raise
-    except Exception:
-        return {"error": "Falha ao consultar WHOIS", "status": "Failed to retrieve WHOIS information", "found": False}
+    except Exception as e:
+        return {"error": str(e), "status": "Failed to retrieve WHOIS information", "found": False}

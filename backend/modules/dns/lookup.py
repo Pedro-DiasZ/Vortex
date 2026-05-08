@@ -1,18 +1,11 @@
 import dns.resolver
 
-from backend.network import DEFAULT_DNS_TIMEOUT
-from backend.security import assert_domain
-
 def dns_lookup(domain, record_type):
     try:
-        safe_domain = assert_domain(domain)
-        resolver = dns.resolver.Resolver()
-        resolver.timeout = DEFAULT_DNS_TIMEOUT
-        resolver.lifetime = DEFAULT_DNS_TIMEOUT
-        records = resolver.resolve(safe_domain, record_type)
+        records = dns.resolver.resolve(domain, record_type)
         result = [r.to_text() for r in records]
         return {
-            "domain": safe_domain,
+            "domain": domain,
             "type": record_type,
             "records": result,
             "found": True,

@@ -1,7 +1,4 @@
 import requests
-from fastapi import HTTPException
-
-from backend.network import DEFAULT_HTTP_TIMEOUT, safe_requests_get
 
 
 def check_uptime(url):
@@ -9,7 +6,7 @@ def check_uptime(url):
         url = f"https://{url}"
 
     try:
-        response = safe_requests_get(url, timeout=DEFAULT_HTTP_TIMEOUT, allow_redirects=False)
+        response = requests.get(url, timeout=10, allow_redirects=False)
         return {
             "url": url,
             "status_code": response.status_code,
@@ -18,11 +15,7 @@ def check_uptime(url):
             "found": True,
             "online": True
         }
-    except requests.exceptions.Timeout:
-        return {"url": url, "status": "Down", "error": "Timeout na requisicao"}
-    except requests.exceptions.RequestException:
-        return {"url": url, "status": "Down", "error": "Falha ao consultar a URL"}
-    except HTTPException:
-        raise
-    except Exception:
-        return {"url": url, "status": "Down", "error": "Falha ao consultar a URL"}
+    except requests.exceptions.RequestException as e:
+        return {"url": url, "status": "Down", "error": str(e)}
+    except Exception as e:
+        return {"url": url, "status": "Down", "error": str(e)}

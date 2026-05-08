@@ -1,32 +1,7 @@
-import logging
-
-from fastapi import FastAPI, HTTPException, Depends, Request
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from urllib.parse import urlparse
-from backend.ai.auth import validate_ai_token
-from slowapi.errors import RateLimitExceeded
-from slowapi.middleware import SlowAPIMiddleware
-from slowapi import _rate_limit_exceeded_handler
-from backend.rate_limit import limiter
-from backend.schemas import (
-    AIEmailHealthRequest,
-    AIHeaderRequest,
-    AILogsRequest,
-    AIReputationRequest,
-    DiagnoseRequest,
-    DomainHealthRequest,
-    EmailLogAnalysisRequest,
-    HibpPasswordRequest,
-    MarkdownRenderRequest,
-    MigrationReviewSummaryRequest,
-    PromptGenerateRequest,
-    ResponseGenerateRequest,
-    SmtpAnalyzeRequest,
-    TextContentRequest,
-)
 
-
-logger = logging.getLogger(__name__)
 
 def limit_text(value: str, max_size: int = 100_000) -> str:
     value = value or ""
@@ -60,15 +35,12 @@ app = FastAPI(
     docs_url="/api/docs"
 )
 
-app.state.limiter = limiter
-app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
-app.add_middleware(SlowAPIMiddleware)
-
-allow_origins=[
-    "https://vortex-supertools.vercel.app",
-    "http://localhost:3000",
-    "http://localhost:8000"
-]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["GET", "POST"],
+    allow_headers=["*"]
+)
 
 @app.get("/api")
 def root():
@@ -100,26 +72,25 @@ def blacklists(domain: str):
     return check_blacklists(domain)
 
 @app.get("/api/smtp")
-@limiter.limit("10/minute")
-def smtp(request: Request, host: str, port: int = 587):
-    from backend.security import assert_public_host, assert_allowed_smtp_port
+def smtp(host: str, port: int = 587):
     from backend.modules.email.smtp_checker import check_smtp
 
-    safe_host = assert_public_host(host)
-    safe_port = assert_allowed_smtp_port(port)
-
-    return check_smtp(safe_host, safe_port)
+    return check_smtp(host, port)
 
 @app.post("/api/analyze-header")
-def header_analyzer(data: TextContentRequest):
+def header_analyzer(raw_header: dict):
     from backend.modules.email.email_header_analyzer import analyze_header
 
-    return analyze_header(limit_text(data.content))
+    return analyze_header(limit_text(raw_header.get("content", "")))
 
 @app.post("/api/ai/header")
-def ai_header_analyzer(data: AIHeaderRequest, _: bool = Depends(validate_ai_token)):
+def ai_header_analyzer(data: dict):
     try:
-        raw_header = data.content
+        from backend.ai.auth import validate_ai_token
+
+        validate_ai_token(data)
+
+        raw_header = data.get("content", "")
 
         if not raw_header or not raw_header.strip():
             return {
@@ -143,20 +114,26 @@ def ai_header_analyzer(data: AIHeaderRequest, _: bool = Depends(validate_ai_toke
             "data": result
         }
 
-    except HTTPException:
-        raise
-
-    except Exception:
-        logger.exception("Erro interno em /api/ai/header")
+    except HTTPException as e:
         return {
             "error": True,
-            "message": "Erro interno ao analisar o header com IA."
+            "message": e.detail
+        }
+
+    except Exception as e:
+        return {
+            "error": True,
+            "message": f"Erro ao analisar header com IA: {str(e)}"
         }
 
 @app.post("/api/ai/logs")
-def ai_logs_analyzer(data: AILogsRequest, _: bool = Depends(validate_ai_token)):
+def ai_logs_analyzer(data: dict):
     try:
-        raw_logs = data.content
+        from backend.ai.auth import validate_ai_token
+
+        validate_ai_token(data)
+
+        raw_logs = data.get("content", "")
 
         if not raw_logs or not raw_logs.strip():
             return {
@@ -180,22 +157,28 @@ def ai_logs_analyzer(data: AILogsRequest, _: bool = Depends(validate_ai_token)):
             "data": result
         }
 
-    except HTTPException:
-        raise
-
-    except Exception:
-        logger.exception("Erro interno em /api/ai/logs")
+    except HTTPException as e:
         return {
             "error": True,
-            "message": "Erro interno ao analisar os logs com IA."
+            "message": e.detail
+        }
+
+    except Exception as e:
+        return {
+            "error": True,
+            "message": f"Erro ao analisar logs com IA: {str(e)}"
         }
 
 @app.post("/api/ai/email-health")
-def ai_email_health_analyzer(data: AIEmailHealthRequest, _: bool = Depends(validate_ai_token)):
+def ai_email_health_analyzer(data: dict):
     try:
         import json
 
-        raw_domain = data.domain
+        from backend.ai.auth import validate_ai_token
+
+        validate_ai_token(data)
+
+        raw_domain = data.get("domain") or data.get("content") or ""
 
         if not raw_domain or not raw_domain.strip():
             return {
@@ -234,20 +217,26 @@ def ai_email_health_analyzer(data: AIEmailHealthRequest, _: bool = Depends(valid
             "raw": collected_data
         }
 
-    except HTTPException:
-        raise
-
-    except Exception:
-        logger.exception("Erro interno em /api/ai/email-health")
+    except HTTPException as e:
         return {
             "error": True,
-            "message": "Erro interno ao analisar a saude de e-mail com IA."
+            "message": e.detail
+        }
+
+    except Exception as e:
+        return {
+            "error": True,
+            "message": f"Erro ao analisar saúde de e-mail com IA: {str(e)}"
         }
 
 @app.post("/api/ai/reputation")
-def ai_reputation_analyzer(data: AIReputationRequest, _: bool = Depends(validate_ai_token)):
+def ai_reputation_analyzer(data: dict):
     try:
-        raw_data = data.content
+        from backend.ai.auth import validate_ai_token
+
+        validate_ai_token(data)
+
+        raw_data = data.get("content", "")
 
         if not raw_data or not raw_data.strip():
             return {
@@ -271,14 +260,16 @@ def ai_reputation_analyzer(data: AIReputationRequest, _: bool = Depends(validate
             "data": result
         }
 
-    except HTTPException:
-        raise
-
-    except Exception:
-        logger.exception("Erro interno em /api/ai/reputation")
+    except HTTPException as e:
         return {
             "error": True,
-            "message": "Erro interno ao analisar reputacao com IA."
+            "message": e.detail
+        }
+
+    except Exception as e:
+        return {
+            "error": True,
+            "message": f"Erro ao analisar reputação com IA: {str(e)}"
         }
 
 
@@ -321,22 +312,16 @@ def ip_info(ip: str):
 
 @app.get("/api/uptime")
 def uptime(url: str):
-    from backend.security import assert_public_url
     from backend.modules.infra.uptime import check_uptime
 
-    safe_url = assert_public_url(url)
-    return check_uptime(safe_url)
+    return check_uptime(url)
 
 @app.get("/api/port-checker")
-@limiter.limit("10/minute")
-def port_checker(request: Request, host: str, port: int):
-    from backend.security import assert_public_host, assert_allowed_public_port
+def port_checker(host: str, port: int):
     from backend.modules.infra.port_checker import check_port
 
-    safe_host = assert_public_host(host)
-    safe_port = assert_allowed_public_port(port)
+    return check_port(host, port)
 
-    return check_port(safe_host, safe_port)
 
 @app.get("/api/ssl")
 def ssl(domain: str):
@@ -393,149 +378,96 @@ def dns_reverse(ip: str):
     return dns_reverse_resolver(ip)
 
 @app.post("/api/email_log_analysis") 
-def email_log_analysis(data: EmailLogAnalysisRequest):
+def email_log_analysis(data: dict):
     from backend.modules.email.log_analyzer import analyze_log
 
-    return analyze_log(limit_text(data.content, 20_000))
+    return analyze_log(limit_text(data.get("content", "")))
 
 @app.post("/api/security/hibp/password")
-def check_hibp_password(data: HibpPasswordRequest):
+def check_hibp_password(data: dict):
     from backend.modules.ssl.hibp import check_password
 
-    return check_password(limit_text(data.password, 256))
+    return check_password(limit_text(data.get("password", ""), 256))
 
 
 @app.get("/api/http-status")
 def http_status(url: str):
-    from backend.security import assert_public_url
     from backend.modules.infra.http_status import check_http_status
 
-    safe_url = assert_public_url(url)
-    return check_http_status(safe_url)
-
+    return check_http_status(url)
 
 
 @app.post("/api/diagnose")
-def vortex_diagnose(data: DiagnoseRequest):
+def vortex_diagnose(data: dict):
     try:
         from backend.modules.diagnostics.diagnose import diagnose
 
-        payload = data.model_dump()
-        payload["smtp_error"] = limit_text(payload.get("smtp_error") or payload.get("log") or payload.get("content") or "", 20_000)
-        return diagnose(payload)
-    except HTTPException:
-        raise
+        data["smtp_error"] = limit_text(data.get("smtp_error") or data.get("log") or data.get("content") or "", 20_000)
+        return diagnose(data)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
-    except Exception:
-        logger.exception("Erro interno em /api/diagnose")
-        return {
-            "error": True,
-            "message": "Erro interno ao gerar o diagnostico."
-        }
 
 
 @app.post("/api/smtp/analyze")
-def smtp_error_analyzer(data: SmtpAnalyzeRequest):
+def smtp_error_analyzer(data: dict):
     try:
         from backend.modules.diagnostics.smtp_analyzer import analyze_smtp_error
 
-        return analyze_smtp_error(limit_text(data.error or data.content or "", 20_000))
-    except HTTPException:
-        raise
+        return analyze_smtp_error(limit_text(data.get("error") or data.get("content") or "", 20_000))
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
-    except Exception:
-        logger.exception("Erro interno em /api/smtp/analyze")
-        return {
-            "error": True,
-            "message": "Erro interno ao analisar o erro SMTP."
-        }
 
 
 @app.post("/api/response/generate")
-def response_generator(data: ResponseGenerateRequest):
+def response_generator(data: dict):
     from backend.modules.diagnostics.response_generator import generate_response
 
-    payload = data.model_dump()
     return generate_response({
-        "problem_type": limit_text(payload.get("problem_type", ""), 80),
-        "tone": limit_text(payload.get("tone", ""), 80),
-        "customer_name": limit_text(payload.get("customer_name", ""), 120),
-        "domain": limit_text(payload.get("domain", ""), 255),
-        "email_account": limit_text(payload.get("email_account", ""), 255),
-        "error_found": limit_text(payload.get("error_found", ""), 2000),
-        "action_done": limit_text(payload.get("action_done", ""), 2000),
-        "next_step": limit_text(payload.get("next_step", ""), 2000),
+        "problem_type": limit_text(data.get("problem_type", ""), 80),
+        "tone": limit_text(data.get("tone", ""), 80),
+        "customer_name": limit_text(data.get("customer_name", ""), 120),
+        "domain": limit_text(data.get("domain", ""), 255),
+        "email_account": limit_text(data.get("email_account", ""), 255),
+        "error_found": limit_text(data.get("error_found", ""), 2000),
+        "action_done": limit_text(data.get("action_done", ""), 2000),
+        "next_step": limit_text(data.get("next_step", ""), 2000),
     })
 
 
 @app.post("/api/domain/health")
-def domain_health(data: DomainHealthRequest):
+def domain_health(data: dict):
     try:
         from backend.security import assert_domain
         from backend.modules.diagnostics.domain_health import check_domain_health
 
-        domain = assert_domain(data.domain)
-        selector = limit_text(data.selector, 80).strip()
+        domain = assert_domain(data.get("domain", ""))
+        selector = limit_text(data.get("selector", ""), 80).strip()
         return check_domain_health(domain, selector)
     except HTTPException:
         raise
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
-    except Exception:
-        logger.exception("Erro interno em /api/domain/health")
-        return {
-            "error": True,
-            "message": "Erro interno ao analisar a saude do dominio."
-        }
 
 
 @app.post("/api/markdown/render")
-def markdown_render(data: MarkdownRenderRequest):
-    try:
-        from backend.modules.diagnostics.markdown_renderer import render_markdown
+def markdown_render(data: dict):
+    from backend.modules.diagnostics.markdown_renderer import render_markdown
 
-        return render_markdown(limit_text(data.markdown or data.content or "", 100_000))
-    except HTTPException:
-        raise
-    except Exception:
-        logger.exception("Erro interno em /api/markdown/render")
-        return {
-            "error": True,
-            "message": "Erro interno ao renderizar o Markdown."
-        }
+    return render_markdown(limit_text(data.get("markdown") or data.get("content") or "", 100_000))
 
 
 @app.post("/api/prompt/generate")
-def prompt_generate(data: PromptGenerateRequest):
+def prompt_generate(data: dict):
     try:
         from backend.modules.diagnostics.prompt_generator import generate_prompt
 
-        return generate_prompt(data.model_dump(exclude_none=True))
-    except HTTPException:
-        raise
+        return generate_prompt(data)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
-    except Exception:
-        logger.exception("Erro interno em /api/prompt/generate")
-        return {
-            "error": True,
-            "message": "Erro interno ao gerar o prompt."
-        }
 
 
 @app.post("/api/migration/review-summary")
-def migration_review_summary(data: MigrationReviewSummaryRequest):
-    try:
-        from backend.modules.diagnostics.migration_review import summarize_migration_review
+def migration_review_summary(data: dict):
+    from backend.modules.diagnostics.migration_review import summarize_migration_review
 
-        return summarize_migration_review(data.model_dump(exclude_none=True))
-    except HTTPException:
-        raise
-    except Exception:
-        logger.exception("Erro interno em /api/migration/review-summary")
-        return {
-            "error": True,
-            "message": "Erro interno ao resumir a revisao de migracao."
-        }
+    return summarize_migration_review(data)

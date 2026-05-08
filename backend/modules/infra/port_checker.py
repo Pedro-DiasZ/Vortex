@@ -1,45 +1,24 @@
-from fastapi import HTTPException
-
-from backend.network import safe_socket_connect
+import socket
 
 def check_port(host: str, port: int) -> dict:
-    sock = None
     try:
-        sock = safe_socket_connect(host, port, timeout=3)
-
-        return {
-            "host": host,
-            "port": port,
-            "open": True,
-            "socket_result": 0,
-            "found": True,
-            "status": f"Port {port} is open"
-        }
-    except TimeoutError:
-        return {
-            "host": host,
-            "port": port,
-            "open": False,
-            "found": True,
-            "status": f"Port {port} is closed"
-        }
-    except OSError:
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+            sock.settimeout(5)
+            result = sock.connect_ex((host, port))
+            is_open = (result == 0)
+            
+            return {
+                "host": host,
+                "port": port,
+                "open": is_open,
+                "socket_result": result,
+                "found": True,
+                "status": f"Port {port} is {'open' if is_open else 'closed'}"
+            }
+    except Exception as e:
         return {
             "host": host,
             "port": port,
             "open": False,
-            "found": True,
-            "status": f"Port {port} is closed"
+            "error": str(e)
         }
-    except HTTPException:
-        raise
-    except Exception:
-        return {
-            "host": host,
-            "port": port,
-            "open": False,
-            "error": "Falha ao verificar a porta"
-        }
-    finally:
-        if sock:
-            sock.close()

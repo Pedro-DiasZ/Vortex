@@ -1,8 +1,5 @@
 import dns.resolver
 
-from backend.network import DEFAULT_DNS_TIMEOUT
-from backend.security import assert_public_ip
-
 BLACKLISTS = [
     
     "zen.spamhaus.org",      
@@ -35,26 +32,21 @@ BLACKLISTS = [
 
 
 def check_blacklists(ip_adress):
-    safe_ip = assert_public_ip(ip_adress)
     listed_on = []
     clean_on = []
-    ip_reversed = ".".join(reversed(safe_ip.split(".")))
-    resolver = dns.resolver.Resolver()
-    resolver.timeout = DEFAULT_DNS_TIMEOUT
-    resolver.lifetime = DEFAULT_DNS_TIMEOUT
-
+    ip_reversed = ".".join(reversed(ip_adress.split(".")))
     for bl in BLACKLISTS:
         query = f"{ip_reversed}.{bl}"
         try:
-            resolver.resolve(query, 'A')
+            dns.resolver.resolve(query, 'A')
             listed_on.append(bl)
         except dns.resolver.NXDOMAIN:
             clean_on.append(bl)
-        except Exception:
+        except Exception as e:
             continue
 
     return {
-            "ip": safe_ip,
+            "ip": ip_adress,
             "listed_on": listed_on,
             "clean_on": clean_on,
             "blacklisted": len(listed_on) > 0,
