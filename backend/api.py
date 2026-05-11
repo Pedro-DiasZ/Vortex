@@ -272,6 +272,64 @@ def ai_reputation_analyzer(data: dict):
             "message": f"Erro ao analisar reputação com IA: {str(e)}"
         }
 
+@app.post("/api/ai/diagram")
+def ai_diagram_generator(data: dict):
+    try:
+        from backend.ai.auth import validate_ai_token
+        from backend.security import limit_text
+
+        validate_ai_token(data)
+
+        prompt = limit_text(data.get("prompt", ""), 4000).strip()
+        language = (data.get("language") or "mermaid").strip().lower()
+        diagram_type = (data.get("diagram_type") or "flowchart").strip().lower()
+
+        if not prompt:
+            return {
+                "success": False,
+                "error": True,
+                "message": "Informe um prompt para gerar o diagrama."
+            }
+
+        if language not in {"mermaid", "plantuml"}:
+            return {
+                "success": False,
+                "error": True,
+                "message": "Linguagem de diagrama invalida."
+            }
+
+        allowed_types = {"flowchart", "sequence", "class", "state", "usecase", "component", "er", "mindmap"}
+        if diagram_type not in allowed_types:
+            return {
+                "success": False,
+                "error": True,
+                "message": "Tipo de diagrama invalido."
+            }
+
+        from backend.ai.diagram_service import generate_diagram_code
+
+        code = generate_diagram_code(prompt, language, diagram_type)
+
+        return {
+            "success": True,
+            "language": language,
+            "code": code
+        }
+
+    except HTTPException as e:
+        return {
+            "success": False,
+            "error": True,
+            "message": e.detail
+        }
+
+    except Exception as e:
+        return {
+            "success": False,
+            "error": True,
+            "message": f"Erro ao gerar diagrama com IA: {str(e)}"
+        }
+
 
 @app.get("/api/whois")
 def whois(domain: str):

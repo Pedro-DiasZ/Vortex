@@ -1048,6 +1048,36 @@
   .md-preview th, .md-preview td { border: 1px solid var(--border); padding: 8px 10px; text-align: left; }
   .md-preview th { color: var(--primary-glow); background: var(--card); }
   .md-counters { color: var(--muted); font: 700 11px var(--font-mono); margin-top: 9px; }
+  .diagram-shell { display: grid; grid-template-columns: minmax(420px, .95fr) minmax(520px, 1.05fr); gap: 18px; align-items: start; }
+  .diagram-panel { min-width: 0; }
+  .diagram-privacy {
+    display: flex; gap: 10px; align-items: flex-start;
+    border: 1px solid color-mix(in srgb, var(--primary) 32%, var(--border));
+    background: color-mix(in srgb, var(--primary) 8%, var(--card));
+    border-radius: 12px; padding: 13px 14px; margin-bottom: 16px;
+    color: var(--text); font: 600 13px/1.5 var(--font-sans);
+  }
+  .diagram-privacy svg { width: 17px; height: 17px; color: var(--primary-glow); flex-shrink: 0; margin-top: 2px; }
+  .diagram-preview {
+    min-height: 640px; padding: 22px; border-radius: 12px; border: 1px solid var(--border);
+    background: var(--card-2); color: var(--text); overflow: auto;
+    display: grid; place-items: center;
+  }
+  .diagram-preview svg { max-width: 100%; height: auto; }
+  .diagram-preview .placeholder, .diagram-preview .err-msg {
+    max-width: 560px; text-align: center; color: var(--muted);
+    font: 600 13px/1.55 var(--font-sans); white-space: pre-wrap;
+  }
+  .diagram-preview .err-msg { color: var(--danger); }
+  .diagram-preview .plantuml-note {
+    max-width: 620px; width: 100%; text-align: left; display: grid; gap: 12px;
+  }
+  .diagram-preview pre {
+    margin: 0; max-height: 440px; overflow: auto; white-space: pre-wrap;
+    background: var(--terminal-bg); color: var(--terminal-fg);
+    border-radius: 10px; padding: 14px; font: 500 12.5px/1.55 var(--font-mono);
+  }
+  #diagramCode { min-height: 390px; font-size: 13px; line-height: 1.55; }
   .prompt-layout { display: grid; grid-template-columns: minmax(360px, .95fr) minmax(420px, 1.05fr); gap: 16px; align-items: start; }
   .prompt-card { padding: 20px; }
   .prompt-presets { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
@@ -1098,7 +1128,7 @@
     .mig-download-row { flex-direction: column; }
     .mig-dl-btn { width: 100%; justify-content: center; }
     .rec-btns { flex-direction: column; }
-    .diag-grid, .diag-card-grid, .md-shell, .prompt-layout { grid-template-columns: 1fr; }
+    .diag-grid, .diag-card-grid, .md-shell, .diagram-shell, .prompt-layout { grid-template-columns: 1fr; }
     .diag-summary { grid-template-columns: 1fr; }
     .health-row { grid-template-columns: 1fr; }
     .md-mobile-tabs { display: flex; }
@@ -1276,6 +1306,7 @@
     search: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>',
     globe: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>',
     network: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="6" rx="1"/><rect x="2" y="16" width="6" height="6" rx="1"/><rect x="16" y="16" width="6" height="6" rx="1"/><path d="M5 16v-2a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v2"/><path d="M12 12V8"/></svg>',
+    diagram: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="6" rx="1.5"/><rect x="14" y="3" width="7" height="6" rx="1.5"/><rect x="8.5" y="15" width="7" height="6" rx="1.5"/><path d="M10 6h4"/><path d="M6.5 9v2a4 4 0 0 0 4 4"/><path d="M17.5 9v2a4 4 0 0 1-4 4"/></svg>',
     lock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>',
     activity: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>',
     timer: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="10" y1="2" x2="14" y2="2"/><line x1="12" y1="14" x2="15" y2="11"/><circle cx="12" cy="14" r="8"/></svg>',
@@ -1352,6 +1383,7 @@
   ROUTE_GROUPS.push(
     { title: 'Playground', category: 'tools', items: [
       { path: '/markdown/render', title: 'Markdown Playground', label: 'Markdown Playground', desc: 'Editor Markdown com preview seguro em tempo real.', icon: 'code', variant: 'markdownPlayground' },
+      { path: '/diagram/ai', title: 'Diagram AI', label: 'Diagram AI', desc: 'Gere e renderize diagramas Mermaid por codigo ou por IA, com PlantUML em modo experimental.', icon: 'diagram', variant: 'diagramAI' },
       { path: '/prompt/generate', title: 'Gerador de Prompt', label: 'Gerador de Prompt', desc: 'Transforme uma ideia solta em um prompt claro, completo e pronto para usar em IA.', icon: 'lightbulb', variant: 'promptBuilder' },
     ]}
   );
@@ -1767,7 +1799,7 @@
   function renderView() {
     const route = findRoute(currentPath);
     if (!route) return;
-    document.querySelector('.container')?.classList.toggle('wide-container', ['markdownPlayground', 'promptBuilder'].includes(route.variant));
+    document.querySelector('.container')?.classList.toggle('wide-container', ['markdownPlayground', 'diagramAI', 'promptBuilder'].includes(route.variant));
     document.getElementById('viewTitle').innerText = route.title;
     document.getElementById('viewSubtitle').innerText = route.desc || '';
     document.getElementById('viewSubtitle').style.display = route.desc ? 'block' : 'none';
@@ -1808,6 +1840,10 @@
         footnote.style.display = 'none';
         document.getElementById('mainCard').innerHTML = renderMarkdownPlaygroundUI();
         bindMarkdownPlayground();
+      } else if (route.variant === 'diagramAI') {
+        footnote.style.display = 'none';
+        document.getElementById('mainCard').innerHTML = renderDiagramAIUI();
+        bindDiagramAI();
       } else if (route.variant === 'promptBuilder') {
         footnote.style.display = 'none';
         document.getElementById('mainCard').innerHTML = renderPromptBuilderUI();
@@ -2352,6 +2388,231 @@
     });
     document.getElementById('mdPreviewPane').classList.add('is-hidden-mobile');
     renderNow();
+  }
+
+  const DIAGRAM_EXAMPLE_CODE = `flowchart TD
+A[Receber chamado] --> B[Analisar erro]
+B --> C{E problema de DNS?}
+C -- Sim --> D[Validar SPF, DKIM e MX]
+C -- Nao --> E[Analisar cabecalho]
+D --> F[Responder cliente]
+E --> F`;
+
+  const PLANTUML_EXAMPLE_CODE = `@startuml
+actor Cliente
+participant Suporte
+participant Sistema
+
+Cliente -> Suporte: Relata erro
+Suporte -> Sistema: Consulta diagnostico
+Sistema --> Suporte: Retorna causa provavel
+Suporte -> Cliente: Envia orientacao
+@enduml`;
+
+  let mermaidLoadPromise = null;
+  let diagramRenderTimer = null;
+
+  function renderDiagramAIUI() {
+    return `
+      <div class="diagram-privacy">${ICONS.info}<span>Esta ferramenta n&atilde;o salva informa&ccedil;&otilde;es. Ao atualizar a p&aacute;gina, trocar de ferramenta ou fechar o navegador, todo o conte&uacute;do ser&aacute; perdido.</span></div>
+      <div class="diagram-shell">
+        <section class="card diagram-panel">
+          <label class="field full"><span class="field-label">Prompt da IA</span><textarea class="textarea" id="diagramPrompt" rows="4" placeholder="Ex: Crie um fluxo de atendimento para erro SPF"></textarea></label>
+          <div class="ai-token-box">
+            <label for="diagramAIToken">Token de acesso IA</label>
+            <input type="password" id="diagramAIToken" class="ai-token-input" placeholder="Digite o token para usar IA" autocomplete="off">
+          </div>
+          <div class="diag-grid" style="margin-top:14px;">
+            <label class="field"><span class="field-label">Linguagem</span>
+              <select class="input" id="diagramLanguage">
+                <option value="mermaid">Mermaid</option>
+                <option value="plantuml">PlantUML (experimental)</option>
+              </select>
+            </label>
+            <label class="field"><span class="field-label">Tipo de diagrama</span>
+              <select class="input" id="diagramType">
+                <option value="flowchart">Fluxograma</option>
+                <option value="sequence">Sequ&ecirc;ncia</option>
+                <option value="class">Classe</option>
+                <option value="state">Estado</option>
+                <option value="usecase">Caso de uso</option>
+                <option value="component">Componentes</option>
+                <option value="er">ER</option>
+                <option value="mindmap">Mindmap</option>
+              </select>
+            </label>
+          </div>
+          <label class="field" style="margin-bottom:0;"><span class="field-label">C&oacute;digo do diagrama</span><textarea class="textarea" id="diagramCode" rows="18" spellcheck="false"></textarea></label>
+          <div class="diag-actions">
+            <button class="btn" id="diagramGenerate">${ICONS.lightbulb}<span>Gerar com IA</span></button>
+            <button class="btn secondary" id="diagramRender">${ICONS.play}<span>Renderizar</span></button>
+            <button class="btn secondary" id="diagramCopy">${ICONS.copy}<span>Copiar c&oacute;digo</span></button>
+            <button class="btn secondary" id="diagramClear">${ICONS.trash}<span>Limpar</span></button>
+            <button class="btn secondary" id="diagramExport">${ICONS.download}<span>Exportar SVG</span></button>
+          </div>
+        </section>
+        <section class="diagram-panel">
+          <div class="result" style="margin-top:0;">
+            <div class="result-head">
+              <div class="result-title">${ICONS.network}<span>Preview</span></div>
+              <span class="ai-badge" id="diagramModeBadge">Mermaid</span>
+            </div>
+            <div class="diagram-preview" id="diagramPreview"><div class="placeholder">Cole ou gere um diagrama e clique em Renderizar.</div></div>
+          </div>
+        </section>
+      </div>
+    `;
+  }
+
+  function loadMermaid() {
+    if (window.mermaid) return Promise.resolve(window.mermaid);
+    if (!mermaidLoadPromise) {
+      mermaidLoadPromise = new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js';
+        script.async = true;
+        script.onload = () => {
+          if (!window.mermaid) return reject(new Error('Mermaid indisponivel.'));
+          window.mermaid.initialize({ startOnLoad: false, securityLevel: 'strict', theme: document.documentElement.dataset.theme === 'light' ? 'default' : 'dark' });
+          resolve(window.mermaid);
+        };
+        script.onerror = () => reject(new Error('Nao foi possivel carregar Mermaid.js.'));
+        document.head.appendChild(script);
+      });
+    }
+    return mermaidLoadPromise;
+  }
+
+  function stripDiagramFences(text) {
+    return String(text || '').trim()
+      .replace(/^```(?:mermaid|plantuml|uml)?\s*/i, '')
+      .replace(/\s*```$/i, '')
+      .trim();
+  }
+
+  function showDiagramMessage(message, isError = false) {
+    const preview = document.getElementById('diagramPreview');
+    if (!preview) return;
+    preview.innerHTML = `<div class="${isError ? 'err-msg' : 'placeholder'}">${escapeHtml(message)}</div>`;
+  }
+
+  function showPlantUMLPreview(code) {
+    const preview = document.getElementById('diagramPreview');
+    preview.innerHTML = `
+      <div class="plantuml-note">
+        <div class="placeholder" style="text-align:left;">Preview PlantUML ainda n&atilde;o dispon&iacute;vel. Copie o c&oacute;digo para usar em um renderizador PlantUML.</div>
+        <pre>${escapeHtml(code)}</pre>
+      </div>
+    `;
+  }
+
+  async function renderDiagramNow() {
+    clearTimeout(diagramRenderTimer);
+    const codeEl = document.getElementById('diagramCode');
+    const lang = document.getElementById('diagramLanguage')?.value || 'mermaid';
+    const badge = document.getElementById('diagramModeBadge');
+    const code = stripDiagramFences(codeEl?.value || '');
+    if (codeEl && codeEl.value !== code) codeEl.value = code;
+    if (badge) badge.textContent = lang === 'plantuml' ? 'PlantUML experimental' : 'Mermaid';
+
+    if (!code) {
+      showDiagramMessage('Cole ou gere um diagrama e clique em Renderizar.');
+      return;
+    }
+
+    if (lang === 'plantuml') {
+      showPlantUMLPreview(code);
+      return;
+    }
+
+    try {
+      showDiagramMessage('Renderizando diagrama...');
+      const mermaid = await loadMermaid();
+      const id = `diagram_${Date.now()}_${Math.random().toString(16).slice(2)}`;
+      await mermaid.parse(code);
+      const rendered = await mermaid.render(id, code);
+      document.getElementById('diagramPreview').innerHTML = rendered.svg;
+    } catch (e) {
+      showDiagramMessage('N\u00e3o foi poss\u00edvel renderizar o diagrama. Verifique a sintaxe ou gere novamente com IA.', true);
+    }
+  }
+
+  function scheduleDiagramRender() {
+    clearTimeout(diagramRenderTimer);
+    diagramRenderTimer = setTimeout(renderDiagramNow, 260);
+  }
+
+  function bindDiagramAI() {
+    const prompt = document.getElementById('diagramPrompt');
+    const code = document.getElementById('diagramCode');
+    const language = document.getElementById('diagramLanguage');
+    const generateBtn = document.getElementById('diagramGenerate');
+    const renderBtn = document.getElementById('diagramRender');
+    const exportBtn = document.getElementById('diagramExport');
+
+    code.value = DIAGRAM_EXAMPLE_CODE;
+    renderDiagramNow();
+
+    language.onchange = () => {
+      if (language.value === 'plantuml' && !code.value.trim()) code.value = PLANTUML_EXAMPLE_CODE;
+      document.getElementById('diagramModeBadge').textContent = language.value === 'plantuml' ? 'PlantUML experimental' : 'Mermaid';
+      renderDiagramNow();
+    };
+    document.getElementById('diagramType').onchange = scheduleDiagramRender;
+    code.addEventListener('input', scheduleDiagramRender);
+
+    renderBtn.onclick = renderDiagramNow;
+    document.getElementById('diagramCopy').onclick = () => copyText(code.value, 'C\u00f3digo copiado!');
+    document.getElementById('diagramClear').onclick = () => {
+      prompt.value = '';
+      code.value = '';
+      showDiagramMessage('Cole ou gere um diagrama e clique em Renderizar.');
+    };
+    exportBtn.onclick = () => {
+      const svg = document.querySelector('#diagramPreview svg');
+      if (!svg) {
+        showToast('Renderize um diagrama Mermaid antes de exportar SVG.', 'warn');
+        return;
+      }
+      const blob = new Blob([new XMLSerializer().serializeToString(svg)], { type: 'image/svg+xml;charset=utf-8' });
+      downloadBlob(blob, 'vortex-diagram.svg');
+      showToast('SVG exportado.');
+    };
+
+    generateBtn.onclick = async () => {
+      const token = getAIToken(document.getElementById('mainCard'));
+      if (!prompt.value.trim()) {
+        showDiagramMessage('Informe um prompt para gerar o diagrama com IA.', true);
+        return;
+      }
+      if (!token) {
+        showDiagramMessage('Informe o token de acesso para utilizar a IA.', true);
+        return;
+      }
+
+      setButtonLoading(generateBtn, 'Gerando...');
+      try {
+        const data = await fetchJSON('/api/ai/diagram', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            prompt: prompt.value,
+            language: language.value,
+            diagram_type: document.getElementById('diagramType').value,
+            ai_token: token
+          })
+        });
+        if (data.error || data.success === false) throw new Error(data.message || 'Erro ao gerar diagrama com IA.');
+        code.value = stripDiagramFences(data.code || '');
+        code.dispatchEvent(new Event('input', { bubbles: true }));
+        if ((data.language || language.value) === 'plantuml') showPlantUMLPreview(code.value);
+        else await renderDiagramNow();
+      } catch (e) {
+        showDiagramMessage(e.message || 'Erro ao gerar diagrama com IA.', true);
+      } finally {
+        restoreButton(generateBtn);
+      }
+    };
   }
 
   const PROMPT_PRESETS = {
