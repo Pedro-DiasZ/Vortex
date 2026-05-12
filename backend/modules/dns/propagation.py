@@ -9,21 +9,21 @@ import requests
 ALLOWED_RECORD_TYPES = {"A", "AAAA", "CNAME", "MX", "TXT", "NS"}
 
 RESOLVERS = [
-    {"id": "google-1", "country": "United States", "provider": "Google DNS", "resolver": "8.8.8.8", "doh": "https://dns.google/dns-query", "x": 24, "y": 39},
-    {"id": "google-2", "country": "United States", "provider": "Google DNS", "resolver": "8.8.4.4", "doh": "https://dns.google/dns-query", "x": 16, "y": 43},
-    {"id": "cloudflare-1", "country": "Global", "provider": "Cloudflare", "resolver": "1.1.1.1", "doh": "https://cloudflare-dns.com/dns-query", "x": 47, "y": 33},
-    {"id": "cloudflare-2", "country": "Global", "provider": "Cloudflare", "resolver": "1.0.0.1", "doh": "https://cloudflare-dns.com/dns-query", "x": 51, "y": 36},
-    {"id": "quad9-1", "country": "Switzerland", "provider": "Quad9", "resolver": "9.9.9.9", "doh": "https://dns.quad9.net/dns-query", "x": 49, "y": 40},
-    {"id": "quad9-2", "country": "Switzerland", "provider": "Quad9", "resolver": "149.112.112.112", "doh": "https://dns.quad9.net/dns-query", "x": 50, "y": 34},
-    {"id": "opendns-1", "country": "United States", "provider": "OpenDNS", "resolver": "208.67.222.222", "doh": "https://doh.opendns.com/dns-query", "x": 22, "y": 30},
-    {"id": "opendns-2", "country": "United States", "provider": "OpenDNS", "resolver": "208.67.220.220", "doh": "https://doh.opendns.com/dns-query", "x": 35, "y": 68},
-    {"id": "adguard-1", "country": "Global", "provider": "AdGuard DNS", "resolver": "94.140.14.14", "doh": "https://dns.adguard-dns.com/dns-query", "x": 68, "y": 53},
-    {"id": "adguard-2", "country": "Global", "provider": "AdGuard DNS", "resolver": "94.140.15.15", "doh": "https://dns.adguard-dns.com/dns-query", "x": 75, "y": 62},
-    {"id": "cleanbrowsing-1", "country": "United States", "provider": "CleanBrowsing", "resolver": "185.228.168.9", "doh": "https://doh.cleanbrowsing.org/doh/security-filter/", "x": 31, "y": 79},
-    {"id": "cleanbrowsing-2", "country": "United States", "provider": "CleanBrowsing", "resolver": "185.228.169.9", "doh": "https://doh.cleanbrowsing.org/doh/security-filter/", "x": 84, "y": 43},
-    {"id": "controld-1", "country": "Canada", "provider": "Control D", "resolver": "76.76.2.0", "doh": "https://freedns.controld.com/p0", "x": 81, "y": 42},
-    {"id": "controld-2", "country": "Canada", "provider": "Control D", "resolver": "76.76.10.0", "doh": "https://freedns.controld.com/p0", "x": 76, "y": 45},
-    {"id": "dns0", "country": "European Union", "provider": "DNS0.eu", "resolver": "193.110.81.0", "doh": "https://dns0.eu/dns-query", "x": 82, "y": 76},
+    {"id": "google-1", "country": "United States", "provider": "Google DNS", "resolver": "8.8.8.8", "doh": "https://dns.google/dns-query", "x": 27, "y": 41},
+    {"id": "google-2", "country": "United States", "provider": "Google DNS", "resolver": "8.8.4.4", "doh": "https://dns.google/dns-query", "x": 16, "y": 44},
+    {"id": "cloudflare-1", "country": "Global", "provider": "Cloudflare", "resolver": "1.1.1.1", "doh": "https://cloudflare-dns.com/dns-query", "x": 19, "y": 44},
+    {"id": "cloudflare-2", "country": "Global", "provider": "Cloudflare", "resolver": "1.0.0.1", "doh": "https://cloudflare-dns.com/dns-query", "x": 49, "y": 36},
+    {"id": "quad9-1", "country": "Switzerland", "provider": "Quad9", "resolver": "9.9.9.9", "doh": "https://dns.quad9.net/dns-query", "x": 51, "y": 38},
+    {"id": "quad9-2", "country": "Switzerland", "provider": "Quad9", "resolver": "149.112.112.112", "doh": "https://dns.quad9.net/dns-query", "x": 53, "y": 35},
+    {"id": "opendns-1", "country": "United States", "provider": "OpenDNS", "resolver": "208.67.222.222", "doh": "https://doh.opendns.com/dns-query", "x": 16, "y": 44},
+    {"id": "opendns-2", "country": "United States", "provider": "OpenDNS", "resolver": "208.67.220.220", "doh": "https://doh.opendns.com/dns-query", "x": 27, "y": 41},
+    {"id": "adguard-1", "country": "Global", "provider": "AdGuard DNS", "resolver": "94.140.14.14", "doh": "https://dns.adguard-dns.com/dns-query", "x": 57, "y": 49},
+    {"id": "adguard-2", "country": "Global", "provider": "AdGuard DNS", "resolver": "94.140.15.15", "doh": "https://dns.adguard-dns.com/dns-query", "x": 76, "y": 67},
+    {"id": "cleanbrowsing-1", "country": "United States", "provider": "CleanBrowsing", "resolver": "185.228.168.9", "doh": "https://doh.cleanbrowsing.org/doh/security-filter/", "x": 26, "y": 41},
+    {"id": "cleanbrowsing-2", "country": "United States", "provider": "CleanBrowsing", "resolver": "185.228.169.9", "doh": "https://doh.cleanbrowsing.org/doh/security-filter/", "x": 17, "y": 44},
+    {"id": "controld-1", "country": "Canada", "provider": "Control D", "resolver": "76.76.2.0", "doh": "https://freedns.controld.com/p0", "x": 21, "y": 29},
+    {"id": "controld-2", "country": "Canada", "provider": "Control D", "resolver": "76.76.10.0", "doh": "https://freedns.controld.com/p0", "x": 27, "y": 28},
+    {"id": "dns0", "country": "European Union", "provider": "DNS0.eu", "resolver": "193.110.81.0", "doh": "https://dns0.eu/dns-query", "x": 48, "y": 39},
 ]
 
 
