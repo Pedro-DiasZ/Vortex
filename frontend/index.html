@@ -614,8 +614,8 @@
     padding: 9px 12px;
     background: color-mix(in srgb, var(--card-2) 72%, transparent);
     display: grid;
-    grid-template-columns: 18px minmax(0, 1fr) minmax(110px, auto);
-    gap: 10px 12px;
+    grid-template-columns: 18px minmax(0, 1fr);
+    gap: 7px 12px;
     align-items: center;
     transition: border-color .12s, background-color .12s;
   }
@@ -659,6 +659,7 @@
     gap: 7px;
     min-width: 0;
   }
+  .dns-resolver-meta { min-width: 0; }
   .dns-flag {
     min-width: 22px;
     height: 16px;
@@ -687,9 +688,10 @@
     white-space: nowrap;
   }
   .dns-result {
+    grid-column: 2;
     display: flex;
     align-items: center;
-    justify-content: flex-end;
+    justify-content: flex-start;
     gap: 8px;
     min-width: 0;
   }
@@ -697,8 +699,10 @@
     color: var(--primary-glow);
     font: 700 12px var(--font-mono);
     line-height: 1.35;
+    min-width: 0;
+    max-width: 100%;
     overflow-wrap: anywhere;
-    text-align: right;
+    text-align: left;
   }
   .dns-answer.muted { color: var(--muted); }
   .dns-result-icon {
@@ -2376,21 +2380,21 @@
   }
 
   const DNS_PROPAGATION_RESOLVERS = [
-    { id: 'us-ny', region: 'New York, United States', country: 'United States', provider: 'Google DNS', flag: 'US', resolver: '8.8.8.8', x: 24, y: 39 },
-    { id: 'us-la', region: 'Los Angeles, United States', country: 'United States', provider: 'Google DNS', flag: 'US', resolver: '8.8.4.4', x: 16, y: 43 },
-    { id: 'ca', region: 'Toronto, Canada', country: 'Canada', provider: 'Comodo', flag: 'CA', resolver: '8.26.56.26', x: 22, y: 30 },
-    { id: 'br', region: 'Sao Paulo, Brazil', country: 'Brazil', provider: 'UOL', flag: 'BR', resolver: '200.221.11.100', x: 35, y: 68 },
-    { id: 'ar', region: 'Buenos Aires, Argentina', country: 'Argentina', provider: 'ARSAT', flag: 'AR', resolver: '200.49.158.1', x: 31, y: 79 },
-    { id: 'uk', region: 'London, United Kingdom', country: 'United Kingdom', provider: 'BT', flag: 'GB', resolver: '195.99.66.220', x: 47, y: 33 },
-    { id: 'de', region: 'Dortmund, Germany', country: 'Germany', provider: 'Deutsche Telekom', flag: 'DE', resolver: '217.237.151.51', x: 51, y: 36 },
-    { id: 'fr', region: 'Paris, France', country: 'France', provider: 'FDN', flag: 'FR', resolver: '80.67.169.40', x: 49, y: 40 },
-    { id: 'nl', region: 'Amsterdam, Netherlands', country: 'Netherlands', provider: 'Ziggo', flag: 'NL', resolver: '213.46.228.196', x: 50, y: 34 },
-    { id: 'in', region: 'Coimbatore, India', country: 'India', provider: 'Sify', flag: 'IN', resolver: '203.94.227.66', x: 68, y: 53 },
-    { id: 'sg', region: 'Singapore', country: 'Singapore', provider: 'Singtel', flag: 'SG', resolver: '165.21.83.88', x: 75, y: 62 },
-    { id: 'jp', region: 'Tokyo, Japan', country: 'Japan', provider: 'WIDE', flag: 'JP', resolver: '202.12.27.33', x: 84, y: 43 },
-    { id: 'kr', region: 'Seoul, South Korea', country: 'South Korea', provider: 'Korea Telecom', flag: 'KR', resolver: '164.124.101.2', x: 81, y: 42 },
-    { id: 'cn', region: 'Beijing, China', country: 'China', provider: 'DNSPod', flag: 'CN', resolver: '114.114.114.114', x: 76, y: 45 },
-    { id: 'au', region: 'Sydney, Australia', country: 'Australia', provider: 'Telstra', flag: 'AU', resolver: '203.50.2.71', x: 82, y: 76 },
+    { id: 'google-1', region: 'Google DNS - United States', country: 'United States', provider: 'Google DNS', flag: 'US', resolver: '8.8.8.8', x: 24, y: 39 },
+    { id: 'google-2', region: 'Google DNS - United States', country: 'United States', provider: 'Google DNS', flag: 'US', resolver: '8.8.4.4', x: 16, y: 43 },
+    { id: 'cloudflare-1', region: 'Cloudflare - Global', country: 'Global', provider: 'Cloudflare', flag: 'GL', resolver: '1.1.1.1', x: 47, y: 33 },
+    { id: 'cloudflare-2', region: 'Cloudflare - Global', country: 'Global', provider: 'Cloudflare', flag: 'GL', resolver: '1.0.0.1', x: 51, y: 36 },
+    { id: 'quad9-1', region: 'Quad9 - Switzerland', country: 'Switzerland', provider: 'Quad9', flag: 'CH', resolver: '9.9.9.9', x: 49, y: 40 },
+    { id: 'quad9-2', region: 'Quad9 - Switzerland', country: 'Switzerland', provider: 'Quad9', flag: 'CH', resolver: '149.112.112.112', x: 50, y: 34 },
+    { id: 'opendns-1', region: 'OpenDNS - United States', country: 'United States', provider: 'OpenDNS', flag: 'US', resolver: '208.67.222.222', x: 22, y: 30 },
+    { id: 'opendns-2', region: 'OpenDNS - United States', country: 'United States', provider: 'OpenDNS', flag: 'US', resolver: '208.67.220.220', x: 35, y: 68 },
+    { id: 'adguard-1', region: 'AdGuard DNS - Global', country: 'Global', provider: 'AdGuard DNS', flag: 'GL', resolver: '94.140.14.14', x: 68, y: 53 },
+    { id: 'adguard-2', region: 'AdGuard DNS - Global', country: 'Global', provider: 'AdGuard DNS', flag: 'GL', resolver: '94.140.15.15', x: 75, y: 62 },
+    { id: 'cleanbrowsing-1', region: 'CleanBrowsing - United States', country: 'United States', provider: 'CleanBrowsing', flag: 'US', resolver: '185.228.168.9', x: 31, y: 79 },
+    { id: 'cleanbrowsing-2', region: 'CleanBrowsing - United States', country: 'United States', provider: 'CleanBrowsing', flag: 'US', resolver: '185.228.169.9', x: 84, y: 43 },
+    { id: 'controld-1', region: 'Control D - Canada', country: 'Canada', provider: 'Control D', flag: 'CA', resolver: '76.76.2.0', x: 81, y: 42 },
+    { id: 'controld-2', region: 'Control D - Canada', country: 'Canada', provider: 'Control D', flag: 'CA', resolver: '76.76.10.0', x: 76, y: 45 },
+    { id: 'dns0', region: 'DNS0.eu - European Union', country: 'European Union', provider: 'DNS0.eu', flag: 'EU', resolver: '193.110.81.0', x: 82, y: 76 },
   ];
 
   const DNS_STATUS_LABELS = {
@@ -3028,7 +3032,11 @@
   }
 
   function normalizeDnsPropagationResult(item) {
-    const fallbackResolver = DNS_PROPAGATION_RESOLVERS.find(resolver => resolver.id === item?.id) || {};
+    const fallbackResolver = DNS_PROPAGATION_RESOLVERS.find(resolver =>
+      resolver.id === item?.id ||
+      resolver.resolver === item?.resolver ||
+      resolver.resolver === item?.nameserver
+    ) || {};
     const rawAnswers =
       Array.isArray(item?.answers) ? item.answers :
       Array.isArray(item?.ips) ? item.ips :
@@ -3055,7 +3063,10 @@
   }
 
   function normalizeDnsPropagationResponse(data) {
-    const byId = new Map((Array.isArray(data?.results) ? data.results : []).map(item => [item.id, normalizeDnsPropagationResult(item)]));
+    const byId = new Map((Array.isArray(data?.results) ? data.results : []).map(item => {
+      const normalized = normalizeDnsPropagationResult(item);
+      return [normalized.id || item?.id || item?.resolver || item?.nameserver, normalized];
+    }));
     return DNS_PROPAGATION_RESOLVERS.map(resolver => byId.get(resolver.id) || {
       ...resolver,
       status: 'fail',
