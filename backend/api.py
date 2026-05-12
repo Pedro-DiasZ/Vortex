@@ -1,5 +1,6 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
 from urllib.parse import urlparse
 
 
@@ -28,6 +29,12 @@ def normalize_email_health_domain(value: str) -> str:
         return assert_domain(domain)
     except Exception:
         return ""
+
+
+class DnsPropagationRequest(BaseModel):
+    domain: str
+    record_type: str = "A"
+
 
 app = FastAPI(
     title="VortexAPI",
@@ -344,10 +351,23 @@ def dns(domain: str, record_type: str = "A"):
     return dns_lookup(domain, record_type)
 
 @app.get("/api/dns-propagation")
-def dns_propagation(domain: str, record_type: str = "A"):
+def dns_propagation(domain: str, record_type: str = "A", resolver_id: str | None = None):
     from backend.modules.dns.propagation import check_propagation
 
-    return check_propagation(domain, record_type)
+    try:
+        return check_propagation(domain, record_type, resolver_id)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@app.post("/api/dns/propagation")
+def dns_propagation_post(payload: DnsPropagationRequest):
+    from backend.modules.dns.propagation import check_propagation
+
+    try:
+        return check_propagation(payload.domain, payload.record_type)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 
 @app.get("/api/geo")
