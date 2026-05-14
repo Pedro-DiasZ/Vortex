@@ -637,7 +637,7 @@
     border-radius: 999px;
     display: inline-grid;
     place-items: center;
-    color: #fff;
+    color: var(--primary-foreground);
     flex: 0 0 auto;
     font: 900 11px/1 var(--font-sans);
     box-shadow: 0 0 0 3px color-mix(in srgb, currentColor 12%, transparent);
@@ -746,17 +746,17 @@
     align-content: space-between;
     gap: 10px;
     border: 1px solid var(--border);
-    color: #fff;
+    color: var(--primary-foreground);
     opacity: 0;
     transform: translateY(6px);
     animation: resultRowIn .24s ease forwards;
     animation-delay: calc(var(--row-index, 0) * 50ms);
   }
   .blacklist-card.clean {
-    background: linear-gradient(135deg, color-mix(in srgb, var(--success) 88%, #064e3b), #15803d);
+    background: color-mix(in srgb, var(--success) 82%, var(--card));
   }
   .blacklist-card.listed {
-    background: linear-gradient(135deg, color-mix(in srgb, var(--danger) 88%, #7f1d1d), #b91c1c);
+    background: color-mix(in srgb, var(--danger) 82%, var(--card));
   }
   .blacklist-card .status-icon {
     box-shadow: 0 0 0 3px rgba(255,255,255,.18);
@@ -1234,6 +1234,37 @@
     }
     table.result-check-table tr:last-child {
       border-bottom: none;
+    }
+    table.mx-record-table,
+    table.mx-record-table thead,
+    table.mx-record-table tbody,
+    table.mx-record-table tr,
+    table.mx-record-table th,
+    table.mx-record-table td {
+      display: block;
+    }
+    table.mx-record-table thead {
+      display: none;
+    }
+    table.mx-record-table tr {
+      border-bottom: 1px solid var(--border-soft);
+      padding: 6px 0;
+    }
+    table.mx-record-table tr:last-child {
+      border-bottom: none;
+    }
+    table.mx-record-table td {
+      border-bottom: none;
+      padding: 7px 11px;
+    }
+    table.mx-record-table td::before {
+      content: attr(data-label);
+      display: block;
+      margin-bottom: 3px;
+      color: var(--muted);
+      font: 900 9px var(--font-sans);
+      letter-spacing: .14em;
+      text-transform: uppercase;
     }
     .more-cell {
       width: auto;
@@ -2658,7 +2689,7 @@
       }
       return `<div class="field">
         <label class="field-label" for="f_${f.n}">${label}</label>
-        <input class="input" id="f_${f.n}" type="${f.type === 'number' ? 'number' : 'text'}" placeholder="${f.p}" value="${f.v ?? ''}">
+        <input class="input" id="f_${f.n}" type="${f.type === 'number' ? 'number' : f.type === 'password' ? 'password' : 'text'}" placeholder="${f.p}" value="${f.v ?? ''}">
       </div>`;
     }).join('');
     const aiTokenHtml = aiConfig ? `
@@ -3212,15 +3243,15 @@
 
   function getDnsStatusIcon(status) {
     if (status === 'ok') {
-      return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
+      return '<span class="status-icon icon-pass" aria-hidden="true">&#10003;</span>';
     }
     if (status === 'fail') {
-      return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>';
+      return '<span class="status-icon icon-fail" aria-hidden="true">&times;</span>';
     }
     if (status === 'loading') {
-      return '<svg class="spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-6.22-8.56"/></svg>';
+      return '<span class="status-icon icon-warn spin" aria-hidden="true">!</span>';
     }
-    return '<span class="dns-status-dash">-</span>';
+    return '<span class="status-icon icon-warn" aria-hidden="true">!</span>';
   }
 
   function getDnsAnswerValue(result) {
@@ -3245,7 +3276,7 @@
       const status = ['ok', 'fail', 'loading', 'waiting'].includes(result.status) ? result.status : 'waiting';
       return `
         <article class="dns-resolver-row ${escapeHtml(status)}" id="dnsResolver-${resolver.id}">
-          <span class="dns-status-dot"></span>
+          <span class="dns-result-icon ${escapeHtml(status)}" aria-label="${escapeHtml(DNS_STATUS_LABELS[status] || status)}">${getDnsStatusIcon(status)}</span>
           <div class="dns-resolver-meta">
             <div class="dns-region-line">
               <span class="dns-flag">${escapeHtml(resolver.flag || '')}</span>
@@ -5343,7 +5374,7 @@ E --> F`;
       const rows = records.map((record, index) => {
         const mx = parseMxRecord(record);
         const host = mx.hostname === '-' ? '' : mx.hostname;
-        return `<tr class="result-row" style="--row-index:${index}"><td>${escapeHtml(mx.pref)}</td><td>${escapeHtml(mx.hostname)}</td><td>${escapeHtml(mx.ip)}</td><td>${escapeHtml(mx.ttl)}</td><td><div class="mx-actions"><a class="mx-action-link" href="javascript:void(0)" onclick="navigateWithData('/blacklists','domain','${escapeHtml(host)}')">Blacklist Check</a><a class="mx-action-link" href="javascript:void(0)" onclick="navigateWithData('/smtp','host','${escapeHtml(host)}')">SMTP Test</a></div></td></tr>`;
+        return `<tr class="result-row" style="--row-index:${index}"><td data-label="Pref">${statusIcon('pass')}${escapeHtml(mx.pref)}</td><td data-label="Hostname">${escapeHtml(mx.hostname)}</td><td data-label="IP Address">${escapeHtml(mx.ip)}</td><td data-label="TTL">${escapeHtml(mx.ttl)}</td><td data-label="Actions"><div class="mx-actions"><a class="mx-action-link" href="javascript:void(0)" onclick="navigateWithData('/blacklists','domain','${escapeHtml(host)}')">Blacklist Check</a><a class="mx-action-link" href="javascript:void(0)" onclick="navigateWithData('/smtp','host','${escapeHtml(host)}')">SMTP Test</a></div></td></tr>`;
       }).join('');
       return `<div class="result-table-wrap"><table class="mx-record-table"><thead><tr><th>Pref</th><th>Hostname</th><th>IP Address</th><th>TTL</th><th>Actions</th></tr></thead><tbody>${rows}</tbody></table></div>`;
     }
@@ -5352,6 +5383,36 @@ E --> F`;
       const pairs = [['OWNER', data?.owner || data?.org || data?.registrar || data?.domain_name], ['ASN', data?.asn], ['PREFIX', data?.prefix || data?.network || data?.range], ['REGISTRY', data?.registry || data?.country], ['STATUS', data?.status], ['HOSTNAME', data?.hostname], ['NAME SERVERS', data?.name_servers], ['CREATED', data?.creation_date], ['EXPIRES', data?.expiration_date], ['UPDATED', data?.updated_date]].filter(([, value]) => value !== undefined && value !== null && value !== '');
       if (!pairs.length) return '';
       return `<div class="whois-card">${pairs.map(([label, value]) => `<div class="whois-row"><div class="whois-label">${escapeHtml(label)}</div><div class="whois-value">${escapeHtml(formatDiagValue(value))}</div></div>`).join('')}</div>`;
+    }
+
+    function labeledCard(pairs) {
+      const active = pairs.filter(([, value]) => value !== undefined && value !== null && value !== '');
+      if (!active.length) return '';
+      return `<div class="whois-card">${active.map(([label, value, status = 'pass'], index) => `<div class="whois-row result-row" style="--row-index:${index}"><div class="whois-label">${statusIcon(status)}${escapeHtml(label)}</div><div class="whois-value">${escapeHtml(formatDiagValue(value))}</div></div>`).join('')}</div>`;
+    }
+
+    function dnsRecordsTable(data) {
+      const records = Array.isArray(data?.records) ? data.records : [];
+      if (!records.length) return '';
+      const type = data?.type || document.getElementById('f_record_type')?.value || 'DNS';
+      const name = data?.domain || document.getElementById('f_domain')?.value || '-';
+      const rows = records.map((record, index) => `<tr class="result-row" style="--row-index:${index}"><td data-label="Type">${statusIcon('pass')}${escapeHtml(type)}</td><td data-label="Name">${escapeHtml(name)}</td><td data-label="Value">${escapeHtml(record)}</td><td data-label="TTL">-</td></tr>`).join('');
+      return `<div class="result-table-wrap"><table class="mx-record-table"><thead><tr><th>Type</th><th>Name</th><th>Value</th><th>TTL</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+    }
+
+    function statusFromRisk(value) {
+      const text = String(value || '').toLowerCase();
+      if (/(high|failure|rejeitado|down|closed|found|vazamento|blacklisted|fail|error)/.test(text)) return 'fail';
+      if (/(medium|temporary|spam|warn|atencao|quarentena|redirect|3\d\d)/.test(text)) return 'warn';
+      return 'pass';
+    }
+
+    function latencyStatus(ms) {
+      const value = Number(ms);
+      if (!Number.isFinite(value)) return 'warn';
+      if (value < 100) return 'pass';
+      if (value < 300) return 'warn';
+      return 'fail';
     }
 
     function renderBlacklistGrid(data) {
@@ -5401,6 +5462,7 @@ E --> F`;
         mainRows.push({ test: 'DNS Record Published', result: isMissing ? (data?.status || `No ${type} record found`) : `${type} record found`, status: isMissing ? 'fail' : 'pass' });
         relatedRows.push(...recordRows(data));
         if (String(type).toUpperCase() === 'MX') sections.push(diagSection('MX Records', mxTable(data)));
+        else sections.push(diagSection('DNS Records', dnsRecordsTable(data)));
       } else if (path === '/ssl') {
         const ssl = data?.ssl_info || {};
         const headers = data?.http_headers || {};
@@ -5408,13 +5470,115 @@ E --> F`;
         mainRows.push({ test: 'Certificate Expiration', result: ssl.days_remaining !== undefined ? `${ssl.days_remaining} days remaining (${ssl.expires_on || ssl.notAfter || '-'})` : (ssl.error || '-'), status: ssl.valid === false ? 'fail' : Number(ssl.days_remaining) <= 30 ? 'warn' : 'pass' });
         relatedRows.push({ test: 'Issuer', result: ssl.issuer || '-', status: ssl.issuer ? 'pass' : 'warn' });
         relatedRows.push({ test: 'HTTP Headers Reachable', result: headers.status || headers.status_code || '-', status: headers.found === false ? 'fail' : inferStatus(headers.status || headers.status_code, 'headers') });
+        sections.push(diagSection('Certificate Details', labeledCard([
+          ['Issued To', ssl.subject_summary?.commonName || ssl.domain || data?.domain, ssl.valid ? 'pass' : 'fail'],
+          ['Issuer', ssl.issuer, ssl.issuer ? 'pass' : 'warn'],
+          ['Valid From', ssl.valid_from || ssl.notBefore, 'pass'],
+          ['Valid Until', ssl.expires_on || ssl.notAfter, Number(ssl.days_remaining) <= 30 ? 'warn' : 'pass'],
+          ['SANs', ssl.san, Array.isArray(ssl.san) && ssl.san.length ? 'pass' : 'warn']
+        ])));
+      } else if (path === '/smtp') {
+        mainRows.push({ test: 'SMTP Reachable', result: data?.status || '-', status: data?.online ? 'pass' : 'fail' });
+        mainRows.push({ test: 'SMTP Banner', result: data?.banner || data?.error || '-', status: data?.banner ? 'pass' : data?.online ? 'warn' : 'fail' });
+        relatedRows.push({ test: 'Host', result: data?.host || document.getElementById('f_host')?.value || '-', status: data?.host ? 'pass' : 'warn' });
+        relatedRows.push({ test: 'Port', result: data?.port || document.getElementById('f_port')?.value || '-', status: data?.online ? 'pass' : 'fail' });
+      } else if (path === '/analyze-header') {
+        const diag = data?.diagnostico || {};
+        mainRows.push({ test: 'Header Parsed', result: data?.found ? 'Header recognized' : (diag.reason || data?.error || 'Header not recognized'), status: data?.found ? 'pass' : 'fail' });
+        mainRows.push({ test: 'Authentication Summary', result: diag.summary || '-', status: statusFromRisk(diag.risk) });
+        relatedRows.push({ test: 'SPF', result: data?.spf || '-', status: inferStatus(data?.spf, 'spf') });
+        relatedRows.push({ test: 'DKIM', result: data?.dkim || '-', status: inferStatus(data?.dkim, 'dkim') });
+        relatedRows.push({ test: 'DMARC', result: data?.dmarc || '-', status: inferStatus(data?.dmarc, 'dmarc') });
+        sections.push(diagSection('Parsed Header Fields', labeledCard([
+          ['From', data?.from, data?.from ? 'pass' : 'warn'],
+          ['To', data?.to, data?.to ? 'pass' : 'warn'],
+          ['Subject', data?.subject, data?.subject ? 'pass' : 'warn'],
+          ['Date', data?.date || data?.date_iso, data?.date ? 'pass' : 'warn'],
+          ['Message ID', data?.message_id, data?.message_id ? 'pass' : 'warn'],
+          ['Origin IP', data?.origin_ip, data?.origin_ip && data.origin_ip !== 'Unknown' ? 'pass' : 'warn'],
+          ['Received Count', data?.received_count, Number(data?.received_count) > 0 ? 'pass' : 'warn']
+        ])));
+      } else if (path === '/email_log_analysis') {
+        const summary = data?.summary || {};
+        const details = data?.details || {};
+        const diag = data?.diagnostico || {};
+        mainRows.push({ test: 'Log Parsed', result: data?.found ? 'Email log recognized' : (diag.reason || data?.error || 'Log not recognized'), status: data?.found ? 'pass' : 'fail' });
+        mainRows.push({ test: 'Delivery Status', result: summary.status || '-', status: statusFromRisk(summary.category || summary.status) });
+        mainRows.push({ test: 'Likely Cause', result: diag.likely_cause || '-', status: statusFromRisk(diag.risk) });
+        sections.push(diagSection('Log Details', labeledCard([
+          ['Queue ID', details.queue_id, details.queue_id && details.queue_id !== 'N/A' ? 'pass' : 'warn'],
+          ['Sender', details.sender, details.sender && details.sender !== 'Nao identificado' ? 'pass' : 'warn'],
+          ['Recipient', details.recipient, details.recipient && details.recipient !== 'Nao identificado' ? 'pass' : 'warn'],
+          ['Origin IP', details.origin_ip, details.origin_ip && details.origin_ip !== 'Desconhecido' ? 'pass' : 'warn'],
+          ['Relay IP', details.relay_ip, details.relay_ip && details.relay_ip !== 'N/A' ? 'pass' : 'warn'],
+          ['DSN Code', details.dsn_code, statusFromRisk(details.dsn_code)],
+          ['Delay', details.delay, 'pass']
+        ])));
+      } else if (path === '/whois') {
+        mainRows.push({ test: 'WHOIS Record Found', result: data?.status || '-', status: data?.found ? 'pass' : 'fail' });
+        sections.push(diagSection('Ownership Info', whoisCard(data)));
+      } else if (path === '/dns_reverse') {
+        mainRows.push({ test: 'PTR Record Published', result: data?.status || (data?.found ? 'PTR record found' : 'No PTR record found'), status: data?.found ? 'pass' : 'fail' });
+        relatedRows.push({ test: 'Reverse DNS', result: data?.reversed_dns || '-', status: data?.reversed_dns ? 'pass' : 'fail' });
+        relatedRows.push({ test: 'IP Address', result: data?.ip || document.getElementById('f_ip')?.value || '-', status: data?.ip ? 'pass' : 'warn' });
+      } else if (path === '/ping') {
+        const latency = data?.response_time_ms;
+        mainRows.push({ test: 'Host Reachable', result: data?.status || '-', status: data?.alive ? 'pass' : 'fail' });
+        mainRows.push({ test: 'Latency', result: latency !== null && latency !== undefined ? `${latency} ms` : (data?.reason || '-'), status: data?.alive ? latencyStatus(latency) : 'fail' });
+        relatedRows.push({ test: 'Resolved IP', result: data?.resolved_ip || '-', status: data?.resolved_ip ? 'pass' : 'warn' });
+      } else if (path === '/uptime') {
+        mainRows.push({ test: 'Uptime Status', result: data?.status || '-', status: data?.status === 'Up' ? 'pass' : 'fail' });
+        mainRows.push({ test: 'HTTP Status Code', result: data?.status_code || data?.error || '-', status: Number(data?.status_code) === 200 ? 'pass' : Number(data?.status_code) < 500 ? 'warn' : 'fail' });
+        relatedRows.push({ test: 'Response Time', result: data?.response_time_ms !== undefined ? `${data.response_time_ms} ms` : '-', status: latencyStatus(data?.response_time_ms) });
+      } else if (path === '/port-checker') {
+        mainRows.push({ test: 'Port Reachable', result: data?.status || '-', status: data?.open ? 'pass' : 'fail' });
+        sections.push(diagSection('Port Details', `<div class="result-table-wrap"><table class="mx-record-table"><thead><tr><th>Port</th><th>Service</th><th>Status</th></tr></thead><tbody><tr class="result-row" style="--row-index:0"><td data-label="Port">${statusIcon(data?.open ? 'pass' : 'fail')}${escapeHtml(data?.port || document.getElementById('f_port')?.value || '-')}</td><td data-label="Service">${escapeHtml(data?.host || document.getElementById('f_host')?.value || '-')}</td><td data-label="Status">${escapeHtml(data?.open ? 'Open' : 'Closed')}</td></tr></tbody></table></div>`));
+      } else if (path === '/geo') {
+        mainRows.push({ test: 'Geo IP Lookup', result: data?.status || '-', status: data?.found ? 'pass' : 'fail' });
+        sections.push(diagSection('Location', labeledCard([
+          ['Country', data?.country, data?.country ? 'pass' : 'warn'],
+          ['Region', data?.region, data?.region ? 'pass' : 'warn'],
+          ['City', data?.city, data?.city ? 'pass' : 'warn'],
+          ['ISP', data?.isp, data?.isp ? 'pass' : 'warn'],
+          ['Organization', data?.org, data?.org ? 'pass' : 'warn'],
+          ['Coordinates', data?.lat !== undefined && data?.lon !== undefined ? `${data.lat}, ${data.lon}` : '', data?.lat !== undefined ? 'pass' : 'warn'],
+          ['Timezone', data?.timezone, data?.timezone ? 'pass' : 'warn']
+        ])));
+      } else if (path === '/ip-info') {
+        mainRows.push({ test: 'IP Info Found', result: data?.status || '-', status: data?.found ? 'pass' : 'fail' });
+        sections.push(diagSection('Ownership Info', labeledCard([
+          ['IP', data?.ip, data?.ip ? 'pass' : 'warn'],
+          ['ASN', data?.asn, data?.asn && data.asn !== 'N/A' ? 'pass' : 'warn'],
+          ['Owner', data?.org, data?.org ? 'pass' : 'warn'],
+          ['Prefix', data?.prefix || data?.network || 'Not returned by provider', 'warn'],
+          ['Registry', data?.registry || data?.country || 'Not returned by provider', data?.country ? 'pass' : 'warn'],
+          ['Abuse Contact', data?.abuse || 'Not returned by provider', 'warn'],
+          ['Hostname', data?.hostname, data?.hostname ? 'pass' : 'warn']
+        ])));
+      } else if (path === '/security/hibp/password') {
+        mainRows.push({ test: 'Password Exposure', result: data?.status || '-', status: data?.found ? 'fail' : 'pass' });
+        relatedRows.push({ test: 'Times Exposed', result: data?.times_exposed ?? 0, status: data?.found ? 'fail' : 'pass' });
+      } else if (path === '/http-status') {
+        const code = Number(data?.status_code);
+        mainRows.push({ test: 'HTTP Response', result: data?.status || data?.status_text || '-', status: data?.found ? (code >= 500 ? 'fail' : code >= 300 ? 'warn' : 'pass') : 'fail' });
+        mainRows.push({ test: 'Status Code', result: data?.status_code ? `${data.status_code} ${data.status_text || ''}` : '-', status: code >= 500 ? 'fail' : code >= 300 ? 'warn' : 'pass' });
+        sections.push(diagSection('Response Details', labeledCard([
+          ['Final URL', data?.final_url, data?.final_url ? 'pass' : 'warn'],
+          ['TLS', data?.tls ? 'HTTPS enabled' : 'Not HTTPS', data?.tls ? 'pass' : 'warn'],
+          ['Response Time', data?.response_time_ms !== undefined ? `${data.response_time_ms} ms` : '', latencyStatus(data?.response_time_ms)],
+          ['Redirect Count', data?.redirect_count ?? 0, Number(data?.redirect_count) ? 'warn' : 'pass'],
+          ['Redirect Chain', data?.redirect_chain, Number(data?.redirect_count) ? 'warn' : 'pass']
+        ])));
+      } else if (path === '/ct-logs') {
+        const certs = Array.isArray(data?.certificates) ? data.certificates : [];
+        mainRows.push({ test: 'CT Logs Found', result: data?.error || `${data?.count ?? certs.length} certificate(s) found`, status: data?.found ? 'pass' : data?.error ? 'fail' : 'warn' });
+        sections.push(diagSection('Certificates', certs.length ? checksTable(certs.slice(0, 50).map((cert, index) => ({ test: cert.common_name || cert.name_value || `Certificate ${index + 1}`, result: `${cert.issuer_name || '-'} | ${cert.not_before || '-'} to ${cert.not_after || '-'}`, status: 'pass' }))) : checksTable([{ test: 'Certificate List', result: data?.error || 'No certificates returned', status: data?.error ? 'fail' : 'warn' }])));
       } else {
         mainRows.push(...flattenDiagnosticRows(data));
       }
       if (!mainRows.length) mainRows.push(...flattenDiagnosticRows(data));
       sections.unshift(diagSection(categoryForRoute(path), checksTable(mainRows)));
       if (relatedRows.length) sections.push(diagSection('Related Tests', checksTable(relatedRows), 'related-band'));
-      if (['/whois', '/ip-info'].includes(path)) sections.push(diagSection('Ownership Info', whoisCard(data)));
       return diagShell(data, sections);
     }
 
@@ -5433,7 +5597,7 @@ E --> F`;
         });
         return buildTableHTML(rows);
       }
-      if (['/spf', '/dkim', '/dmarc', '/dns', '/ssl', '/blacklists', '/mx', '/whois', '/ip-info'].includes(route.path)) {
+      if (['/spf', '/dkim', '/dmarc', '/blacklists', '/smtp', '/analyze-header', '/email_log_analysis', '/whois', '/dns', '/mx', '/dns_reverse', '/ssl', '/ct-logs', '/ping', '/uptime', '/port-checker', '/geo', '/ip-info', '/security/hibp/password', '/http-status'].includes(route.path)) {
         return renderDiagnosticTable(data);
       }
       return buildTableHTML(flattenDiagnosticRows(data).map(row => ({ k: row.test, v: row.result, d: 0 })));
@@ -5482,7 +5646,7 @@ E --> F`;
           if (qs) url += `?${qs}`;
         }
         const data = await fetchJSON(url, init);
-        out.innerHTML = route.variant === 'ctLogs' ? renderCTLogs(data) : renderTable(data);
+        out.innerHTML = renderTable(data);
         if (route.path === '/spf') renderSPFTags(data, out);
         const rawText = typeof data === 'string' ? data : JSON.stringify(data, null, 2);
         showRecommendations(route.path, rawText);
