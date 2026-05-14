@@ -495,6 +495,282 @@
     font: 800 10.5px var(--font-sans);
     text-transform: uppercase; letter-spacing: 0.16em;
   }
+  .diagnostic-results {
+    background: var(--card-2);
+    max-height: none;
+    overflow: visible;
+  }
+  .output-wrap:has(.diagnostic-results) {
+    max-height: none;
+    overflow: visible;
+  }
+  .diag-hero {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 16px;
+    border-bottom: 1px solid var(--border);
+    background: var(--card);
+  }
+  .diag-target {
+    min-width: 0;
+  }
+  .diag-target span {
+    display: block;
+    margin-bottom: 4px;
+    color: var(--muted);
+    font: 800 10px var(--font-sans);
+    letter-spacing: .16em;
+    text-transform: uppercase;
+  }
+  .diag-target strong {
+    display: block;
+    color: var(--text);
+    font: 900 20px/1.2 var(--font-sans);
+    overflow-wrap: anywhere;
+  }
+  .diag-action-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: flex-end;
+  }
+  .diag-action {
+    min-height: 34px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    padding: 0 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    color: var(--text);
+    background: transparent;
+    font: 800 11px var(--font-sans);
+    white-space: nowrap;
+  }
+  .diag-action.find {
+    border-color: color-mix(in srgb, var(--success) 48%, var(--border));
+    background: color-mix(in srgb, var(--success) 14%, transparent);
+    color: var(--success);
+  }
+  .diag-action.solve {
+    border-color: color-mix(in srgb, var(--primary) 55%, var(--border));
+    color: var(--primary-glow);
+  }
+  .diag-section {
+    padding: 14px 16px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .diag-section:last-child {
+    border-bottom: none;
+  }
+  .diag-section-title {
+    margin: 0 0 10px;
+    color: var(--primary-glow);
+    font: 900 11px var(--font-sans);
+    letter-spacing: .16em;
+    text-transform: uppercase;
+  }
+  .result-table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--card);
+  }
+  table.result-check-table,
+  table.mx-record-table {
+    width: 100%;
+    border-collapse: collapse;
+    font: 500 13px var(--font-sans);
+  }
+  table.result-check-table th,
+  table.result-check-table td,
+  table.mx-record-table th,
+  table.mx-record-table td {
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border-soft);
+    vertical-align: top;
+  }
+  table.result-check-table th,
+  table.mx-record-table th {
+    background: color-mix(in srgb, var(--card) 78%, var(--card-2));
+    color: var(--muted);
+    font: 900 10.5px var(--font-sans);
+    letter-spacing: .14em;
+    text-transform: uppercase;
+  }
+  table.result-check-table tbody tr:nth-child(even) td,
+  table.mx-record-table tbody tr:nth-child(even) td {
+    background: color-mix(in srgb, var(--card-2) 62%, transparent);
+  }
+  table.result-check-table tr:last-child td,
+  table.mx-record-table tr:last-child td {
+    border-bottom: none;
+  }
+  .result-row {
+    opacity: 0;
+    transform: translateY(6px);
+    animation: resultRowIn .24s ease forwards;
+    animation-delay: calc(var(--row-index, 0) * 50ms);
+  }
+  @keyframes resultRowIn {
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .test-name {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 190px;
+    color: var(--text);
+    font-weight: 800;
+  }
+  .test-result {
+    color: var(--text);
+    line-height: 1.45;
+    overflow-wrap: anywhere;
+  }
+  .status-icon {
+    width: 17px;
+    height: 17px;
+    border-radius: 999px;
+    display: inline-grid;
+    place-items: center;
+    color: #fff;
+    flex: 0 0 auto;
+    font: 900 11px/1 var(--font-sans);
+    box-shadow: 0 0 0 3px color-mix(in srgb, currentColor 12%, transparent);
+  }
+  .icon-pass { background: var(--success); }
+  .icon-fail { background: var(--danger); }
+  .icon-warn { background: var(--warning); }
+  .more-cell {
+    width: 132px;
+    color: var(--muted);
+  }
+  .more-info {
+    position: relative;
+  }
+  .more-info summary {
+    list-style: none;
+    cursor: pointer;
+    color: var(--primary-glow);
+    font: 800 11px var(--font-sans);
+    white-space: nowrap;
+  }
+  .more-info summary::-webkit-details-marker { display: none; }
+  .more-panel {
+    margin-top: 8px;
+    min-width: 220px;
+    max-width: 440px;
+    padding: 10px 11px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--card-2);
+    color: var(--muted);
+    font: 600 12px/1.5 var(--font-sans);
+  }
+  .related-band .result-table-wrap {
+    background: color-mix(in srgb, var(--primary) 5%, var(--card));
+  }
+  .related-band table.result-check-table th {
+    background: color-mix(in srgb, var(--primary) 9%, var(--card));
+  }
+  .mx-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+  }
+  .mx-action-link {
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 4px 8px;
+    color: var(--primary-glow);
+    background: color-mix(in srgb, var(--primary) 7%, transparent);
+    font: 800 10.5px var(--font-sans);
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .whois-card {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    background: var(--card);
+  }
+  .whois-row {
+    display: grid;
+    grid-template-columns: 150px minmax(0, 1fr);
+    border-bottom: 1px solid var(--border-soft);
+  }
+  .whois-row:last-child { border-bottom: none; }
+  .whois-label {
+    padding: 10px 12px;
+    color: var(--muted);
+    background: color-mix(in srgb, var(--card-2) 70%, transparent);
+    font: 900 10px var(--font-sans);
+    letter-spacing: .14em;
+    text-transform: uppercase;
+  }
+  .whois-value {
+    padding: 10px 12px;
+    color: var(--text);
+    font: 600 13px var(--font-mono);
+    overflow-wrap: anywhere;
+  }
+  .blacklist-summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border);
+    background: var(--card);
+    color: var(--text);
+    font: 800 14px var(--font-sans);
+  }
+  .blacklist-summary strong {
+    color: var(--primary-glow);
+  }
+  .blacklist-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 10px;
+    padding: 14px 16px 16px;
+  }
+  .blacklist-card {
+    min-height: 82px;
+    border-radius: 10px;
+    padding: 12px;
+    display: grid;
+    align-content: space-between;
+    gap: 10px;
+    border: 1px solid var(--border);
+    color: #fff;
+    opacity: 0;
+    transform: translateY(6px);
+    animation: resultRowIn .24s ease forwards;
+    animation-delay: calc(var(--row-index, 0) * 50ms);
+  }
+  .blacklist-card.clean {
+    background: linear-gradient(135deg, color-mix(in srgb, var(--success) 88%, #064e3b), #15803d);
+  }
+  .blacklist-card.listed {
+    background: linear-gradient(135deg, color-mix(in srgb, var(--danger) 88%, #7f1d1d), #b91c1c);
+  }
+  .blacklist-card .status-icon {
+    box-shadow: 0 0 0 3px rgba(255,255,255,.18);
+  }
+  .blacklist-name {
+    font: 900 13px/1.3 var(--font-sans);
+    overflow-wrap: anywhere;
+  }
+  .blacklist-state {
+    font: 900 10px var(--font-sans);
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    opacity: .9;
+  }
 
   .dns-prop-shell {
     display: grid;
@@ -929,6 +1205,43 @@
   .ct-meta .v { color: var(--text); word-break: break-word; font-family: var(--font-mono); }
 
   @media (max-width: 680px) {
+    .diag-hero {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+    .diag-action-row,
+    .diag-action {
+      width: 100%;
+      justify-content: center;
+    }
+    table.result-check-table,
+    table.result-check-table thead,
+    table.result-check-table tbody,
+    table.result-check-table tr,
+    table.result-check-table th,
+    table.result-check-table td {
+      display: block;
+    }
+    table.result-check-table thead {
+      display: none;
+    }
+    table.result-check-table td {
+      border-bottom: none;
+      padding: 9px 11px;
+    }
+    table.result-check-table tr {
+      border-bottom: 1px solid var(--border-soft);
+    }
+    table.result-check-table tr:last-child {
+      border-bottom: none;
+    }
+    .more-cell {
+      width: auto;
+      padding-top: 0 !important;
+    }
+    .whois-row {
+      grid-template-columns: 1fr;
+    }
     .ttl-row { grid-template-columns: 1fr; }
     .ttl-equals { width: 100%; }
     .ct-meta { grid-template-columns: 1fr; }
@@ -1798,6 +2111,7 @@
     { title: 'DNS', category: 'checks', items: [
       { path: '/whois', title: 'WHOIS', label: 'WHOIS', icon: 'search', fields: [{ n: 'domain', p: 'exemplo.com' }] },
       { path: '/dns', title: 'DNS', label: 'DNS', icon: 'globe', fields: [{ n: 'domain', p: 'exemplo.com' }, { n: 'record_type', v: 'A', options: ['A', 'AAAA', 'MX', 'TXT', 'CNAME', 'NS', 'SOA', 'PTR'] }] },
+      { path: '/mx', apiPath: '/dns', title: 'MX Lookup', label: 'MX', desc: 'Lista mail exchangers do dominio usando o endpoint DNS existente.', icon: 'mail', fields: [{ n: 'domain', p: 'exemplo.com' }, { n: 'record_type', v: 'MX', type: 'hidden' }] },
       { path: '/dns-propagation', title: 'Propagacao DNS', label: 'Propagacao', icon: 'network', variant: 'dnsPropagation', desc: 'Valida registros DNS em resolvers globais em tempo real.', fields: [{ n: 'domain', p: 'exemplo.com' }, { n: 'record_type', v: 'A', options: ['A', 'AAAA', 'MX', 'TXT', 'CNAME', 'NS'] }] },
       { path: '/dns_reverse', title: 'DNS Reverso', label: 'Reverso', icon: 'network', fields: [{ n: 'ip', p: 'Endereço IP (ex: 8.8.8.8)' }] },
     ]},
@@ -2321,6 +2635,9 @@
     const aiConfig = AI_ROUTE_CONFIG[route.path];
     const fieldsHtml = (route.fields || []).map(f => {
       const label = f.n.replace(/_/g, ' ');
+      if (f.type === 'hidden') {
+        return `<input type="hidden" id="f_${f.n}" value="${escapeHtml(f.v ?? '')}">`;
+      }
       if (f.options) {
         return `<div class="field">
           <label class="field-label">${label}</label>
@@ -4933,6 +5250,174 @@ E --> F`;
       rows.push({ k: prefix || 'valor', v: String(value), d: depth });
     }
 
+    function formatDiagValue(value) {
+      if (value === null || value === undefined || value === '') return '-';
+      if (Array.isArray(value)) return value.length ? value.map(formatDiagValue).join(', ') : '-';
+      if (typeof value === 'object') return JSON.stringify(value);
+      return String(value);
+    }
+
+    function titleizeKey(key) {
+      return String(key || 'Result').replace(/[_\-.]+/g, ' ').replace(/\s+/g, ' ').trim().replace(/\b\w/g, c => c.toUpperCase());
+    }
+
+    function getTargetLabel(data) {
+      const field = ['domain', 'ip', 'host', 'url', 'cidr'].map(name => document.getElementById(`f_${name}`)?.value?.trim()).find(Boolean);
+      return field || data?.domain || data?.ip || data?.host || data?.url || route.title;
+    }
+
+    function inferStatus(value, key = '') {
+      const text = `${key} ${formatDiagValue(value)}`.toLowerCase();
+      if (value === false) return 'fail';
+      if (value === true) return 'pass';
+      if (/(blacklisted|not found|no .*record|domain not found|failed|failure|error|invalid|expired|socket|down|timeout|false)/.test(text)) return 'fail';
+      if (/(warning|warn|recommended|partial|soon|neutral|softfail|p=none|quarantine|missing|empty|none)/.test(text)) return 'warn';
+      if (/(found|valid|success|clean|ok|pass|published|up|true)/.test(text)) return 'pass';
+      return 'warn';
+    }
+
+    function statusIcon(status) {
+      const safe = status === 'fail' ? 'fail' : status === 'warn' ? 'warn' : 'pass';
+      const mark = safe === 'pass' ? '&#10003;' : safe === 'fail' ? '&times;' : '!';
+      return `<span class="status-icon icon-${safe}" aria-hidden="true">${mark}</span>`;
+    }
+
+    function detailText(name, result, status) {
+      if (status === 'pass') return `${name} is returning an expected result. Keep monitoring it after DNS, mail flow, or certificate changes.`;
+      if (status === 'fail') return `${name} needs attention. Check the published record, resolver response, provider configuration, or certificate chain and run the test again after changes propagate.`;
+      return `${name} is present but may need improvement. Review the value and tighten policy or configuration when the domain is stable.`;
+    }
+
+    function rowHtml(row, index) {
+      const status = row.status || inferStatus(row.result, row.test);
+      const detail = row.detail || detailText(row.test, row.result, status);
+      return `<tr class="result-row" style="--row-index:${index}"><td><div class="test-name">${statusIcon(status)}<span>${escapeHtml(row.test)}</span></div></td><td class="test-result">${escapeHtml(formatDiagValue(row.result))}</td><td class="more-cell"><details class="more-info"><summary>More Info</summary><div class="more-panel">${escapeHtml(detail)}</div></details></td></tr>`;
+    }
+
+    function checksTable(rows) {
+      if (!rows.length) return `<div class="placeholder">Sem dados.</div>`;
+      return `<div class="result-table-wrap"><table class="result-check-table"><thead><tr><th>Test</th><th>Result</th><th></th></tr></thead><tbody>${rows.map(rowHtml).join('')}</tbody></table></div>`;
+    }
+
+    function diagShell(data, sections) {
+      return `<div class="diagnostic-results"><div class="diag-hero"><div class="diag-target"><span>${escapeHtml(route.title)}</span><strong>${escapeHtml(getTargetLabel(data))}</strong></div><div class="diag-action-row"><span class="diag-action find">Find Problems</span><span class="diag-action solve">Solve Delivery Problems</span></div></div>${sections.filter(Boolean).join('')}</div>`;
+    }
+
+    function diagSection(title, html, className = '') {
+      return `<section class="diag-section ${className}"><h3 class="diag-section-title">${escapeHtml(title)}</h3>${html}</section>`;
+    }
+
+    function flattenDiagnosticRows(value, prefix = '', rows = []) {
+      if (value === null || value === undefined) {
+        rows.push({ test: titleizeKey(prefix || 'value'), result: '-' });
+        return rows;
+      }
+      if (Array.isArray(value)) {
+        if (!value.length) rows.push({ test: titleizeKey(prefix || 'list'), result: 'No values returned', status: 'warn' });
+        else if (value.every(v => v === null || typeof v !== 'object')) rows.push({ test: titleizeKey(prefix), result: value.join(', ') });
+        else value.forEach((item, index) => flattenDiagnosticRows(item, `${prefix || 'item'} ${index + 1}`, rows));
+        return rows;
+      }
+      if (typeof value === 'object') {
+        Object.keys(value).forEach(key => flattenDiagnosticRows(value[key], prefix ? `${prefix}.${key}` : key, rows));
+        return rows;
+      }
+      rows.push({ test: titleizeKey(prefix), result: value });
+      return rows;
+    }
+
+    function recordRows(data) {
+      const records = Array.isArray(data?.records) ? data.records : data?.record ? [data.record] : [];
+      return records.map((record, index) => ({ test: `${data?.type || route.title} Record ${index + 1}`, result: record, status: 'pass', detail: 'This is the DNS value returned by the resolver for the requested record type.' }));
+    }
+
+    function parseMxRecord(record) {
+      const parts = String(record || '').trim().split(/\s+/);
+      const pref = /^\d+$/.test(parts[0] || '') ? parts.shift() : '-';
+      return { pref, hostname: (parts.join(' ') || '-').replace(/\.$/, ''), ip: '-', ttl: '-' };
+    }
+
+    function mxTable(data) {
+      const records = Array.isArray(data?.records) ? data.records : [];
+      if (!records.length) return '';
+      const rows = records.map((record, index) => {
+        const mx = parseMxRecord(record);
+        const host = mx.hostname === '-' ? '' : mx.hostname;
+        return `<tr class="result-row" style="--row-index:${index}"><td>${escapeHtml(mx.pref)}</td><td>${escapeHtml(mx.hostname)}</td><td>${escapeHtml(mx.ip)}</td><td>${escapeHtml(mx.ttl)}</td><td><div class="mx-actions"><a class="mx-action-link" href="javascript:void(0)" onclick="navigateWithData('/blacklists','domain','${escapeHtml(host)}')">Blacklist Check</a><a class="mx-action-link" href="javascript:void(0)" onclick="navigateWithData('/smtp','host','${escapeHtml(host)}')">SMTP Test</a></div></td></tr>`;
+      }).join('');
+      return `<div class="result-table-wrap"><table class="mx-record-table"><thead><tr><th>Pref</th><th>Hostname</th><th>IP Address</th><th>TTL</th><th>Actions</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+    }
+
+    function whoisCard(data) {
+      const pairs = [['OWNER', data?.owner || data?.org || data?.registrar || data?.domain_name], ['ASN', data?.asn], ['PREFIX', data?.prefix || data?.network || data?.range], ['REGISTRY', data?.registry || data?.country], ['STATUS', data?.status], ['HOSTNAME', data?.hostname], ['NAME SERVERS', data?.name_servers], ['CREATED', data?.creation_date], ['EXPIRES', data?.expiration_date], ['UPDATED', data?.updated_date]].filter(([, value]) => value !== undefined && value !== null && value !== '');
+      if (!pairs.length) return '';
+      return `<div class="whois-card">${pairs.map(([label, value]) => `<div class="whois-row"><div class="whois-label">${escapeHtml(label)}</div><div class="whois-value">${escapeHtml(formatDiagValue(value))}</div></div>`).join('')}</div>`;
+    }
+
+    function renderBlacklistGrid(data) {
+      const listed = new Set(Array.isArray(data?.listed_on) ? data.listed_on : []);
+      const clean = new Set(Array.isArray(data?.clean_on) ? data.clean_on : []);
+      const providers = Array.from(new Set([...listed, ...clean]));
+      const cards = providers.map((provider, index) => {
+        const isListed = listed.has(provider);
+        return `<article class="blacklist-card ${isListed ? 'listed' : 'clean'}" style="--row-index:${index}"><div class="blacklist-name">${escapeHtml(provider)}</div><div style="display:flex;align-items:center;justify-content:space-between;gap:10px;">${statusIcon(isListed ? 'fail' : 'pass')}<span class="blacklist-state">${isListed ? 'Listed' : 'Clean'}</span></div></article>`;
+      }).join('');
+      return `<div class="diagnostic-results"><div class="blacklist-summary"><span><strong>${providers.length}</strong> blacklists checked - ${listed.size} listed, ${clean.size} clean</span>${statusIcon(listed.size ? 'fail' : 'pass')}</div><div class="blacklist-grid">${cards || '<div class="placeholder">No blacklist data returned.</div>'}</div></div>`;
+    }
+
+    function categoryForRoute(path) {
+      if (['/spf', '/dkim', '/dmarc'].includes(path)) return 'Email Auth';
+      if (['/dns', '/mx', '/dns_reverse'].includes(path)) return 'DNS';
+      if (path === '/ssl') return 'Security';
+      if (path === '/blacklists') return 'Blacklists';
+      return route.title;
+    }
+
+    function renderDiagnosticTable(data) {
+      if (route.path === '/blacklists') return renderBlacklistGrid(data);
+      const path = route.path;
+      const isFound = data?.found === true;
+      const isMissing = data?.found === false;
+      const mainRows = [];
+      const relatedRows = [];
+      const sections = [];
+      if (path === '/spf') {
+        const record = data?.record || '';
+        mainRows.push({ test: 'SPF Record Published', result: data?.status || (isFound ? 'SPF record found' : 'No SPF record found'), status: isFound ? 'pass' : 'fail' });
+        if (record) mainRows.push({ test: 'SPF Record Value', result: record, status: inferStatus(record, 'spf') });
+        relatedRows.push({ test: 'SPF Policy Strength', result: record.includes('-all') ? 'Hard fail policy enabled' : record.includes('~all') ? 'Soft fail policy enabled' : record.includes('+all') ? 'Open +all policy detected' : 'Policy qualifier not detected', status: record.includes('-all') ? 'pass' : record.includes('+all') ? 'fail' : 'warn' });
+        relatedRows.push({ test: 'Resolved Mechanisms', result: Object.keys(data?.resolved || {}).length ? Object.keys(data.resolved).join(', ') : 'No mechanisms resolved', status: Object.keys(data?.resolved || {}).length ? 'pass' : 'warn' });
+      } else if (path === '/dkim') {
+        mainRows.push({ test: 'DKIM Record Published', result: data?.status || (isFound ? 'DKIM record found' : 'No DKIM record found'), status: isFound ? 'pass' : 'fail' });
+        relatedRows.push({ test: 'DKIM Selector', result: data?.selector || document.getElementById('f_selector')?.value || 'default', status: data?.selector ? 'pass' : 'warn' });
+        if (data?.record) relatedRows.push({ test: 'DKIM Public Key', result: data.record, status: 'pass' });
+      } else if (path === '/dmarc') {
+        const record = data?.record || '';
+        mainRows.push({ test: 'DMARC Record Published', result: data?.status || (isFound ? 'DMARC record found' : 'No DMARC record found'), status: isFound ? 'pass' : 'fail' });
+        relatedRows.push({ test: 'DMARC Policy Not Enabled', result: /p=(quarantine|reject)/i.test(record) ? 'Enforcement policy enabled' : 'Use quarantine or reject after monitoring alignment', status: /p=(quarantine|reject)/i.test(record) ? 'pass' : 'warn' });
+        if (record) relatedRows.push({ test: 'DMARC Record Value', result: record, status: inferStatus(record, 'dmarc') });
+      } else if (path === '/dns' || path === '/mx') {
+        const type = data?.type || document.getElementById('f_record_type')?.value || (path === '/mx' ? 'MX' : 'DNS');
+        mainRows.push({ test: 'DNS Record Published', result: isMissing ? (data?.status || `No ${type} record found`) : `${type} record found`, status: isMissing ? 'fail' : 'pass' });
+        relatedRows.push(...recordRows(data));
+        if (String(type).toUpperCase() === 'MX') sections.push(diagSection('MX Records', mxTable(data)));
+      } else if (path === '/ssl') {
+        const ssl = data?.ssl_info || {};
+        const headers = data?.http_headers || {};
+        mainRows.push({ test: 'SSL Certificate Valid', result: ssl.status || 'SSL certificate checked', status: ssl.valid ? 'pass' : 'fail' });
+        mainRows.push({ test: 'Certificate Expiration', result: ssl.days_remaining !== undefined ? `${ssl.days_remaining} days remaining (${ssl.expires_on || ssl.notAfter || '-'})` : (ssl.error || '-'), status: ssl.valid === false ? 'fail' : Number(ssl.days_remaining) <= 30 ? 'warn' : 'pass' });
+        relatedRows.push({ test: 'Issuer', result: ssl.issuer || '-', status: ssl.issuer ? 'pass' : 'warn' });
+        relatedRows.push({ test: 'HTTP Headers Reachable', result: headers.status || headers.status_code || '-', status: headers.found === false ? 'fail' : inferStatus(headers.status || headers.status_code, 'headers') });
+      } else {
+        mainRows.push(...flattenDiagnosticRows(data));
+      }
+      if (!mainRows.length) mainRows.push(...flattenDiagnosticRows(data));
+      sections.unshift(diagSection(categoryForRoute(path), checksTable(mainRows)));
+      if (relatedRows.length) sections.push(diagSection('Related Tests', checksTable(relatedRows), 'related-band'));
+      if (['/whois', '/ip-info'].includes(path)) sections.push(diagSection('Ownership Info', whoisCard(data)));
+      return diagShell(data, sections);
+    }
+
     function renderTable(data) {
       if (typeof data === 'string') {
         const t = data.trim();
@@ -4948,9 +5433,10 @@ E --> F`;
         });
         return buildTableHTML(rows);
       }
-      const rows = [];
-      flatten(data, '', 0, rows);
-      return buildTableHTML(rows);
+      if (['/spf', '/dkim', '/dmarc', '/dns', '/ssl', '/blacklists', '/mx', '/whois', '/ip-info'].includes(route.path)) {
+        return renderDiagnosticTable(data);
+      }
+      return buildTableHTML(flattenDiagnosticRows(data).map(row => ({ k: row.test, v: row.result, d: 0 })));
     }
 
     function buildTableHTML(rows) {
@@ -4976,7 +5462,7 @@ E --> F`;
       btn.disabled = true;
       btn.innerHTML = `<svg class="spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M21 12a9 9 0 1 1-6.22-8.56"/></svg><span>Carregando...</span>`;
       try {
-        let url = `/api${route.path}`;
+        let url = `/api${route.apiPath || route.path}`;
         const init = { method: route.method || 'GET' };
         if (route.method === 'POST') {
           init.headers = { 'Content-Type': 'application/json' };
