@@ -1580,10 +1580,11 @@
   .mig-download-row { display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
   .mig-dl-btn {
     position: relative; isolation: isolate; overflow: hidden;
-    min-height: 44px; padding: 0 18px; border-radius: 12px; border: 1px solid transparent;
+    min-height: 44px; min-width: 148px; padding: 0 18px; border-radius: 12px; border: 1px solid transparent;
     cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
     font: 700 12px var(--font-sans); text-transform: uppercase; letter-spacing: 0.12em;
-    transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease, opacity .12s ease;
+    transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease, opacity .12s ease,
+                min-width .5s cubic-bezier(.2, .9, .2, 1), padding .5s cubic-bezier(.2, .9, .2, 1), border-radius .5s ease;
     white-space: nowrap;
     box-shadow: 0 12px 24px -12px rgba(15, 23, 42, 0.34);
   }
@@ -1595,6 +1596,34 @@
   .mig-dl-btn::after {
     content: ""; position: absolute; inset: 1px;
     border-radius: inherit; border: 1px solid rgba(255,255,255,0.16); pointer-events: none; z-index: 0;
+  }
+  .mig-dl-btn__check {
+    position: absolute; inset: 0;
+    display: grid; place-items: center;
+    opacity: 0; transform: scale(0.5) rotate(-90deg);
+    transition: opacity .25s ease, transform .25s ease;
+    z-index: 1;
+  }
+  .mig-dl-btn__check svg {
+    width: 16px; height: 16px;
+    stroke: #fff; stroke-width: 2.5;
+    stroke-linecap: round; stroke-linejoin: round;
+    fill: none;
+  }
+  .mig-dl-btn.is-running {
+    transform: rotate(360deg) scale(0.92);
+    min-width: 44px; padding: 0; border-radius: 999px;
+    pointer-events: none;
+  }
+  .mig-dl-btn.is-running .mig-dl-btn__icon,
+  .mig-dl-btn.is-running .mig-dl-btn__label,
+  .mig-dl-btn.is-running .mig-dl-btn__glow {
+    opacity: 0; transform: scale(0.78);
+    transition: opacity .25s ease, transform .25s ease;
+  }
+  .mig-dl-btn.is-running .mig-dl-btn__check {
+    opacity: 1; transform: scale(1) rotate(0deg);
+    transition-delay: .12s;
   }
   .mig-dl-btn:hover:not(:disabled) {
     transform: translateY(-1px);
@@ -6460,16 +6489,19 @@ E --> F`;
           <div class="mig-download-row">
             <button class="mig-dl-btn lote" id="dlLoteBtn" disabled>
               <span class="mig-dl-btn__icon">${ICONS.download}</span>
+              <span class="mig-dl-btn__check">${ICONS.check}</span>
               <span class="mig-dl-btn__label">Baixar LOTE</span>
               <span class="mig-dl-btn__glow"></span>
             </button>
             <button class="mig-dl-btn acc" id="dlAccBtn" disabled>
               <span class="mig-dl-btn__icon">${ICONS.download}</span>
+              <span class="mig-dl-btn__check">${ICONS.check}</span>
               <span class="mig-dl-btn__label">Baixar ACC</span>
               <span class="mig-dl-btn__glow"></span>
             </button>
             <button class="mig-dl-btn both" id="dlBothBtn" disabled>
               <span class="mig-dl-btn__icon">${ICONS.download}</span>
+              <span class="mig-dl-btn__check">${ICONS.check}</span>
               <span class="mig-dl-btn__label">Baixar Ambos</span>
               <span class="mig-dl-btn__glow"></span>
             </button>
@@ -6477,6 +6509,15 @@ E --> F`;
         </div>
       </div>
     `;
+  }
+
+  function triggerMigButtonAnimation(button, action) {
+    if (!button || button.disabled || button.classList.contains('is-running')) return;
+    button.classList.add('is-running');
+    window.setTimeout(() => {
+      button.classList.remove('is-running');
+      if (typeof action === 'function') action();
+    }, 2400);
   }
 
   function bindMigration() {
@@ -6523,9 +6564,9 @@ E --> F`;
       }
     };
 
-    document.getElementById('dlLoteBtn').onclick = () => downloadLote();
-    document.getElementById('dlAccBtn').onclick  = () => downloadAcc();
-    document.getElementById('dlBothBtn').onclick = () => downloadBoth();
+    document.getElementById('dlLoteBtn').onclick = () => triggerMigButtonAnimation(document.getElementById('dlLoteBtn'), downloadLote);
+    document.getElementById('dlAccBtn').onclick  = () => triggerMigButtonAnimation(document.getElementById('dlAccBtn'), downloadAcc);
+    document.getElementById('dlBothBtn').onclick = () => triggerMigButtonAnimation(document.getElementById('dlBothBtn'), downloadBoth);
   }
 
   function closeConfirmModal() { document.getElementById('confirmModal').classList.remove('show'); }
