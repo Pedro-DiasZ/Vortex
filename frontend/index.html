@@ -1577,19 +1577,57 @@
 
   .mig-footer { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-top: 16px; }
   .mig-footer-info { font: 500 12px var(--font-mono); color: var(--muted); }
-  .mig-download-row { display: flex; gap: 8px; flex-wrap: wrap; }
+  .mig-download-row { display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
   .mig-dl-btn {
-    height: 44px; padding: 0 20px; border-radius: 10px; border: none;
-    cursor: pointer; display: inline-flex; align-items: center; gap: 8px;
-    font: 700 12px var(--font-sans); text-transform: uppercase; letter-spacing: 0.1em;
-    transition: opacity .12s; white-space: nowrap;
+    position: relative; isolation: isolate; overflow: hidden;
+    min-height: 44px; padding: 0 18px; border-radius: 12px; border: 1px solid transparent;
+    cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    font: 700 12px var(--font-sans); text-transform: uppercase; letter-spacing: 0.12em;
+    transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease, opacity .12s ease;
+    white-space: nowrap;
+    box-shadow: 0 12px 24px -12px rgba(15, 23, 42, 0.34);
   }
-  .mig-dl-btn:hover:not(:disabled) { opacity: .92; }
-  .mig-dl-btn:disabled { opacity: .45; cursor: not-allowed; }
-  .mig-dl-btn.lote { background: linear-gradient(135deg, #22c55e, #16a34a); color: #fff; box-shadow: 0 8px 24px -8px rgba(34,197,94,.5); }
-  .mig-dl-btn.acc  { background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; box-shadow: 0 8px 24px -8px rgba(245,158,11,.5); }
-  .mig-dl-btn.both { background: var(--gradient-primary); color: #fff; box-shadow: var(--shadow-elegant); }
-  .mig-dl-btn svg { width: 15px; height: 15px; }
+  .mig-dl-btn::before {
+    content: ""; position: absolute; inset: 0;
+    background: linear-gradient(120deg, transparent 0%, rgba(255,255,255,0.24) 45%, transparent 100%);
+    transform: translateX(-120%); transition: transform .45s ease; z-index: 0;
+  }
+  .mig-dl-btn::after {
+    content: ""; position: absolute; inset: 1px;
+    border-radius: inherit; border: 1px solid rgba(255,255,255,0.16); pointer-events: none; z-index: 0;
+  }
+  .mig-dl-btn:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 16px 30px -14px rgba(15, 23, 42, 0.35);
+  }
+  .mig-dl-btn:hover:not(:disabled)::before { transform: translateX(120%); }
+  .mig-dl-btn:active:not(:disabled) { transform: translateY(0) scale(0.98); }
+  .mig-dl-btn:disabled { opacity: .45; cursor: not-allowed; box-shadow: none; }
+  .mig-dl-btn__icon,
+  .mig-dl-btn__label,
+  .mig-dl-btn__glow { position: relative; z-index: 1; }
+  .mig-dl-btn__icon { display: grid; place-items: center; }
+  .mig-dl-btn__icon svg { width: 15px; height: 15px; }
+  .mig-dl-btn__glow {
+    width: 8px; height: 8px; border-radius: 999px;
+    background: rgba(255,255,255,0.85);
+    box-shadow: 0 0 0 3px rgba(255,255,255,0.16);
+    opacity: 0.7; transition: transform .2s ease, opacity .2s ease;
+  }
+  .mig-dl-btn:hover:not(:disabled) .mig-dl-btn__glow { transform: translateX(2px); opacity: 1; }
+  .mig-dl-btn.lote {
+    background: linear-gradient(135deg, #22c55e, #16a34a);
+    color: #fff; border-color: rgba(255,255,255,0.16);
+  }
+  .mig-dl-btn.acc {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    color: #fff; border-color: rgba(255,255,255,0.16);
+  }
+  .mig-dl-btn.both {
+    background: var(--gradient-primary);
+    color: #fff; border-color: rgba(255,255,255,0.16);
+    box-shadow: var(--shadow-elegant);
+  }
 
   .mig-badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 9999px; font: 700 10px var(--font-mono); margin-left: 6px; }
   .mig-badge.ok   { background: rgba(34,197,94,.15); color: var(--success); }
@@ -6420,9 +6458,21 @@ E --> F`;
         <div class="mig-footer">
           <div class="mig-footer-info" id="migStats">—</div>
           <div class="mig-download-row">
-            <button class="mig-dl-btn lote" id="dlLoteBtn" disabled>${ICONS.download}<span>Baixar LOTE</span></button>
-            <button class="mig-dl-btn acc"  id="dlAccBtn"  disabled>${ICONS.download}<span>Baixar ACC</span></button>
-            <button class="mig-dl-btn both" id="dlBothBtn" disabled>${ICONS.download}<span>Baixar Ambos</span></button>
+            <button class="mig-dl-btn lote" id="dlLoteBtn" disabled>
+              <span class="mig-dl-btn__icon">${ICONS.download}</span>
+              <span class="mig-dl-btn__label">Baixar LOTE</span>
+              <span class="mig-dl-btn__glow"></span>
+            </button>
+            <button class="mig-dl-btn acc" id="dlAccBtn" disabled>
+              <span class="mig-dl-btn__icon">${ICONS.download}</span>
+              <span class="mig-dl-btn__label">Baixar ACC</span>
+              <span class="mig-dl-btn__glow"></span>
+            </button>
+            <button class="mig-dl-btn both" id="dlBothBtn" disabled>
+              <span class="mig-dl-btn__icon">${ICONS.download}</span>
+              <span class="mig-dl-btn__label">Baixar Ambos</span>
+              <span class="mig-dl-btn__glow"></span>
+            </button>
           </div>
         </div>
       </div>
